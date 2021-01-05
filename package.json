@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -9,6 +9,11 @@
   ],
   "engines": {
     "node": ">=10"
+  },
+  "homepage": "https://github.com/Jaaneek/useFilePicker",
+  "repository": {
+    "url": "https://github.com/Jaaneek/useFilePicker",
+    "type": "git"
   },
   "scripts": {
     "start": "tsdx watch",
