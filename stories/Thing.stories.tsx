@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { useFilePicker } from '../src';
 
 const TemporaryComponent = () => {
+  const [files, errors, reopen] = useFilePicker({ multiple: false });
+  useEffect(() => {
+    reopen();
+  });
+  if (files) return <div>success</div>;
+  if (errors) return <div>error</div>;
   return <div>test</div>;
 };
 
