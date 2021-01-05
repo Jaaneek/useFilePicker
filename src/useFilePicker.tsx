@@ -53,8 +53,9 @@ function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize
         setFileErrors([]);
       })
       .catch(err => {
-        setFileErrors([err, ...fileErrors]);
+        setFileErrors(f => [err, ...f]);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
   return [filesContent, fileErrors, openFileSelector];
