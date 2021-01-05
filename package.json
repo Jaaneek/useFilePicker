@@ -35,7 +35,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "usefilepicker",
+  "name": "use-file-picker",
   "description": "Simple react hook to open browser file selector.",
   "keywords": [
     "file",
