@@ -21,7 +21,11 @@
 npm i use-file-picker
 ```
 
-Usage
+## Example
+
+https://codesandbox.io/s/pedantic-joliot-8nkn7?file=/src/App.js
+
+## Usage
 
 ```jsx
 import { useFilePicker } from 'use-file-picker';
