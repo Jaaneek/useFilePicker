@@ -1,6 +1,6 @@
 export interface UseFilePickerConfig extends Options {
   multiple?: boolean;
-  accept?: string;
+  accept?: string | string[];
 }
 
 export interface FileContent {

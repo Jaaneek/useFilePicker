@@ -6,7 +6,8 @@ import { useFilePicker } from '../src';
 const App = () => {
   const [filesContent, errors, openFileSelector] = useFilePicker({
     multiple: true,
-    accept: '.ics,.pdf',
+    // accept: '.ics,.pdf',
+    accept: ['.json', '.pdf'],
   });
 
   if (errors.length) {
