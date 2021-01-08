@@ -31,12 +31,17 @@ https://codesandbox.io/s/pedantic-joliot-8nkn7?file=/src/App.js
 import { useFilePicker } from 'use-file-picker';
 
 function App() {
-  const [filesContent, errors, openFileSelector] = useFilePicker({
+  const [filesContent, errors, openFileSelector, loading] = useFilePicker({
     multiple: true,
-    accept: '.ics,.pdf',
+    // accept: '.ics,.pdf',
+    accept: ['.json', '.pdf'],
   });
 
   if (errors.length > 0) return <p>Error!</p>;
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -53,7 +58,12 @@ function App() {
 
 - Twitter: [@twitter.com\/JankiewiczMi\/](https://twitter.com/JankiewiczMi/)
 - Github: [@Jaaneek ](https://github.com/Jaaneek)
-- LinkedIn: [@https:\/\/www.linkedin.com\/in\/mi%C5%82osz-jankiewicz-554562168\/](https://www.linkedin.com/in/mi%C5%82osz-jankiewicz-554562168/)
+- LinkedIn: [@https:\/\/www.linkedin.com\/in\/jaaneek](https://www.linkedin.com/in/mi%C5%82osz-jankiewicz-554562168/)
+
+👤 **Kamil Planer**
+
+- Github: [@MrKampla ](https://github.com/MrKampla)
+- LinkedIn: [@https://www.linkedin.com/in/kamil-planer/](https://www.linkedin.com/in/kamil-planer/)
 
 ## 🤝 Contributing
 
