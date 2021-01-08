@@ -23,7 +23,7 @@ const App = () => {
     <div>
       <button onClick={() => openFileSelector()}>Select file </button>
       File names:
-      {JSON.stringify(filesContent.map(x => x.name))}
+      {filesContent.length}
     </div>
   );
 };
