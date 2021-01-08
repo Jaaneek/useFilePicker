@@ -6,6 +6,7 @@ function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent[]>([]);
   const [fileErrors, setFileErrors] = useState<FileError[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const openFileSelector = () => {
     openFileDialog(accept, multiple, evt => {
@@ -16,6 +17,7 @@ function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize
   };
 
   useEffect(() => {
+    setLoading(true);
     const filePromises = files.map(
       (file: FileWithPath) =>
         new Promise((resolve: (fileContent: FileContent) => void, reject: (reason: FileError) => void) => {
@@ -54,11 +56,12 @@ function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize
       })
       .catch(err => {
         setFileErrors(f => [err, ...f]);
-      });
+      })
+      .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
-  return [filesContent, fileErrors, openFileSelector];
+  return [filesContent, fileErrors, openFileSelector, loading];
 }
 
 export default useFilePicker;

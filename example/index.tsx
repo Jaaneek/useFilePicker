@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import { useFilePicker } from '../src';
 
 const App = () => {
-  const [filesContent, errors, openFileSelector] = useFilePicker({
+  const [filesContent, errors, openFileSelector, loading] = useFilePicker({
     multiple: true,
     accept: '.ics,.pdf',
   });
@@ -19,10 +19,15 @@ const App = () => {
     );
   }
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <button onClick={() => openFileSelector()}>Select file </button>
-      File names:
+      <br />
+      Number of selected files:
       {filesContent.length}
     </div>
   );
