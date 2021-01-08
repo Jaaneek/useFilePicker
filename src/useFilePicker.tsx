@@ -9,7 +9,8 @@ function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize
   const [loading, setLoading] = useState<boolean>(false);
 
   const openFileSelector = () => {
-    openFileDialog(accept, multiple, evt => {
+    const fileExtensions = accept instanceof Array ? accept.join(',') : accept;
+    openFileDialog(fileExtensions, multiple, evt => {
       fromEvent(evt).then(files => {
         setFiles(files as FileWithPath[]);
       });
