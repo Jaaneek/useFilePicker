@@ -18,6 +18,10 @@ function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize
   };
 
   useEffect(() => {
+    if (files.length === 0) {
+      setFilesContent([]);
+      return;
+    }
     setLoading(true);
     const filePromises = files.map(
       (file: FileWithPath) =>
