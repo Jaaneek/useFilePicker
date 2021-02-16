@@ -30,7 +30,7 @@ export interface FileError extends FileSizeError, FileReaderError {
 }
 
 interface FileReaderError {
-  readerError?: ProgressEvent<FileReader>;
+  readerError?: DOMException | null;
 }
 
 interface FileSizeError {
