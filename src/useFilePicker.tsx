@@ -49,6 +49,11 @@ function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize
               lastModified: file.lastModified,
             } as FileContent);
           };
+
+          reader.onerror = () => {
+            addError({ readerError: reader.error });
+          };
+
           const addError = ({ name = file.name, ...others }: FileError) => {
             reject({ name, fileSizeToolarge: false, fileSizeTooSmall: false, ...others });
           };

@@ -25,8 +25,12 @@ export interface Options extends ImageDims {
   maxFileSize?: number;
 }
 
-export interface FileError extends FileSizeError {
+export interface FileError extends FileSizeError, FileReaderError {
   name?: string;
+}
+
+interface FileReaderError {
+  readerError?: DOMException | null;
 }
 
 interface FileSizeError {
