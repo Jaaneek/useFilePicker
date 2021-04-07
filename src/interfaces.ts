@@ -1,4 +1,4 @@
-export type ReadType = "Text" | "BinaryString" | "ArrayBuffer" | "DataURL";
+export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
 export type ReaderMethod = keyof FileReader;
 
