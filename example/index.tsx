@@ -6,6 +6,7 @@ import { useFilePicker } from '../src';
 const App = () => {
   const [filesContent, errors, openFileSelector, loading] = useFilePicker({
     multiple: true,
+    readAs: 'Text', // availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
     // accept: '.ics,.pdf',
     accept: ['.json', '.pdf'],
   });
@@ -31,6 +32,11 @@ const App = () => {
       <br />
       Number of selected files:
       {filesContent.length}
+      <br />
+      {filesContent.map(content => (
+        <div style={{ lineBreak: 'anywhere' }}>{JSON.stringify(content.content)}</div>
+      ))}
+      {!!filesContent.length && <img src={filesContent[0].content} />}
     </div>
   );
 };

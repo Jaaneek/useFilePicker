@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { fromEvent, FileWithPath } from 'file-selector';
-import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError } from './interfaces';
+import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError, ReaderMethod } from './interfaces';
 
-function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize }: UseFilePickerConfig): FilePickerReturnTypes {
+function useFilePicker({ accept = '*', multiple = true, readAs = 'Text', minFileSize, maxFileSize }: UseFilePickerConfig): FilePickerReturnTypes {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent[]>([]);
   const [fileErrors, setFileErrors] = useState<FileError[]>([]);
@@ -27,7 +27,10 @@ function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize
       (file: FileWithPath) =>
         new Promise((resolve: (fileContent: FileContent) => void, reject: (reason: FileError) => void) => {
           const reader = new FileReader();
-          reader.readAsText(file);
+
+          //availible reader methods: readAsText, readAsBinaryString, readAsArrayBuffer, readAsDataURL
+          const readStrategy = reader[`readAs${readAs}` as ReaderMethod] as typeof reader.readAsText;
+          readStrategy.call(reader, file);
 
           reader.onload = () => {
             if (minFileSize) {
