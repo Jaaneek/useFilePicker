@@ -1,6 +1,11 @@
+export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
+
+export type ReaderMethod = keyof FileReader;
+
 export interface UseFilePickerConfig extends Options {
   multiple?: boolean;
   accept?: string | string[];
+  readAs?: ReadType;
 }
 
 export interface FileContent {
