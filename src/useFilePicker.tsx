@@ -39,8 +39,8 @@ function useFilePicker({ accept = '*', multiple = true, minFileSize, maxFileSize
             if (maxFileSize) {
               const maxBytes = maxFileSize * BYTES_PER_MEGABYTE;
               if (file.size > maxBytes) {
+                addError({ fileSizeToolarge: true });
               }
-              addError({ fileSizeToolarge: true });
             }
 
             resolve({
