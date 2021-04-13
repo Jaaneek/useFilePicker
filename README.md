@@ -33,6 +33,7 @@ import { useFilePicker } from 'use-file-picker';
 function App() {
   const [filesContent, errors, openFileSelector, loading] = useFilePicker({
     multiple: true,
+    readAs: 'Text', // default: "Text", availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
     // accept: '.ics,.pdf',
     accept: ['.json', '.pdf'],
   });
