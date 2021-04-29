@@ -2,7 +2,7 @@ export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
 export type ReaderMethod = keyof FileReader;
 
-export interface LimitFilesCofnig {
+export interface LimitFilesConfig {
   min?: number;
   max?: number;
 }
@@ -10,7 +10,7 @@ export interface UseFilePickerConfig extends Options {
   multiple?: boolean;
   accept?: string | string[];
   readAs?: ReadType;
-  limitFilesConfig?: LimitFilesCofnig;
+  limitFilesConfig?: LimitFilesConfig;
 }
 
 export interface FileContent {
