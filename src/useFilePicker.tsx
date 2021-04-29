@@ -9,15 +9,33 @@ function useFilePicker({
   minFileSize,
   maxFileSize,
   limitFilesConfig,
+  readFilesContent = true,
 }: UseFilePickerConfig): FilePickerReturnTypes {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent[]>([]);
   const [fileErrors, setFileErrors] = useState<FileError[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [plainFiles, setPlainFiles] = useState<File[]>([]);
 
   const openFileSelector = () => {
     const fileExtensions = accept instanceof Array ? accept.join(',') : accept;
     openFileDialog(fileExtensions, multiple, evt => {
+      const inputElement = evt.target as HTMLInputElement;
+      const plainFiles = inputElement.files ? Array.from(inputElement.files) : [];
+      setPlainFiles(plainFiles);
+
+      if (limitFilesConfig) {
+        if (limitFilesConfig.max && plainFiles.length > limitFilesConfig.max) {
+          setFileErrors(f => [{ maxLimitExceeded: true }, ...f]);
+          return;
+        }
+
+        if (limitFilesConfig.min && plainFiles.length < limitFilesConfig.min) {
+          setFileErrors(f => [{ minLimitNotReached: true }, ...f]);
+          return;
+        }
+      }
+      if (!readFilesContent) return;
       fromEvent(evt).then(files => {
         setFiles(files as FileWithPath[]);
       });
@@ -28,17 +46,6 @@ function useFilePicker({
     if (files.length === 0) {
       setFilesContent([]);
       return;
-    }
-    if (limitFilesConfig) {
-      if (limitFilesConfig.max && files.length > limitFilesConfig.max) {
-        setFileErrors(f => [{ maxLimitExceeded: true }, ...f]);
-        return;
-      }
-
-      if (limitFilesConfig.min && files.length < limitFilesConfig.min) {
-        setFileErrors(f => [{ minLimitNotReached: true }, ...f]);
-        return;
-      }
     }
     setLoading(true);
     const filePromises = files.map(
@@ -92,12 +99,12 @@ function useFilePicker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
-  return [filesContent, fileErrors, openFileSelector, loading];
+  return [openFileSelector, { filesContent, errors: fileErrors, loading, plainFiles }];
 }
 
 export default useFilePicker;
 
-function openFileDialog(accept: string, multiple: boolean, callback: (arg: any) => void) {
+function openFileDialog(accept: string, multiple: boolean, callback: (arg: Event) => void) {
   // this function must be called from  a user
   // activation event (ie an onclick event)
 

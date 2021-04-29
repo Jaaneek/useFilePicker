@@ -4,12 +4,19 @@ import * as ReactDOM from 'react-dom';
 import { useFilePicker } from '../src';
 
 const App = () => {
-  const [filesContent, errors, openFileSelector, loading] = useFilePicker({
+  const [openFileSelector, { filesContent, loading, errors, plainFiles }] = useFilePicker({
     multiple: true,
-    readAs: 'Text', // availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
+    readAs: 'DataURL', // availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
     // accept: '.ics,.pdf',
     accept: ['.json', '.pdf'],
     limitFilesConfig: { min: 2, max: 3 },
+    // minFileSize: 1, // in megabytes
+    // maxFileSize: 1,
+    // maxImageHeight: 1024, // in pixels
+    // minImageHeight: 1024,
+    // maxImageWidth: 768,
+    // minImageWidth: 768
+    // readFilesContent: false, // ignores file content
   });
 
   if (errors.length) {
@@ -34,9 +41,14 @@ const App = () => {
       <button onClick={() => openFileSelector()}>Select file </button>
       <br />
       Number of selected files:
-      {filesContent.length}
+      {plainFiles.length}
       <br />
+      {/* If readAs is set to DataURL, You can display an image */}
       {!!filesContent.length && <img src={filesContent[0].content} />}
+      <br />
+      {plainFiles.map(file => (
+        <div key={file.name}>{file.name}</div>
+      ))}
     </div>
   );
 };
