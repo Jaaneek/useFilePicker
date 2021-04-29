@@ -11,6 +11,7 @@ export interface UseFilePickerConfig extends Options {
   accept?: string | string[];
   readAs?: ReadType;
   limitFilesConfig?: LimitFilesConfig;
+  readFilesContent?: boolean;
 }
 
 export interface FileContent {
@@ -19,7 +20,8 @@ export interface FileContent {
   content: string;
 }
 
-export type FilePickerReturnTypes = [FileContent[], FileError[], () => void, boolean];
+// export type FilePickerReturnTypes = [FileContent[], FileError[], () => void, boolean, File[]];
+export type FilePickerReturnTypes = [() => void, { filesContent: FileContent[], errors: FileError[], loading: boolean, plainFiles: File[] }];
 
 export interface ImageDims {
   minImageWidth?: number;
