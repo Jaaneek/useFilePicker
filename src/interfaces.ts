@@ -2,10 +2,15 @@ export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
 export type ReaderMethod = keyof FileReader;
 
+export interface LimitFilesCofnig {
+  min?: number;
+  max?: number;
+}
 export interface UseFilePickerConfig extends Options {
   multiple?: boolean;
   accept?: string | string[];
   readAs?: ReadType;
+  limitFilesConfig?: LimitFilesCofnig;
 }
 
 export interface FileContent {
@@ -30,12 +35,17 @@ export interface Options extends ImageDims {
   maxFileSize?: number;
 }
 
-export interface FileError extends FileSizeError, FileReaderError {
+export interface FileError extends FileSizeError, FileReaderError, FileLimitError {
   name?: string;
 }
 
 interface FileReaderError {
   readerError?: DOMException | null;
+}
+
+interface FileLimitError {
+  minLimitNotReached?: boolean;
+  maxLimitExceeded?: boolean;
 }
 
 interface FileSizeError {

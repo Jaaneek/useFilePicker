@@ -9,6 +9,7 @@ const App = () => {
     readAs: 'Text', // availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
     // accept: '.ics,.pdf',
     accept: ['.json', '.pdf'],
+    limitFilesConfig: { min: 2, max: 3 },
   });
 
   if (errors.length) {
@@ -18,6 +19,8 @@ const App = () => {
         {errors[0].fileSizeTooSmall && 'File size is too small!'}
         {errors[0].fileSizeToolarge && 'File size is too large!'}
         {errors[0].readerError && 'Problem occured while reading file!'}
+        {errors[0].maxLimitExceeded && 'Too many files'}
+        {errors[0].minLimitNotReached && 'Not enought files'}
       </div>
     );
   }
@@ -33,9 +36,6 @@ const App = () => {
       Number of selected files:
       {filesContent.length}
       <br />
-      {filesContent.map(content => (
-        <div style={{ lineBreak: 'anywhere' }}>{JSON.stringify(content.content)}</div>
-      ))}
       {!!filesContent.length && <img src={filesContent[0].content} />}
     </div>
   );

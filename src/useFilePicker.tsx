@@ -2,7 +2,14 @@ import { useEffect, useState } from 'react';
 import { fromEvent, FileWithPath } from 'file-selector';
 import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError, ReaderMethod } from './interfaces';
 
-function useFilePicker({ accept = '*', multiple = true, readAs = 'Text', minFileSize, maxFileSize }: UseFilePickerConfig): FilePickerReturnTypes {
+function useFilePicker({
+  accept = '*',
+  multiple = true,
+  readAs = 'Text',
+  minFileSize,
+  maxFileSize,
+  limitFilesConfig,
+}: UseFilePickerConfig): FilePickerReturnTypes {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent[]>([]);
   const [fileErrors, setFileErrors] = useState<FileError[]>([]);
@@ -21,6 +28,17 @@ function useFilePicker({ accept = '*', multiple = true, readAs = 'Text', minFile
     if (files.length === 0) {
       setFilesContent([]);
       return;
+    }
+    if (limitFilesConfig) {
+      if (limitFilesConfig.max && files.length > limitFilesConfig.max) {
+        setFileErrors(f => [{ maxLimitExceeded: true }, ...f]);
+        return;
+      }
+
+      if (limitFilesConfig.min && files.length < limitFilesConfig.min) {
+        setFileErrors(f => [{ minLimitNotReached: true }, ...f]);
+        return;
+      }
     }
     setLoading(true);
     const filePromises = files.map(
