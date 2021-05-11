@@ -2,7 +2,7 @@
 
 ## _Simple react hook to open browser file selector._
 
-![alt Version](https://img.shields.io/npm/v/use-file-picker?color=blue) ![alt License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) ![alt Twitter: twitter.com/JankiewiczMi/](https://img.shields.io/twitter/follow/JankiewiczMi.svg?style=social)
+[![alt Version](https://img.shields.io/npm/v/use-file-picker?color=blue)](https://www.npmjs.com/package/use-file-picker) [![alt License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#) [![alt Twitter: twitter.com/JankiewiczMi/](https://img.shields.io/twitter/follow/JankiewiczMi.svg?style=social)](https://twitter.com/twitter.com/JankiewiczMi)
 
 <strong>🏠 [Homepage](https://github.com/Jaaneek/useFilePicker 'user-file-picker Github')</strong>
 
