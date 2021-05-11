@@ -42,6 +42,13 @@ function useFilePicker({
     });
   };
 
+  const clear = () : void => {
+    setPlainFiles([])
+    setFiles([])
+    setFilesContent([])
+    setFileErrors([])
+  }
+
   useEffect(() => {
     if (files.length === 0) {
       setFilesContent([]);
@@ -99,7 +106,7 @@ function useFilePicker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
-  return [openFileSelector, { filesContent, errors: fileErrors, loading, plainFiles }];
+  return [openFileSelector, clear, { filesContent, errors: fileErrors, loading, plainFiles }];
 }
 
 export default useFilePicker;
