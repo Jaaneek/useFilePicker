@@ -10,7 +10,7 @@
 
 #### Usage
 
-- [Simple txt reader](#simple-.txt-file-content-reading)
+- [Simple txt reader](#simple-txt-file-content-reading)
 - [Image reader](#reading-and-rendering-images)
 - [Advanced usage](#advanced-usage)
 
@@ -26,7 +26,7 @@
 
 ## Usage
 
-#### Simple .txt file content reading
+#### Simple txt file content reading
 
 https://codesandbox.io/s/inspiring-swartz-pjxze?file=/src/App.js
 
