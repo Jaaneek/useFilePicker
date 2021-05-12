@@ -20,7 +20,7 @@ export interface FileContent {
   content: string;
 }
 
-export type FilePickerReturnTypes = [() => void, () => void, { filesContent: FileContent[], errors: FileError[], loading: boolean, plainFiles: File[] }];
+export type FilePickerReturnTypes = [() => void, { filesContent: FileContent[], errors: FileError[], loading: boolean, plainFiles: File[], clear: () => void }];
 
 export interface ImageDims {
   minImageWidth?: number;

@@ -106,7 +106,7 @@ function useFilePicker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
-  return [openFileSelector, clear, { filesContent, errors: fileErrors, loading, plainFiles }];
+  return [openFileSelector, { filesContent, errors: fileErrors, loading, plainFiles, clear }];
 }
 
 export default useFilePicker;
