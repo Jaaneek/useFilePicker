@@ -42,12 +42,12 @@ function useFilePicker({
     });
   };
 
-  const clear = () : void => {
-    setPlainFiles([])
-    setFiles([])
-    setFilesContent([])
-    setFileErrors([])
-  }
+  const clear = (): void => {
+    setPlainFiles([]);
+    setFiles([]);
+    setFilesContent([]);
+    setFileErrors([]);
+  };
 
   useEffect(() => {
     if (files.length === 0) {
