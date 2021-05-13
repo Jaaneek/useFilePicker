@@ -31,7 +31,7 @@ https://codesandbox.io/s/pedantic-joliot-8nkn7?file=/src/App.js
 import { useFilePicker } from 'use-file-picker';
 
 const App = () => {
-  const [openFileSelector, { filesContent, loading, errors, plainFiles }] = useFilePicker({
+  const [openFileSelector, { filesContent, loading, errors, plainFiles, clear }] = useFilePicker({
     multiple: true,
     readAs: 'DataURL', // availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
     // accept: '.ics,.pdf',
@@ -66,6 +66,7 @@ const App = () => {
   return (
     <div>
       <button onClick={() => openFileSelector()}>Select file </button>
+      <button onClick={() => clear()}>Clear</button>
       <br />
       Number of selected files:
       {plainFiles.length}
