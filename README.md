@@ -4,7 +4,7 @@
 
 [![alt Version](https://img.shields.io/npm/v/use-file-picker?color=blue)](https://www.npmjs.com/package/use-file-picker) [![alt License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#) [![alt Twitter: twitter.com/JankiewiczMi/](https://img.shields.io/twitter/follow/JankiewiczMi.svg?style=social)](https://twitter.com/twitter.com/JankiewiczMi)
 
-<strong>🏠 [Homepage](https://github.com/Jaaneek/useFilePicker 'user-file-picker Github')</strong>
+**🏠 [Homepage](https://github.com/Jaaneek/useFilePicker 'user-file-picker Github')**</strong>\*\*
 
 ## Documentation
 
@@ -23,6 +23,8 @@
 ## Install
 
 `npm i use-file-picker`
+or
+`yarn add use-file-picker`
 
 ## Usage
 
@@ -175,6 +177,7 @@ export default function App() {
 | Name             | Description                                                                              |
 | ---------------- | ---------------------------------------------------------------------------------------- |
 | openFileSelector | Opens file selector                                                                      |
+| clear            | Clears alls files and errors                                                             |
 | filesContent     | Get files array of type [FileContent](#filecontent)                                      |
 | plainFiles       | Get array of the [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) objects |
 | loading          | True if the reading files is in progress, otherwise False                                |
