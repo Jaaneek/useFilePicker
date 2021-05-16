@@ -79,7 +79,6 @@ export default function App() {
     maxFileSize: 50,
   });
 
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -164,15 +163,15 @@ export default function App() {
 
 ### Props
 
-| Prop name        | Description                                          | Default value | Example values                                   |
-| ---------------- | ---------------------------------------------------- | ------------- | ------------------------------------------------ |
-| multiple         | Allow user to pick multiple files at once            | true          | true, false                                      |
-| accept           | Set type of files that user can choose from the list | "\*"          | [".png", ".txt"], "image/\*", ".txt"             |
-| readAs           | Set a return type of [filesContent](#returns)        | "Text"        | "DataURL", "Text", "BinaryString", "ArrayBuffer" |
-| limitFilesConfig | Set maximum and minimum files that user can select   | n/a           | {min: 1, max: 2}, {max: 1}                       |
-| readFilesContent | Title                                                | true          | true, false                                      |
-| minFileSize      | Set minimum limit of file size in megabytes          | n/a           | 0.01 - 50                                        |
-| maxFileSize      | Set maximum limit of file size in megabytes          | n/a           | 0.01 - 50                                        |
+| Prop name        | Description                                                     | Default value | Example values                                   |
+| ---------------- | --------------------------------------------------------------- | ------------- | ------------------------------------------------ |
+| multiple         | Allow user to pick multiple files at once                       | true          | true, false                                      |
+| accept           | Set type of files that user can choose from the list            | "\*"          | [".png", ".txt"], "image/\*", ".txt"             |
+| readAs           | Set a return type of [filesContent](#returns)                   | "Text"        | "DataURL", "Text", "BinaryString", "ArrayBuffer" |
+| limitFilesConfig | Set maximum and minimum files that user can select              | n/a           | {min: 1, max: 2}, {max: 1}                       |
+| readFilesContent | Ignores files content and omits reading process if set to false | true          | true, false                                      |
+| minFileSize      | Set minimum limit of file size in megabytes                     | n/a           | 0.01 - 50                                        |
+| maxFileSize      | Set maximum limit of file size in megabytes                     | n/a           | 0.01 - 50                                        |
 
 ### Returns
 
