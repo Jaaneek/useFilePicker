@@ -4,7 +4,7 @@
 
 [![alt Version](https://img.shields.io/npm/v/use-file-picker?color=blue)](https://www.npmjs.com/package/use-file-picker) [![alt License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#) [![alt Twitter: twitter.com/JankiewiczMi/](https://img.shields.io/twitter/follow/JankiewiczMi.svg?style=social)](https://twitter.com/twitter.com/JankiewiczMi)
 
-**🏠 [Homepage](https://github.com/Jaaneek/useFilePicker 'user-file-picker Github')**</strong>\*\*
+**🏠 [Homepage](https://github.com/Jaaneek/useFilePicker 'user-file-picker Github')**
 
 ## Documentation
 
@@ -79,6 +79,7 @@ export default function App() {
     maxFileSize: 50,
   });
 
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -112,7 +113,7 @@ import { useFilePicker } from 'use-file-picker';
 import React from 'react';
 
 export default function App() {
-  const [openFileSelector, { filesContent, loading, errors, plainFiles }] = useFilePicker({
+  const [openFileSelector, { filesContent, loading, errors, plainFiles, clear }] = useFilePicker({
     multiple: true,
     readAs: 'DataURL', // availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
     // accept: '.ics,.pdf',
@@ -143,6 +144,7 @@ export default function App() {
   return (
     <div>
       <button onClick={() => openFileSelector()}>Select file </button>
+      <button onClick={() => clear()}>Clear</button>
       <br />
       Number of selected files:
       {plainFiles.length}
@@ -177,7 +179,7 @@ export default function App() {
 | Name             | Description                                                                              |
 | ---------------- | ---------------------------------------------------------------------------------------- |
 | openFileSelector | Opens file selector                                                                      |
-| clear            | Clears alls files and errors                                                             |
+| clear            | Clears all files and errors                                                              |
 | filesContent     | Get files array of type [FileContent](#filecontent)                                      |
 | plainFiles       | Get array of the [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) objects |
 | loading          | True if the reading files is in progress, otherwise False                                |
@@ -286,7 +288,7 @@ FileSizeError {
 ## [](https://github.com/Jaaneek/useFilePicker#-contributing)🤝 Contributing
 
 Contributions, issues and feature requests are welcome!  
-Feel free to check [issues page](https://github.com/Jaaneek/useFilePicker/issues).
+Feel free to check the [issues page](https://github.com/Jaaneek/useFilePicker/issues).
 
 ## [](https://github.com/Jaaneek/useFilePicker#show-your-support)Show your support
 

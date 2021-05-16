@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1",
+  "version": "1.1.2",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -54,14 +54,14 @@
     "react-file-selector"
   ],
   "author": "Milosz Jankiewicz",
-  "module": "dist/usefilepicker.esm.js",
+  "module": "dist/use-file-picker.esm.js",
   "size-limit": [
     {
-      "path": "dist/usefilepicker.cjs.production.min.js",
+      "path": "dist/use-file-picker.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/usefilepicker.esm.js",
+      "path": "dist/use-file-picker.esm.js",
       "limit": "10 KB"
     }
   ],
