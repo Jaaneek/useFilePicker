@@ -105,7 +105,7 @@ export default function App() {
 
 ### Advanced usage
 
-https://codesandbox.io/s/pedantic-joliot-8nkn7?file=/src/App.js
+https://codesandbox.io/s/musing-moon-wuq4u?file=/src/App.js
 
 ```ts
 import { useFilePicker } from 'use-file-picker';
