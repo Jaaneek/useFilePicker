@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fromEvent, FileWithPath } from 'file-selector';
-import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError, ReaderMethod } from './interfaces';
+import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError, ReaderMethod, ImageDims, ImageDimensionError } from './interfaces';
 
 function useFilePicker({
   accept = '*',
@@ -8,6 +8,7 @@ function useFilePicker({
   readAs = 'Text',
   minFileSize,
   maxFileSize,
+  imageSizeRestrictions,
   limitFilesConfig,
   readFilesContent = true,
 }: UseFilePickerConfig): FilePickerReturnTypes {
@@ -55,27 +56,28 @@ function useFilePicker({
       return;
     }
     setLoading(true);
-    const filePromises = files.map(
+    const fileParsingPromises = files.map(
       (file: FileWithPath) =>
-        new Promise((resolve: (fileContent: FileContent) => void, reject: (reason: FileError) => void) => {
+        new Promise(async (resolve: (fileContent: FileContent) => void, reject: (reason: FileError) => void) => {
           const reader = new FileReader();
 
           //availible reader methods: readAsText, readAsBinaryString, readAsArrayBuffer, readAsDataURL
           const readStrategy = reader[`readAs${readAs}` as ReaderMethod] as typeof reader.readAsText;
           readStrategy.call(reader, file);
 
-          reader.onload = () => {
-            if (minFileSize) {
-              const minBytes = minFileSize * BYTES_PER_MEGABYTE;
-              if (file.size < minBytes) {
-                addError({ fileSizeTooSmall: true });
-              }
+          const addError = ({ name = file.name, ...others }: FileError) => {
+            reject({ name, fileSizeToolarge: false, fileSizeTooSmall: false, ...others });
+          };
+
+          reader.onload = async () => {
+            if (minFileSize || maxFileSize) {
+              await checkFileSize({ minFileSize, maxFileSize, fileSize: file.size }).catch(err => addError(err));
             }
-            if (maxFileSize) {
-              const maxBytes = maxFileSize * BYTES_PER_MEGABYTE;
-              if (file.size > maxBytes) {
-                addError({ fileSizeToolarge: true });
-              }
+
+            if (readAs === 'DataURL' && imageSizeRestrictions && isImage(file.type)) {
+              await checkImageDimensions(reader.result as string, imageSizeRestrictions).catch(err => {
+                addError({ name: file.name, ...err });
+              });
             }
 
             resolve({
@@ -88,13 +90,9 @@ function useFilePicker({
           reader.onerror = () => {
             addError({ readerError: reader.error });
           };
-
-          const addError = ({ name = file.name, ...others }: FileError) => {
-            reject({ name, fileSizeToolarge: false, fileSizeTooSmall: false, ...others });
-          };
         })
     );
-    Promise.all(filePromises)
+    Promise.all(fileParsingPromises)
       .then((fileContent: FileContent[]) => {
         setFilesContent(fileContent);
         setFileErrors([]);
@@ -103,7 +101,6 @@ function useFilePicker({
         setFileErrors(f => [err, ...f]);
       })
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
   return [openFileSelector, { filesContent, errors: fileErrors, loading, plainFiles, clear }];
@@ -132,3 +129,41 @@ function openFileDialog(accept: string, multiple: boolean, callback: (arg: Event
 
 //Const values
 const BYTES_PER_MEGABYTE = 1000000;
+
+const checkFileSize = ({ fileSize, maxFileSize, minFileSize }: { minFileSize: number | undefined; maxFileSize: number | undefined; fileSize: number }) =>
+  new Promise<void>((resolve, reject) => {
+    if (minFileSize) {
+      const minBytes = minFileSize * BYTES_PER_MEGABYTE;
+      if (fileSize < minBytes) {
+        reject({ fileSizeTooSmall: true });
+      }
+    }
+    if (maxFileSize) {
+      const maxBytes = maxFileSize * BYTES_PER_MEGABYTE;
+      if (fileSize > maxBytes) {
+        reject({ fileSizeToolarge: true });
+      }
+    }
+    resolve();
+  });
+
+const isImage = (fileType: string) => fileType.startsWith('image');
+
+const checkImageDimensions = (imgDataURL: string, imageSizeRestrictions: ImageDims) =>
+  new Promise<void>((resolve, reject) => {
+    const img = new Image();
+    img.onload = function() {
+      const { maxHeight, maxWidth, minHeight, minWidth } = imageSizeRestrictions;
+      const { width, height } = (this as unknown) as typeof img;
+      let errors: ImageDimensionError = {};
+      if (maxHeight && maxHeight < height) errors = { ...errors, imageHeightTooBig: true };
+      if (minHeight && minHeight > height) errors = { ...errors, imageHeightTooSmall: true };
+      if (maxWidth && maxWidth < width) errors = { ...errors, imageWidthTooBig: true };
+      if (minWidth && minWidth > width) errors = { ...errors, imageWidthTooSmall: true };
+      Object.keys(errors).length ? reject(errors) : resolve();
+    };
+    img.onerror = function() {
+      reject({ imageNotLoaded: true } as ImageDimensionError);
+    };
+    img.src = imgDataURL;
+  });

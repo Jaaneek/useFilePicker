@@ -77,6 +77,12 @@ export default function App() {
     limitFilesConfig: { max: 1 },
     // minFileSize: 0.1, // in megabytes
     maxFileSize: 50,
+    imageSizeRestrictions: {
+      maxHeight: 900, // in pixels
+      maxWidth: 1600,
+      minHeight: 600,
+      minWidth: 768,
+    },
   });
 
   if (loading) {
@@ -163,15 +169,16 @@ export default function App() {
 
 ### Props
 
-| Prop name        | Description                                                     | Default value | Example values                                   |
-| ---------------- | --------------------------------------------------------------- | ------------- | ------------------------------------------------ |
-| multiple         | Allow user to pick multiple files at once                       | true          | true, false                                      |
-| accept           | Set type of files that user can choose from the list            | "\*"          | [".png", ".txt"], "image/\*", ".txt"             |
-| readAs           | Set a return type of [filesContent](#returns)                   | "Text"        | "DataURL", "Text", "BinaryString", "ArrayBuffer" |
-| limitFilesConfig | Set maximum and minimum files that user can select              | n/a           | {min: 1, max: 2}, {max: 1}                       |
-| readFilesContent | Ignores files content and omits reading process if set to false | true          | true, false                                      |
-| minFileSize      | Set minimum limit of file size in megabytes                     | n/a           | 0.01 - 50                                        |
-| maxFileSize      | Set maximum limit of file size in megabytes                     | n/a           | 0.01 - 50                                        |
+| Prop name             | Description                                                     | Default value | Example values                                    |
+| --------------------- | --------------------------------------------------------------- | ------------- | ------------------------------------------------- |
+| multiple              | Allow user to pick multiple files at once                       | true          | true, false                                       |
+| accept                | Set type of files that user can choose from the list            | "\*"          | [".png", ".txt"], "image/\*", ".txt"              |
+| readAs                | Set a return type of [filesContent](#returns)                   | "Text"        | "DataURL", "Text", "BinaryString", "ArrayBuffer"  |
+| limitFilesConfig      | Set maximum and minimum files that user can select              | n/a           | {min: 1, max: 2}, {max: 1}                        |
+| readFilesContent      | Ignores files content and omits reading process if set to false | true          | true, false                                       |
+| minFileSize           | Set minimum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
+| maxFileSize           | Set maximum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
+| imageSizeRestrictions | Set maximum and minimum constraints for image size in pixels    | n/a           | { maxHeight: 1024, minWidth: 768, minHeight:480 } |
 
 ### Returns
 
@@ -204,6 +211,7 @@ UseFilePickerConfig extends Options {
 	readAs?: ReadType;
 	limitFilesConfig?: LimitFilesConfig;
 	readFilesContent?: boolean;
+	imageSizeRestrictions?: ImageDims;
 }
 ```
 
@@ -221,10 +229,10 @@ FileContent {
 
 ```ts
 ImageDims {
-	minImageWidth?: number;
-	maxImageWidth?: number;
-	minImageHeight?: number;
-	maxImageHeight?: number;
+	minWidth?: number;
+	maxWidth?: number;
+	minHeight?: number;
+	maxHeight?: number;
 }
 ```
 
@@ -240,7 +248,7 @@ Options extends ImageDims {
 #### FileError
 
 ```ts
-FileError extends FileSizeError, FileReaderError, FileLimitError {
+FileError extends FileSizeError, FileReaderError, FileLimitError, ImageDimensionError {
 	name?: string;
 }
 ```
@@ -271,7 +279,19 @@ FileSizeError {
 }
 ```
 
-## Author
+#### ImageDimensionError
+
+```ts
+ImageDimensionError {
+	imageWidthTooBig?: boolean;
+	imageWidthTooSmall?: boolean;
+	imageHeightTooBig?: boolean;
+	imageHeightTooSmall?: boolean;
+	imageNotLoaded?: boolean;
+}
+```
+
+## Authors
 
 👤 **Milosz Jankiewicz**
 
