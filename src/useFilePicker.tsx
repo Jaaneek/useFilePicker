@@ -75,9 +75,7 @@ function useFilePicker({
             }
 
             if (readAs === 'DataURL' && imageSizeRestrictions && isImage(file.type)) {
-              await checkImageDimensions(reader.result as string, imageSizeRestrictions).catch(err => {
-                addError({ name: file.name, ...err });
-              });
+              await checkImageDimensions(reader.result as string, imageSizeRestrictions).catch(err => addError(err));
             }
 
             resolve({
