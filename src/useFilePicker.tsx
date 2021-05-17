@@ -99,6 +99,7 @@ function useFilePicker({
         setFileErrors(f => [err, ...f]);
       })
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
   return [openFileSelector, { filesContent, errors: fileErrors, loading, plainFiles, clear }];
