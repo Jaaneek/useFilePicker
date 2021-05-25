@@ -1,3 +1,5 @@
+import { Validator } from "./validators/validatorInterface";
+
 export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
 export type ReaderMethod = keyof FileReader;
@@ -6,6 +8,7 @@ export interface LimitFilesConfig {
   min?: number;
   max?: number;
 }
+
 export interface UseFilePickerConfig extends Options {
   multiple?: boolean;
   accept?: string | string[];
@@ -13,6 +16,7 @@ export interface UseFilePickerConfig extends Options {
   limitFilesConfig?: LimitFilesConfig;
   readFilesContent?: boolean;
   imageSizeRestrictions?: ImageDims;
+  validators?: Validator[]
 }
 
 export interface FileContent {

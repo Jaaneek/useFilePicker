@@ -18,6 +18,7 @@ function useFilePicker({
   imageSizeRestrictions,
   limitFilesConfig,
   readFilesContent = true,
+  validators = [],
 }: UseFilePickerConfig): FilePickerReturnTypes {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent[]>([]);
@@ -32,7 +33,7 @@ function useFilePicker({
       const plainFiles = inputElement.files ? Array.from(inputElement.files) : [];
       setPlainFiles(plainFiles);
 
-      const validations = VALIDATORS.map(validator =>
+      const validations = VALIDATORS.concat(validators).map(validator =>
         validator
           .validateBeforeParsing(
             {
@@ -86,7 +87,7 @@ function useFilePicker({
           };
 
           reader.onload = async () => {
-            const validations = VALIDATORS.map(validator =>
+            const validations = VALIDATORS.concat(validators).map(validator =>
               validator
                 .validateAfterParsing(
                   {
