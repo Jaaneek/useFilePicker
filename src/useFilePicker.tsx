@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { fromEvent, FileWithPath } from 'file-selector';
-import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError, ReaderMethod, ImageDims, ImageDimensionError } from './interfaces';
+import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError, ReaderMethod } from './interfaces';
+import FileSizeValidator from './validators/fileSizeValidator';
+import FilesLimitValidator from './validators/filesLimitValidator';
+import { Validator } from './validators/validatorInterface';
+import { openFileDialog } from './helpers/openFileDialog';
+import ImageDimensionsValidator from './validators/imageDimensionsValidator';
+
+const VALIDATORS: Validator[] = [new FileSizeValidator(), new FilesLimitValidator(), new ImageDimensionsValidator()];
 
 function useFilePicker({
   accept = '*',
@@ -25,20 +32,29 @@ function useFilePicker({
       const plainFiles = inputElement.files ? Array.from(inputElement.files) : [];
       setPlainFiles(plainFiles);
 
-      if (limitFilesConfig) {
-        if (limitFilesConfig.max && plainFiles.length > limitFilesConfig.max) {
-          setFileErrors(f => [{ maxLimitExceeded: true }, ...f]);
-          return;
-        }
+      const validations = VALIDATORS.map(validator =>
+        validator
+          .validateBeforeParsing(
+            {
+              accept,
+              multiple,
+              readAs,
+              minFileSize,
+              maxFileSize,
+              imageSizeRestrictions,
+              limitFilesConfig,
+              readFilesContent,
+            },
+            plainFiles
+          )
+          .catch(err => Promise.reject(setFileErrors(f => [{ ...err, ...f }])))
+      );
 
-        if (limitFilesConfig.min && plainFiles.length < limitFilesConfig.min) {
-          setFileErrors(f => [{ minLimitNotReached: true }, ...f]);
-          return;
-        }
-      }
-      if (!readFilesContent) return;
-      fromEvent(evt).then(files => {
-        setFiles(files as FileWithPath[]);
+      Promise.all(validations).then(() => {
+        if (!readFilesContent) return;
+        fromEvent(evt).then(files => {
+          setFiles(files as FileWithPath[]);
+        });
       });
     });
   };
@@ -70,19 +86,32 @@ function useFilePicker({
           };
 
           reader.onload = async () => {
-            if (minFileSize || maxFileSize) {
-              await checkFileSize({ minFileSize, maxFileSize, fileSize: file.size }).catch(err => addError(err));
-            }
+            const validations = VALIDATORS.map(validator =>
+              validator
+                .validateAfterParsing(
+                  {
+                    accept,
+                    multiple,
+                    readAs,
+                    minFileSize,
+                    maxFileSize,
+                    imageSizeRestrictions,
+                    limitFilesConfig,
+                    readFilesContent,
+                  },
+                  file,
+                  reader
+                )
+                .catch(err => Promise.reject(addError(err)))
+            );
 
-            if (readAs === 'DataURL' && imageSizeRestrictions && isImage(file.type)) {
-              await checkImageDimensions(reader.result as string, imageSizeRestrictions).catch(err => addError(err));
-            }
-
-            resolve({
-              content: reader.result as string,
-              name: file.name,
-              lastModified: file.lastModified,
-            } as FileContent);
+            Promise.all(validations).then(() =>
+              resolve({
+                content: reader.result as string,
+                name: file.name,
+                lastModified: file.lastModified,
+              } as FileContent)
+            );
           };
 
           reader.onerror = () => {
@@ -106,63 +135,3 @@ function useFilePicker({
 }
 
 export default useFilePicker;
-
-function openFileDialog(accept: string, multiple: boolean, callback: (arg: Event) => void) {
-  // this function must be called from  a user
-  // activation event (ie an onclick event)
-
-  // Create an input element
-  var inputElement = document.createElement('input');
-  // Set its type to file
-  inputElement.type = 'file';
-  // Set accept to the file types you want the user to select.
-  // Include both the file extension and the mime type
-  inputElement.accept = accept;
-  // Accept multiple files
-  inputElement.multiple = multiple;
-  // set onchange event to call callback when user has selected file
-  inputElement.addEventListener('change', callback);
-  // dispatch a click event to open the file dialog
-  inputElement.dispatchEvent(new MouseEvent('click'));
-}
-
-//Const values
-const BYTES_PER_MEGABYTE = 1000000;
-
-const checkFileSize = ({ fileSize, maxFileSize, minFileSize }: { minFileSize: number | undefined; maxFileSize: number | undefined; fileSize: number }) =>
-  new Promise<void>((resolve, reject) => {
-    if (minFileSize) {
-      const minBytes = minFileSize * BYTES_PER_MEGABYTE;
-      if (fileSize < minBytes) {
-        reject({ fileSizeTooSmall: true });
-      }
-    }
-    if (maxFileSize) {
-      const maxBytes = maxFileSize * BYTES_PER_MEGABYTE;
-      if (fileSize > maxBytes) {
-        reject({ fileSizeToolarge: true });
-      }
-    }
-    resolve();
-  });
-
-const isImage = (fileType: string) => fileType.startsWith('image');
-
-const checkImageDimensions = (imgDataURL: string, imageSizeRestrictions: ImageDims) =>
-  new Promise<void>((resolve, reject) => {
-    const img = new Image();
-    img.onload = function() {
-      const { maxHeight, maxWidth, minHeight, minWidth } = imageSizeRestrictions;
-      const { width, height } = (this as unknown) as typeof img;
-      let errors: ImageDimensionError = {};
-      if (maxHeight && maxHeight < height) errors = { ...errors, imageHeightTooBig: true };
-      if (minHeight && minHeight > height) errors = { ...errors, imageHeightTooSmall: true };
-      if (maxWidth && maxWidth < width) errors = { ...errors, imageWidthTooBig: true };
-      if (minWidth && minWidth > width) errors = { ...errors, imageWidthTooSmall: true };
-      Object.keys(errors).length ? reject(errors) : resolve();
-    };
-    img.onerror = function() {
-      reject({ imageNotLoaded: true } as ImageDimensionError);
-    };
-    img.src = imgDataURL;
-  });
