@@ -1,4 +1,4 @@
-import { Validator } from "./validators/validatorInterface";
+import { Validator } from './validators/validatorInterface';
 
 export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
@@ -16,7 +16,7 @@ export interface UseFilePickerConfig extends Options {
   limitFilesConfig?: LimitFilesConfig;
   readFilesContent?: boolean;
   imageSizeRestrictions?: ImageDims;
-  validators?: Validator[]
+  validators?: Validator[];
 }
 
 export interface FileContent {

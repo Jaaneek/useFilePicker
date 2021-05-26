@@ -1,7 +1,7 @@
-import { FileWithPath } from "file-selector";
-import { BYTES_PER_MEGABYTE } from "../../constants/bytesPerMegabyte";
-import { UseFilePickerConfig } from "../../interfaces";
-import { Validator } from "../validatorInterface";
+import { FileWithPath } from 'file-selector';
+import { BYTES_PER_MEGABYTE } from '../../constants/bytesPerMegabyte';
+import { UseFilePickerConfig } from '../../interfaces';
+import { Validator } from '../validatorInterface';
 
 export default class FileSizeValidator implements Validator {
   validateBeforeParsing(_config: UseFilePickerConfig, _plainFiles: File[]): Promise<void> {
@@ -10,7 +10,7 @@ export default class FileSizeValidator implements Validator {
   async validateAfterParsing(config: UseFilePickerConfig, file: FileWithPath): Promise<void> {
     const { minFileSize, maxFileSize } = config;
     if (minFileSize || maxFileSize) {
-      return checkFileSize({ minFileSize, maxFileSize, fileSize: file.size })
+      return checkFileSize({ minFileSize, maxFileSize, fileSize: file.size });
     }
     return Promise.resolve();
   }

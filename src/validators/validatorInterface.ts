@@ -1,5 +1,5 @@
-import { FileWithPath } from "file-selector";
-import { UseFilePickerConfig } from "../interfaces";
+import { FileWithPath } from 'file-selector';
+import { UseFilePickerConfig } from '../interfaces';
 
 export interface Validator {
   validateBeforeParsing(config: UseFilePickerConfig, plainFiles: File[]): Promise<void>;

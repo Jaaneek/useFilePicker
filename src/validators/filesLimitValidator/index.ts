@@ -1,5 +1,5 @@
-import { UseFilePickerConfig } from "../../interfaces";
-import { Validator } from "../validatorInterface";
+import { UseFilePickerConfig } from '../../interfaces';
+import { Validator } from '../validatorInterface';
 
 export default class FilesLimitValidator implements Validator {
   validateBeforeParsing(config: UseFilePickerConfig, plainFiles: File[]): Promise<void> {
