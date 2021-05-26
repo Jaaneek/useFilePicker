@@ -16,7 +16,7 @@ const customValidator: Validator = {
    * Validation takes place after parsing (or is never called if readFilesContent is set to false).
    * You have access to config passed as argument to useFilePicker hook, FileWithPath object that is currently
    * being validated and the reader object that has loaded that file. Called individually for every file.
-   * Example validator below allowes only if file hasn't been modified for last 24 hours
+   * Example validator below allowes only if file hasn't been modified in last 24 hours
    * @returns {Promise} resolve means that file passed validation, reject means that file did not pass
    */
   validateAfterParsing: async (config, file, reader) =>

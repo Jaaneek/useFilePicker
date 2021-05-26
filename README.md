@@ -179,6 +179,7 @@ export default function App() {
 | minFileSize           | Set minimum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
 | maxFileSize           | Set maximum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
 | imageSizeRestrictions | Set maximum and minimum constraints for image size in pixels    | n/a           | { maxHeight: 1024, minWidth: 768, minHeight:480 } |
+| validators            | Add custom [validation](#Custom-validation) logic               | []            | [MyValidator, MySecondValidator]                  |
 
 ### Returns
 
@@ -190,6 +191,38 @@ export default function App() {
 | plainFiles       | Get array of the [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) objects |
 | loading          | True if the reading files is in progress, otherwise False                                |
 | errors           | Get errors array of type [FileError](#fileerror) if any appears                          |
+
+### Custom validation
+
+useFilePicker allows for injection of custom validation logic. Validation is divided into two steps:
+
+- **validateBeforeParsing** - takes place before parsing. You have access to config passed as argument to useFilePicker hook and all plain file objects of selected files by user. Called once for all files after selection.
+- **validateAfterParsing** - takes place after parsing (or is never called if readFilesContent is set to false).You have access to config passed as argument to useFilePicker hook, FileWithPath object that is currently being validated and the reader object that has loaded that file. Called individually for every file.
+
+```ts
+interface Validator {
+  validateBeforeParsing(config: UseFilePickerConfig, plainFiles: File[]): Promise<void>;
+  validateAfterParsing(config: UseFilePickerConfig, file: FileWithPath, reader: FileReader): Promise<void>;
+}
+```
+
+Validators must return Promise object - resolved promise means that file passed validation, rejected promise means that file did not pass.
+
+#### Example validator
+
+```ts
+/**
+ * validateBeforeParsing allows the user to select only an even number of files
+ * validateAfterParsing allows the user to select only files that have not been modified in the last 24 hours
+ */
+const customValidator: Validator = {
+  validateBeforeParsing: async (config, plainFiles) => new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true }))),
+  validateAfterParsing: async (config, file, reader) =>
+    new Promise((res, rej) =>
+      file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000 ? res() : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
+    ),
+};
+```
 
 ### Interfaces
 
