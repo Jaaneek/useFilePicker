@@ -2,32 +2,60 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { useFilePicker } from '../src';
+import { Validator } from '../src/validators/validatorInterface';
+
+const customValidator: Validator = {
+  /**
+   * Validation takes place before parsing. You have access to config passed as argument to useFilePicker hook
+   * and all plain file objects of selected files by user. Called once for all files after selection.
+   * Example validator below allowes only even amount of files
+   * @returns {Promise} resolve means that file passed validation, reject means that file did not pass
+   */
+  validateBeforeParsing: async (config, plainFiles) => new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true }))),
+  /**
+   * Validation takes place after parsing (or is never called if readFilesContent is set to false).
+   * You have access to config passed as argument to useFilePicker hook, FileWithPath object that is currently
+   * being validated and the reader object that has loaded that file. Called individually for every file.
+   * Example validator below allowes only if file hasn't been modified in last 24 hours
+   * @returns {Promise} resolve means that file passed validation, reject means that file did not pass
+   */
+  validateAfterParsing: async (config, file, reader) =>
+    new Promise((res, rej) =>
+      file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000 ? res() : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
+    ),
+};
 
 const App = () => {
   const [openFileSelector, { filesContent, loading, errors, plainFiles }] = useFilePicker({
     multiple: true,
     readAs: 'DataURL', // availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
     // accept: '.ics,.pdf',
-    accept: ['.json', '.pdf'],
+    accept: ['.png', '.jpeg'],
     limitFilesConfig: { min: 2, max: 3 },
     // minFileSize: 1, // in megabytes
     // maxFileSize: 1,
-    // maxImageHeight: 1024, // in pixels
-    // minImageHeight: 1024,
-    // maxImageWidth: 768,
-    // minImageWidth: 768
-    // readFilesContent: false, // ignores file content
+    // imageSizeRestrictions: {
+    //   maxHeight: 1024, // in pixels
+    //   maxWidth: 1024,
+    //   minHeight: 768,
+    //   minWidth: 768,
+    // },
+    // readFilesContent: false, // ignores file content,
+    // validators: [customValidator],
   });
 
   if (errors.length) {
     return (
       <div>
         <button onClick={() => openFileSelector()}>Something went wrong, retry! </button>
-        {errors[0].fileSizeTooSmall && 'File size is too small!'}
-        {errors[0].fileSizeToolarge && 'File size is too large!'}
-        {errors[0].readerError && 'Problem occured while reading file!'}
-        {errors[0].maxLimitExceeded && 'Too many files'}
-        {errors[0].minLimitNotReached && 'Not enought files'}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {console.log(errors)}
+          {Object.entries(errors[0])
+            .filter(([key, value]) => key !== 'name' && value)
+            .map(([key]) => (
+              <div key={key}>{key}</div>
+            ))}
+        </div>
       </div>
     );
   }
@@ -38,7 +66,7 @@ const App = () => {
 
   return (
     <div>
-      <button onClick={() => openFileSelector()}>Select file </button>
+      <button onClick={() => openFileSelector()}>Select file</button>
       <br />
       Number of selected files:
       {plainFiles.length}

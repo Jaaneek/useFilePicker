@@ -1,3 +1,5 @@
+import { Validator } from './validators/validatorInterface';
+
 export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
 export type ReaderMethod = keyof FileReader;
@@ -6,12 +8,15 @@ export interface LimitFilesConfig {
   min?: number;
   max?: number;
 }
+
 export interface UseFilePickerConfig extends Options {
   multiple?: boolean;
   accept?: string | string[];
   readAs?: ReadType;
   limitFilesConfig?: LimitFilesConfig;
   readFilesContent?: boolean;
+  imageSizeRestrictions?: ImageDims;
+  validators?: Validator[];
 }
 
 export interface FileContent {
@@ -23,20 +28,20 @@ export interface FileContent {
 export type FilePickerReturnTypes = [() => void, { filesContent: FileContent[]; errors: FileError[]; loading: boolean; plainFiles: File[]; clear: () => void }];
 
 export interface ImageDims {
-  minImageWidth?: number;
-  maxImageWidth?: number;
-  minImageHeight?: number;
-  maxImageHeight?: number;
+  minWidth?: number;
+  maxWidth?: number;
+  minHeight?: number;
+  maxHeight?: number;
 }
 
-export interface Options extends ImageDims {
+export interface Options {
   /**Minimum file size in mb**/
   minFileSize?: number;
   /**Maximum file size in mb**/
   maxFileSize?: number;
 }
 
-export interface FileError extends FileSizeError, FileReaderError, FileLimitError {
+export interface FileError extends FileSizeError, FileReaderError, FileLimitError, ImageDimensionError {
   name?: string;
 }
 
@@ -52,4 +57,12 @@ interface FileLimitError {
 interface FileSizeError {
   fileSizeToolarge?: boolean;
   fileSizeTooSmall?: boolean;
+}
+
+export interface ImageDimensionError {
+  imageWidthTooBig?: boolean;
+  imageWidthTooSmall?: boolean;
+  imageHeightTooBig?: boolean;
+  imageHeightTooSmall?: boolean;
+  imageNotLoaded?: boolean;
 }

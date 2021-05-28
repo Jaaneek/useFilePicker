@@ -77,6 +77,12 @@ export default function App() {
     limitFilesConfig: { max: 1 },
     // minFileSize: 0.1, // in megabytes
     maxFileSize: 50,
+    imageSizeRestrictions: {
+      maxHeight: 900, // in pixels
+      maxWidth: 1600,
+      minHeight: 600,
+      minWidth: 768,
+    },
   });
 
   if (loading) {
@@ -163,15 +169,17 @@ export default function App() {
 
 ### Props
 
-| Prop name        | Description                                                     | Default value | Example values                                   |
-| ---------------- | --------------------------------------------------------------- | ------------- | ------------------------------------------------ |
-| multiple         | Allow user to pick multiple files at once                       | true          | true, false                                      |
-| accept           | Set type of files that user can choose from the list            | "\*"          | [".png", ".txt"], "image/\*", ".txt"             |
-| readAs           | Set a return type of [filesContent](#returns)                   | "Text"        | "DataURL", "Text", "BinaryString", "ArrayBuffer" |
-| limitFilesConfig | Set maximum and minimum files that user can select              | n/a           | {min: 1, max: 2}, {max: 1}                       |
-| readFilesContent | Ignores files content and omits reading process if set to false | true          | true, false                                      |
-| minFileSize      | Set minimum limit of file size in megabytes                     | n/a           | 0.01 - 50                                        |
-| maxFileSize      | Set maximum limit of file size in megabytes                     | n/a           | 0.01 - 50                                        |
+| Prop name             | Description                                                     | Default value | Example values                                    |
+| --------------------- | --------------------------------------------------------------- | ------------- | ------------------------------------------------- |
+| multiple              | Allow user to pick multiple files at once                       | true          | true, false                                       |
+| accept                | Set type of files that user can choose from the list            | "\*"          | [".png", ".txt"], "image/\*", ".txt"              |
+| readAs                | Set a return type of [filesContent](#returns)                   | "Text"        | "DataURL", "Text", "BinaryString", "ArrayBuffer"  |
+| limitFilesConfig      | Set maximum and minimum files that user can select              | n/a           | {min: 1, max: 2}, {max: 1}                        |
+| readFilesContent      | Ignores files content and omits reading process if set to false | true          | true, false                                       |
+| minFileSize           | Set minimum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
+| maxFileSize           | Set maximum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
+| imageSizeRestrictions | Set maximum and minimum constraints for image size in pixels    | n/a           | { maxHeight: 1024, minWidth: 768, minHeight:480 } |
+| validators            | Add custom [validation](#Custom-validation) logic               | []            | [MyValidator, MySecondValidator]                  |
 
 ### Returns
 
@@ -183,6 +191,38 @@ export default function App() {
 | plainFiles       | Get array of the [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) objects |
 | loading          | True if the reading files is in progress, otherwise False                                |
 | errors           | Get errors array of type [FileError](#fileerror) if any appears                          |
+
+### Custom validation
+
+useFilePicker allows for injection of custom validation logic. Validation is divided into two steps:
+
+- **validateBeforeParsing** - takes place before parsing. You have access to config passed as argument to useFilePicker hook and all plain file objects of selected files by user. Called once for all files after selection.
+- **validateAfterParsing** - takes place after parsing (or is never called if readFilesContent is set to false).You have access to config passed as argument to useFilePicker hook, FileWithPath object that is currently being validated and the reader object that has loaded that file. Called individually for every file.
+
+```ts
+interface Validator {
+  validateBeforeParsing(config: UseFilePickerConfig, plainFiles: File[]): Promise<void>;
+  validateAfterParsing(config: UseFilePickerConfig, file: FileWithPath, reader: FileReader): Promise<void>;
+}
+```
+
+Validators must return Promise object - resolved promise means that file passed validation, rejected promise means that file did not pass.
+
+#### Example validator
+
+```ts
+/**
+ * validateBeforeParsing allows the user to select only an even number of files
+ * validateAfterParsing allows the user to select only files that have not been modified in the last 24 hours
+ */
+const customValidator: Validator = {
+  validateBeforeParsing: async (config, plainFiles) => new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true }))),
+  validateAfterParsing: async (config, file, reader) =>
+    new Promise((res, rej) =>
+      file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000 ? res() : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
+    ),
+};
+```
 
 ### Interfaces
 
@@ -204,6 +244,7 @@ UseFilePickerConfig extends Options {
 	readAs?: ReadType;
 	limitFilesConfig?: LimitFilesConfig;
 	readFilesContent?: boolean;
+	imageSizeRestrictions?: ImageDims;
 }
 ```
 
@@ -221,10 +262,10 @@ FileContent {
 
 ```ts
 ImageDims {
-	minImageWidth?: number;
-	maxImageWidth?: number;
-	minImageHeight?: number;
-	maxImageHeight?: number;
+	minWidth?: number;
+	maxWidth?: number;
+	minHeight?: number;
+	maxHeight?: number;
 }
 ```
 
@@ -240,7 +281,7 @@ Options extends ImageDims {
 #### FileError
 
 ```ts
-FileError extends FileSizeError, FileReaderError, FileLimitError {
+FileError extends FileSizeError, FileReaderError, FileLimitError, ImageDimensionError {
 	name?: string;
 }
 ```
@@ -271,7 +312,19 @@ FileSizeError {
 }
 ```
 
-## Author
+#### ImageDimensionError
+
+```ts
+ImageDimensionError {
+	imageWidthTooBig?: boolean;
+	imageWidthTooSmall?: boolean;
+	imageHeightTooBig?: boolean;
+	imageHeightTooSmall?: boolean;
+	imageNotLoaded?: boolean;
+}
+```
+
+## Authors
 
 👤 **Milosz Jankiewicz**
 
