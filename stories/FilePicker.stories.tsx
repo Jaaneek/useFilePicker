@@ -54,7 +54,7 @@ const FilePickerComponent = (props: UseFilePickerConfig & { storyTitle: string }
       ) : null}
       <br />
       <button onClick={open}>Open File Picker</button>
-      {filesContent?.map(file => (file ? renderDependingOnReaderType(file, props.readAs) : null))}
+      {filesContent?.map(file => (file ? renderDependingOnReaderType(file, props.readAs!) : null))}
       {plainFiles?.map(file => (
         <div style={{ margin: '8px' }}>
           File name: {file.name}
@@ -144,7 +144,7 @@ export const DontReadFileContent = Template.bind(
   {},
   { storyTitle: 'Selected files are not read, plainFiles array contains File objects for selected files', readFilesContent: false }
 );
-DontReadFileContent.story = {
+(DontReadFileContent as any).story = {
   name: "Don't Read File Content",
 };
 export const MaximumFileSize = Template.bind(
