@@ -1,11 +1,11 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Default as Thing } from '../stories/Thing.stories';
+import { DefaultPicker } from '../stories/FilePicker.stories';
 
 describe('Thing', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<Thing />, div);
+    ReactDOM.render(<DefaultPicker />, div);
     ReactDOM.unmountComponentAtNode(div);
   });
 });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fromEvent, FileWithPath } from 'file-selector';
 import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError, ReaderMethod } from './interfaces';
 import FileSizeValidator from './validators/fileSizeValidator';
@@ -25,14 +25,14 @@ function useFilePicker({
   const [fileErrors, setFileErrors] = useState<FileError[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [plainFiles, setPlainFiles] = useState<File[]>([]);
+  const plainFileObjectsRef = useRef<File[]>([]);
 
   const openFileSelector = () => {
     const fileExtensions = accept instanceof Array ? accept.join(',') : accept;
     openFileDialog(fileExtensions, multiple, evt => {
+      clear();
       const inputElement = evt.target as HTMLInputElement;
-      const plainFiles = inputElement.files ? Array.from(inputElement.files) : [];
-      setPlainFiles(plainFiles);
-
+      plainFileObjectsRef.current = inputElement.files ? Array.from(inputElement.files) : [];
       const validations = VALIDATORS.concat(validators).map(validator =>
         validator
           .validateBeforeParsing(
@@ -46,13 +46,16 @@ function useFilePicker({
               limitFilesConfig,
               readFilesContent,
             },
-            plainFiles
+            plainFileObjectsRef.current
           )
           .catch(err => Promise.reject(setFileErrors(f => [{ ...err, ...f }])))
       );
 
       Promise.all(validations).then(() => {
-        if (!readFilesContent) return;
+        if (!readFilesContent) {
+          setPlainFiles(plainFileObjectsRef.current);
+          return;
+        }
         fromEvent(evt).then(files => {
           setFiles(files as FileWithPath[]);
         });
@@ -123,6 +126,7 @@ function useFilePicker({
     Promise.all(fileParsingPromises)
       .then((fileContent: FileContent[]) => {
         setFilesContent(fileContent);
+        setPlainFiles(plainFileObjectsRef.current);
         setFileErrors([]);
       })
       .catch(err => {

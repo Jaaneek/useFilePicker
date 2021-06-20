@@ -4,14 +4,16 @@ import { UseFilePickerConfig } from '../../interfaces';
 import { Validator } from '../validatorInterface';
 
 export default class FileSizeValidator implements Validator {
-  validateBeforeParsing(_config: UseFilePickerConfig, _plainFiles: File[]): Promise<void> {
+  validateBeforeParsing(config: UseFilePickerConfig, plainFiles: File[]): Promise<void> {
+    const { minFileSize, maxFileSize } = config;
+    for (const file of plainFiles) {
+      if (minFileSize || maxFileSize) {
+        return checkFileSize({ minFileSize, maxFileSize, fileSize: file.size });
+      }
+    }
     return Promise.resolve();
   }
-  async validateAfterParsing(config: UseFilePickerConfig, file: FileWithPath): Promise<void> {
-    const { minFileSize, maxFileSize } = config;
-    if (minFileSize || maxFileSize) {
-      return checkFileSize({ minFileSize, maxFileSize, fileSize: file.size });
-    }
+  async validateAfterParsing(_config: UseFilePickerConfig, _file: FileWithPath): Promise<void> {
     return Promise.resolve();
   }
 }
