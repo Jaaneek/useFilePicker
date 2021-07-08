@@ -1,4 +1,5 @@
 import { Validator } from './validators/validatorInterface';
+import { MutableRefObject } from 'react';
 
 export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
@@ -17,6 +18,7 @@ export interface UseFilePickerConfig extends Options {
   readFilesContent?: boolean;
   imageSizeRestrictions?: ImageDims;
   validators?: Validator[];
+  inputElement?: MutableRefObject<HTMLInputElement | null>;
 }
 
 export interface FileContent {

@@ -19,6 +19,7 @@ function useFilePicker({
   limitFilesConfig,
   readFilesContent = true,
   validators = [],
+  inputElement,
 }: UseFilePickerConfig): FilePickerReturnTypes {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent[]>([]);
@@ -29,7 +30,7 @@ function useFilePicker({
 
   const openFileSelector = () => {
     const fileExtensions = accept instanceof Array ? accept.join(',') : accept;
-    openFileDialog(fileExtensions, multiple, evt => {
+    openFileDialog(fileExtensions, multiple, inputElement, evt => {
       clear();
       const inputElement = evt.target as HTMLInputElement;
       plainFileObjectsRef.current = inputElement.files ? Array.from(inputElement.files) : [];
@@ -81,7 +82,7 @@ function useFilePicker({
         new Promise(async (resolve: (fileContent: FileContent) => void, reject: (reason: FileError) => void) => {
           const reader = new FileReader();
 
-          //availible reader methods: readAsText, readAsBinaryString, readAsArrayBuffer, readAsDataURL
+          // Available reader methods: readAsText, readAsBinaryString, readAsArrayBuffer, readAsDataURL
           const readStrategy = reader[`readAs${readAs}` as ReaderMethod] as typeof reader.readAsText;
           readStrategy.call(reader, file);
 

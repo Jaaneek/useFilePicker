@@ -1,9 +1,16 @@
-export function openFileDialog(accept: string, multiple: boolean, callback: (arg: Event) => void) {
+import { MutableRefObject } from 'react';
+
+export function openFileDialog(
+  accept: string,
+  multiple: boolean,
+  inputElementRef: MutableRefObject<HTMLInputElement | null> | undefined,
+  callback: (arg: Event) => void
+) {
   // this function must be called from a user
   // activation event (ie an onclick event)
 
-  // Create an input element
-  var inputElement = document.createElement('input');
+  // Use provided input element or create a input element
+  const inputElement = inputElementRef?.current || document.createElement('input');
   // Set its type to file
   inputElement.type = 'file';
   // Set accept to the file types you want the user to select.

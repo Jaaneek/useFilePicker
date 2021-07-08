@@ -180,6 +180,7 @@ export default function App() {
 | maxFileSize           | Set maximum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
 | imageSizeRestrictions | Set maximum and minimum constraints for image size in pixels    | n/a           | { maxHeight: 1024, minWidth: 768, minHeight:480 } |
 | validators            | Add custom [validation](#Custom-validation) logic               | []            | [MyValidator, MySecondValidator]                  |
+| inputElement          | Provide your own input ref element, handy for e2e testing       | n/a           | result of useRef<HTMLInputElement>(null)         |             
 
 ### Returns
 
