@@ -4,6 +4,9 @@ export function openFileDialog(accept: string, multiple: boolean, callback: (arg
 
   // Create an input element
   var inputElement = document.createElement('input');
+  // add the element to DOM to make it work on IOS (https://github.com/Jaaneek/useFilePicker/issues/23)
+  inputElement.style.display = 'none';
+  document.body.appendChild(inputElement);
   // Set its type to file
   inputElement.type = 'file';
   // Set accept to the file types you want the user to select.
