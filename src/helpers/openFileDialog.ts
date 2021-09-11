@@ -13,6 +13,8 @@ export function openFileDialog(accept: string, multiple: boolean, callback: (arg
   inputElement.multiple = multiple;
   // set onchange event to call callback when user has selected file
   inputElement.addEventListener('change', callback);
+  // set onblur event to call callback when user has selected file on Safari
+  inputElement.addEventListener('blur', callback);
   // dispatch a click event to open the file dialog
   inputElement.dispatchEvent(new MouseEvent('click'));
 }
