@@ -26,6 +26,10 @@
 or
 `yarn add use-file-picker`
 
+## StoryBook
+
+https://use-file-picker-storybook-b0wsuz1yj-mrkampla.vercel.app/
+
 ## Usage
 
 #### Simple txt file content reading
