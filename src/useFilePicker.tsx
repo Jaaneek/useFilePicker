@@ -51,15 +51,17 @@ function useFilePicker({
           .catch(err => Promise.reject(setFileErrors(f => [{ ...err, ...f }])))
       );
 
-      Promise.all(validations).then(() => {
-        if (!readFilesContent) {
-          setPlainFiles(plainFileObjectsRef.current);
-          return;
-        }
-        fromEvent(evt).then(files => {
-          setFiles(files as FileWithPath[]);
-        });
-      });
+      Promise.all(validations)
+        .then(() => {
+          if (!readFilesContent) {
+            setPlainFiles(plainFileObjectsRef.current);
+            return;
+          }
+          fromEvent(evt).then(files => {
+            setFiles(files as FileWithPath[]);
+          });
+        })
+        .catch(() => {});
     });
   };
 
@@ -109,13 +111,15 @@ function useFilePicker({
                 .catch(err => Promise.reject(addError(err)))
             );
 
-            Promise.all(validations).then(() =>
-              resolve({
-                content: reader.result as string,
-                name: file.name,
-                lastModified: file.lastModified,
-              } as FileContent)
-            );
+            Promise.all(validations)
+              .then(() =>
+                resolve({
+                  content: reader.result as string,
+                  name: file.name,
+                  lastModified: file.lastModified,
+                } as FileContent)
+              )
+              .catch(() => {});
           };
 
           reader.onerror = () => {
