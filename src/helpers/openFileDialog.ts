@@ -12,6 +12,7 @@ export function openFileDialog(accept: string, multiple: boolean, webkitdirector
   // Accept multiple files
   inputElement.multiple = multiple;
   // Accept directory
+  /* @ts-expect-error */
   inputElement.webkitdirectory = webkitdirectory;
   // set onchange event to call callback when user has selected file
   inputElement.addEventListener('change', callback);
