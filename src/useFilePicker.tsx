@@ -10,6 +10,7 @@ import ImageDimensionsValidator from './validators/imageDimensionsValidator';
 const VALIDATORS: Validator[] = [new FileSizeValidator(), new FilesLimitValidator(), new ImageDimensionsValidator()];
 
 function useFilePicker({
+  webkitdirectory = false,
   accept = '*',
   multiple = true,
   readAs = 'Text',
@@ -29,7 +30,7 @@ function useFilePicker({
 
   const openFileSelector = () => {
     const fileExtensions = accept instanceof Array ? accept.join(',') : accept;
-    openFileDialog(fileExtensions, multiple, evt => {
+    openFileDialog(fileExtensions, multiple, webkitdirectory, evt => {
       clear();
       const inputElement = evt.target as HTMLInputElement;
       plainFileObjectsRef.current = inputElement.files ? Array.from(inputElement.files) : [];

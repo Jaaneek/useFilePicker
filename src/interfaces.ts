@@ -11,6 +11,7 @@ export interface LimitFilesConfig {
 
 export interface UseFilePickerConfig extends Options {
   multiple?: boolean;
+  webkitdirectory?: boolean;
   accept?: string | string[];
   readAs?: ReadType;
   limitFilesConfig?: LimitFilesConfig;

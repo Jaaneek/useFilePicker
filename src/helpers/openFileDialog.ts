@@ -1,4 +1,4 @@
-export function openFileDialog(accept: string, multiple: boolean, callback: (arg: Event) => void) {
+export function openFileDialog(accept: string, multiple: boolean, webkitdirectory: boolean, callback: (arg: Event) => void) {
   // this function must be called from a user
   // activation event (ie an onclick event)
 
@@ -11,6 +11,8 @@ export function openFileDialog(accept: string, multiple: boolean, callback: (arg
   inputElement.accept = accept;
   // Accept multiple files
   inputElement.multiple = multiple;
+  // Accept directory
+  inputElement.webkitdirectory = webkitdirectory;
   // set onchange event to call callback when user has selected file
   inputElement.addEventListener('change', callback);
   // set onblur event to call callback when user has selected file on Safari
