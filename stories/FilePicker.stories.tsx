@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import useFilePicker, { Validator } from '../src';
-import useDirectoryPicker from '../src/useDirectoryPicker';
+// import useDirectoryPicker from '../src/useDirectoryPicker';
 import { FileContent, ReadType, UseFilePickerConfig } from '../src/interfaces';
 
 const renderDependingOnReaderType = (file: FileContent, readAs: ReadType) => {
@@ -32,7 +32,7 @@ const renderDependingOnReaderType = (file: FileContent, readAs: ReadType) => {
 };
 
 const FilePickerComponent = (props: UseFilePickerConfig & { storyTitle: string }) => {
-  const [open, { filesContent, errors, plainFiles, loading }] = useDirectoryPicker({ ...props });
+  const [open, { filesContent, errors, plainFiles, loading }] = useFilePicker({ ...props });
 
   return (
     <>
