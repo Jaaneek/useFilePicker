@@ -1,7 +1,8 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { useFilePicker } from '../src';
+import useFilePicker from '../src';
+// import useDirectoryPicker from '../src/useDirectoryPicker';
 import { Validator } from '../src/validators/validatorInterface';
 
 const customValidator: Validator = {

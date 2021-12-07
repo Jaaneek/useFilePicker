@@ -1,5 +1,6 @@
-export function openFileDialog(accept: string, multiple: boolean, callback: (arg: Event) => void) {
-  // this function must be called from a user
+// @ts-nocheck
+export function openFileDialog(accept: string, multiple: boolean, pickDirectories: boolean, callback: (arg: Event) => void) {
+  // This function must be called from a user
   // activation event (ie an onclick event)
 
   // Create an input element
@@ -11,10 +12,14 @@ export function openFileDialog(accept: string, multiple: boolean, callback: (arg
   inputElement.accept = accept;
   // Accept multiple files
   inputElement.multiple = multiple;
-  // set onchange event to call callback when user has selected file
+  // Allow user to pick directories - NON-STANDARD FEATURE!
+  if (pickDirectories) {
+    inputElement.webkitdirectory = true;
+  }
+  // Set onchange event to call callback when user has selected file
   inputElement.addEventListener('change', callback);
-  // set onblur event to call callback when user has selected file on Safari
+  // Set onblur event to call callback when user has selected file on Safari
   inputElement.addEventListener('blur', callback);
-  // dispatch a click event to open the file dialog
+  // Dispatch a click event to open the file dialog
   inputElement.dispatchEvent(new MouseEvent('click'));
 }

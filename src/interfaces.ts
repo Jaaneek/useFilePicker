@@ -9,6 +9,10 @@ export interface LimitFilesConfig {
   max?: number;
 }
 
+export interface FactoryConfig {
+  pickDirectories: boolean;
+}
+
 export interface UseFilePickerConfig extends Options {
   multiple?: boolean;
   accept?: string | string[];
