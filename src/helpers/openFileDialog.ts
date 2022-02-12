@@ -4,6 +4,9 @@ export function openFileDialog(accept: string, multiple: boolean, callback: (arg
 
   // Create an input element
   var inputElement = document.createElement('input');
+  // Hide element and append to body (required to run on iOS safari)
+  inputElement.style.display = 'none';
+  document.body.appendChild(inputElement);
   // Set its type to file
   inputElement.type = 'file';
   // Set accept to the file types you want the user to select.
@@ -12,9 +15,18 @@ export function openFileDialog(accept: string, multiple: boolean, callback: (arg
   // Accept multiple files
   inputElement.multiple = multiple;
   // set onchange event to call callback when user has selected file
-  inputElement.addEventListener('change', callback);
+  //inputElement.addEventListener('change', callback);
+  inputElement.addEventListener('change', arg => {
+    callback(arg);
+    // remove element
+    document.body.removeChild(inputElement);
+  });
   // set onblur event to call callback when user has selected file on Safari
-  inputElement.addEventListener('blur', callback);
+  inputElement.addEventListener('blur', arg => {
+    callback(arg);
+    // remove element
+    document.body.removeChild(inputElement);
+  });
   // dispatch a click event to open the file dialog
   inputElement.dispatchEvent(new MouseEvent('click'));
 }
