@@ -21,12 +21,6 @@ export function openFileDialog(accept: string, multiple: boolean, callback: (arg
     // remove element
     document.body.removeChild(inputElement);
   });
-  // set onblur event to call callback when user has selected file on Safari
-  inputElement.addEventListener('blur', arg => {
-    callback(arg);
-    // remove element
-    document.body.removeChild(inputElement);
-  });
   // dispatch a click event to open the file dialog
   inputElement.dispatchEvent(new MouseEvent('click'));
 }
