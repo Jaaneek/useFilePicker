@@ -1,4 +1,3 @@
-// @ts-nocheck
 export function openFileDialog(accept: string, multiple: boolean, pickDirectories: boolean, callback: (arg: Event) => void) {
   // This function must be called from a user
   // activation event (ie an onclick event)
@@ -14,7 +13,7 @@ export function openFileDialog(accept: string, multiple: boolean, pickDirectorie
   inputElement.multiple = multiple;
   // Allow user to pick directories - NON-STANDARD FEATURE!
   if (pickDirectories) {
-    inputElement.webkitdirectory = true;
+    (inputElement as any).webkitdirectory = true;
   }
   // Set onchange event to call callback when user has selected file
   inputElement.addEventListener('change', callback);
