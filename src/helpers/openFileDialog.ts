@@ -11,12 +11,13 @@ export function openFileDialog(accept: string, multiple: boolean, callback: (arg
   inputElement.type = 'file';
   // Set accept to the file types you want the user to select.
   // Include both the file extension and the mime type
-  inputElement.accept = accept;
+  // if accept is "*" then dont set the accept attribute
+  if (accept !== '*') inputElement.accept = accept;
   // Accept multiple files
   inputElement.multiple = multiple;
   // set onchange event to call callback when user has selected file
   //inputElement.addEventListener('change', callback);
-  inputElement.addEventListener('change', arg => {
+  inputElement.addEventListener('change', (arg) => {
     callback(arg);
     // remove element
     document.body.removeChild(inputElement);
