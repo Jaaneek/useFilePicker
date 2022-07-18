@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { fromEvent, FileWithPath } from 'file-selector';
 import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError, ReaderMethod } from './interfaces';
 import FileSizeValidator from './validators/fileSizeValidator';
@@ -65,12 +65,12 @@ function useFilePicker({
     });
   };
 
-  const clear = (): void => {
+  const clear: () => void = useCallback(() => {
     setPlainFiles([]);
     setFiles([]);
     setFilesContent([]);
     setFileErrors([]);
-  };
+  }, []);
 
   useEffect(() => {
     if (files.length === 0) {
