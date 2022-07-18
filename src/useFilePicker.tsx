@@ -111,6 +111,7 @@ function useFilePicker({
                     imageSizeRestrictions,
                     limitFilesConfig,
                     readFilesContent,
+                    initializeWithCustomParameters,
                   },
                   file,
                   reader
