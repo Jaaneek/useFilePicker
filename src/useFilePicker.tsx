@@ -19,6 +19,7 @@ function useFilePicker({
   limitFilesConfig,
   readFilesContent = true,
   validators = [],
+  initializeWithCustomParameters,
 }: UseFilePickerConfig): FilePickerReturnTypes {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent[]>([]);
@@ -29,40 +30,46 @@ function useFilePicker({
 
   const openFileSelector = () => {
     const fileExtensions = accept instanceof Array ? accept.join(',') : accept;
-    openFileDialog(fileExtensions, multiple, evt => {
-      clear();
-      const inputElement = evt.target as HTMLInputElement;
-      plainFileObjectsRef.current = inputElement.files ? Array.from(inputElement.files) : [];
-      const validations = VALIDATORS.concat(validators).map(validator =>
-        validator
-          .validateBeforeParsing(
-            {
-              accept,
-              multiple,
-              readAs,
-              minFileSize,
-              maxFileSize,
-              imageSizeRestrictions,
-              limitFilesConfig,
-              readFilesContent,
-            },
-            plainFileObjectsRef.current
-          )
-          .catch(err => Promise.reject(setFileErrors(f => [{ ...err, ...f }])))
-      );
+    openFileDialog(
+      fileExtensions,
+      multiple,
+      (evt) => {
+        clear();
+        const inputElement = evt.target as HTMLInputElement;
+        plainFileObjectsRef.current = inputElement.files ? Array.from(inputElement.files) : [];
+        const validations = VALIDATORS.concat(validators).map((validator) =>
+          validator
+            .validateBeforeParsing(
+              {
+                accept,
+                multiple,
+                readAs,
+                minFileSize,
+                maxFileSize,
+                imageSizeRestrictions,
+                limitFilesConfig,
+                readFilesContent,
+                initializeWithCustomParameters,
+              },
+              plainFileObjectsRef.current
+            )
+            .catch((err) => Promise.reject(setFileErrors((f) => [{ ...err, ...f }])))
+        );
 
-      Promise.all(validations)
-        .then(() => {
-          if (!readFilesContent) {
-            setPlainFiles(plainFileObjectsRef.current);
-            return;
-          }
-          fromEvent(evt).then(files => {
-            setFiles(files as FileWithPath[]);
-          });
-        })
-        .catch(() => {});
-    });
+        Promise.all(validations)
+          .then(() => {
+            if (!readFilesContent) {
+              setPlainFiles(plainFileObjectsRef.current);
+              return;
+            }
+            fromEvent(evt).then((files) => {
+              setFiles(files as FileWithPath[]);
+            });
+          })
+          .catch(() => {});
+      },
+      initializeWithCustomParameters
+    );
   };
 
   const clear: () => void = useCallback(() => {
@@ -92,7 +99,7 @@ function useFilePicker({
           };
 
           reader.onload = async () => {
-            const validations = VALIDATORS.concat(validators).map(validator =>
+            const validations = VALIDATORS.concat(validators).map((validator) =>
               validator
                 .validateAfterParsing(
                   {
@@ -108,7 +115,7 @@ function useFilePicker({
                   file,
                   reader
                 )
-                .catch(err => Promise.reject(addError(err)))
+                .catch((err) => Promise.reject(addError(err)))
             );
 
             Promise.all(validations)
@@ -133,8 +140,8 @@ function useFilePicker({
         setPlainFiles(plainFileObjectsRef.current);
         setFileErrors([]);
       })
-      .catch(err => {
-        setFileErrors(f => [err, ...f]);
+      .catch((err) => {
+        setFileErrors((f) => [err, ...f]);
       })
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps

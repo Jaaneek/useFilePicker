@@ -17,6 +17,7 @@ export interface UseFilePickerConfig extends Options {
   readFilesContent?: boolean;
   imageSizeRestrictions?: ImageDims;
   validators?: Validator[];
+  initializeWithCustomParameters: (inputElement: HTMLInputElement) => void;
 }
 
 export interface FileContent {
