@@ -4,33 +4,33 @@ import { UseFilePickerConfig } from '../../interfaces';
 import { Validator } from '../validatorInterface';
 
 export default class FileSizeValidator implements Validator {
-  validateBeforeParsing(config: UseFilePickerConfig, plainFiles: File[]): Promise<void> {
+  async validateBeforeParsing(config: UseFilePickerConfig, plainFiles: File[]): Promise<void> {
     const { minFileSize, maxFileSize } = config;
-    for (const file of plainFiles) {
-      if (minFileSize || maxFileSize) {
-        return checkFileSize({ minFileSize, maxFileSize, fileSize: file.size });
-      }
+
+    if (!minFileSize && !maxFileSize) {
+      return Promise.resolve();
     }
-    return Promise.resolve();
+
+    const errors = plainFiles.map(file => getFileSizeError({ minFileSize, maxFileSize, fileSize: file.size })).filter(error => !!error);
+
+    return errors.length > 0 ? Promise.reject(errors[0]) : Promise.resolve();
   }
   async validateAfterParsing(_config: UseFilePickerConfig, _file: FileWithPath): Promise<void> {
     return Promise.resolve();
   }
 }
 
-const checkFileSize = ({ fileSize, maxFileSize, minFileSize }: { minFileSize: number | undefined; maxFileSize: number | undefined; fileSize: number }) =>
-  new Promise<void>((resolve, reject) => {
-    if (minFileSize) {
-      const minBytes = minFileSize * BYTES_PER_MEGABYTE;
-      if (fileSize < minBytes) {
-        reject({ fileSizeTooSmall: true });
-      }
+const getFileSizeError = ({ fileSize, maxFileSize, minFileSize }: { minFileSize: number | undefined; maxFileSize: number | undefined; fileSize: number }) => {
+  if (minFileSize) {
+    const minBytes = minFileSize * BYTES_PER_MEGABYTE;
+    if (fileSize < minBytes) {
+      return { fileSizeTooSmall: true };
     }
-    if (maxFileSize) {
-      const maxBytes = maxFileSize * BYTES_PER_MEGABYTE;
-      if (fileSize > maxBytes) {
-        reject({ fileSizeToolarge: true });
-      }
+  }
+  if (maxFileSize) {
+    const maxBytes = maxFileSize * BYTES_PER_MEGABYTE;
+    if (fileSize > maxBytes) {
+      return { fileSizeToolarge: true };
     }
-    resolve();
-  });
+  }
+};
