@@ -46,16 +46,16 @@ export interface FileError extends FileSizeError, FileReaderError, FileLimitErro
   name?: string;
 }
 
-interface FileReaderError {
+export interface FileReaderError {
   readerError?: DOMException | null;
 }
 
-interface FileLimitError {
+export interface FileLimitError {
   minLimitNotReached?: boolean;
   maxLimitExceeded?: boolean;
 }
 
-interface FileSizeError {
+export interface FileSizeError {
   fileSizeToolarge?: boolean;
   fileSizeTooSmall?: boolean;
 }
