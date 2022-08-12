@@ -22,7 +22,7 @@ export function openFileDialog(
   inputElement.multiple = multiple;
   // set onchange event to call callback when user has selected file
   //inputElement.addEventListener('change', callback);
-  inputElement.addEventListener('change', (arg) => {
+  inputElement.addEventListener('change', arg => {
     callback(arg);
     // remove element
     document.body.removeChild(inputElement);

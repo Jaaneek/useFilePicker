@@ -33,11 +33,11 @@ function useFilePicker({
     openFileDialog(
       fileExtensions,
       multiple,
-      (evt) => {
+      evt => {
         clear();
         const inputElement = evt.target as HTMLInputElement;
         plainFileObjectsRef.current = inputElement.files ? Array.from(inputElement.files) : [];
-        const validations = VALIDATORS.concat(validators).map((validator) =>
+        const validations = VALIDATORS.concat(validators).map(validator =>
           validator
             .validateBeforeParsing(
               {
@@ -53,7 +53,7 @@ function useFilePicker({
               },
               plainFileObjectsRef.current
             )
-            .catch((err) => Promise.reject(setFileErrors((f) => [{ ...err, ...f }])))
+            .catch(err => Promise.reject(setFileErrors(f => [{ ...err, ...f }])))
         );
 
         Promise.all(validations)
@@ -62,7 +62,7 @@ function useFilePicker({
               setPlainFiles(plainFileObjectsRef.current);
               return;
             }
-            fromEvent(evt).then((files) => {
+            fromEvent(evt).then(files => {
               setFiles(files as FileWithPath[]);
             });
           })
@@ -99,7 +99,7 @@ function useFilePicker({
           };
 
           reader.onload = async () => {
-            const validations = VALIDATORS.concat(validators).map((validator) =>
+            const validations = VALIDATORS.concat(validators).map(validator =>
               validator
                 .validateAfterParsing(
                   {
@@ -116,7 +116,7 @@ function useFilePicker({
                   file,
                   reader
                 )
-                .catch((err) => Promise.reject(addError(err)))
+                .catch(err => Promise.reject(addError(err)))
             );
 
             Promise.all(validations)
@@ -141,8 +141,8 @@ function useFilePicker({
         setPlainFiles(plainFileObjectsRef.current);
         setFileErrors([]);
       })
-      .catch((err) => {
-        setFileErrors((f) => [err, ...f]);
+      .catch(err => {
+        setFileErrors(f => [err, ...f]);
       })
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
