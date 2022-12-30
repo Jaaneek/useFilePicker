@@ -141,7 +141,7 @@ export default function App() {
         {errors[0].fileSizeToolarge && 'File size is too large!'}
         {errors[0].readerError && 'Problem occured while reading file!'}
         {errors[0].maxLimitExceeded && 'Too many files'}
-        {errors[0].minLimitNotReached && 'Not enought files'}
+        {errors[0].minLimitNotReached && 'Not enough files'}
       </div>
     );
   }
