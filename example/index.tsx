@@ -2,7 +2,7 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { useFilePicker } from '../src';
-import { Validator } from '../src/validators/validatorInterface';
+import type { Validator } from '../src';
 
 const customValidator: Validator = {
   /**
@@ -11,7 +11,8 @@ const customValidator: Validator = {
    * Example validator below allowes only even amount of files
    * @returns {Promise} resolve means that file passed validation, reject means that file did not pass
    */
-  validateBeforeParsing: async (config, plainFiles) => new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true }))),
+  validateBeforeParsing: async (config, plainFiles) =>
+    new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res(undefined) : rej({ oddNumberOfFiles: true }))),
   /**
    * Validation takes place after parsing (or is never called if readFilesContent is set to false).
    * You have access to config passed as argument to useFilePicker hook, FileWithPath object that is currently
@@ -21,16 +22,16 @@ const customValidator: Validator = {
    */
   validateAfterParsing: async (config, file, reader) =>
     new Promise((res, rej) =>
-      file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000 ? res() : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
+      file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000 ? res(undefined) : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
     ),
 };
 
 const App = () => {
-  const [openFileSelector, { filesContent, loading, errors, plainFiles }] = useFilePicker({
+  const [openFileSelector, { filesContent, loading, errors, plainFiles, clear }] = useFilePicker({
     multiple: true,
     readAs: 'DataURL', // availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
     // accept: '.ics,.pdf',
-    accept: ['.png', '.jpeg'],
+    accept: ['.png', '.jpeg', '.heic'],
     limitFilesConfig: { min: 2, max: 3 },
     // minFileSize: 1, // in megabytes
     // maxFileSize: 1,
@@ -66,7 +67,22 @@ const App = () => {
 
   return (
     <div>
-      <button onClick={() => openFileSelector()}>Select file</button>
+      <button
+        onClick={async () => {
+          try {
+            const result = await openFileSelector();
+            console.log('result.errors', result.errors);
+            console.log('result.filesContent', result.filesContent);
+            console.log('result.plainFiles', result.plainFiles);
+          } catch (err) {
+            console.log(err);
+            console.log('Something went wrong or validation failed');
+          }
+        }}
+      >
+        Select file
+      </button>
+      <button onClick={() => clear()}>Clear</button>
       <br />
       Number of selected files:
       {plainFiles.length}

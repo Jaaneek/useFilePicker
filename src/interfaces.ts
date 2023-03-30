@@ -20,13 +20,18 @@ export interface UseFilePickerConfig extends Options {
   initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
 }
 
-export interface FileContent {
+export interface FileContent extends Blob {
   lastModified: number;
   name: string;
   content: string;
 }
 
-export type FilePickerReturnTypes = [() => void, { filesContent: FileContent[]; errors: FileError[]; loading: boolean; plainFiles: File[]; clear: () => void }];
+export type OpenFilePickerFunction = () => Promise<{ plainFiles: File[]; errors: FileError[]; filesContent: FileContent[] }>;
+
+export type FilePickerReturnTypes = [
+  OpenFilePickerFunction,
+  { filesContent: FileContent[]; errors: FileError[]; loading: boolean; plainFiles: File[]; clear: () => void }
+];
 
 export interface ImageDims {
   minWidth?: number;

@@ -20,9 +20,9 @@ const isImage = (fileType: string) => fileType.startsWith('image');
 const checkImageDimensions = (imgDataURL: string, imageSizeRestrictions: ImageDims) =>
   new Promise<void>((resolve, reject) => {
     const img = new Image();
-    img.onload = function() {
+    img.onload = function () {
       const { maxHeight, maxWidth, minHeight, minWidth } = imageSizeRestrictions;
-      const { width, height } = (this as unknown) as typeof img;
+      const { width, height } = this as unknown as typeof img;
       let errors: ImageDimensionError = {};
       if (maxHeight && maxHeight < height) errors = { ...errors, imageHeightTooBig: true };
       if (minHeight && minHeight > height) errors = { ...errors, imageHeightTooSmall: true };
@@ -30,7 +30,7 @@ const checkImageDimensions = (imgDataURL: string, imageSizeRestrictions: ImageDi
       if (minWidth && minWidth > width) errors = { ...errors, imageWidthTooSmall: true };
       Object.keys(errors).length ? reject(errors) : resolve();
     };
-    img.onerror = function() {
+    img.onerror = function () {
       reject({ imageNotLoaded: true } as ImageDimensionError);
     };
     img.src = imgDataURL;
