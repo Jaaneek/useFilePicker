@@ -1,5 +1,6 @@
+import { FileWithPath } from 'file-selector';
 import { Validator } from './validators/validatorInterface';
-
+import { XOR } from 'ts-xor';
 export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
 export type ReaderMethod = keyof FileReader;
@@ -9,6 +10,17 @@ export interface LimitFilesConfig {
   max?: number;
 }
 
+export type SelectedFiles = {
+  plainFiles: FileWithPath[];
+  filesContent: FileContent[];
+};
+
+export type FileErrors = {
+  errors: FileError[];
+};
+
+export type SelectedFilesOrErrors = XOR<SelectedFiles, FileErrors>;
+
 export interface UseFilePickerConfig extends Options {
   multiple?: boolean;
   accept?: string | string[];
@@ -17,16 +29,22 @@ export interface UseFilePickerConfig extends Options {
   readFilesContent?: boolean;
   imageSizeRestrictions?: ImageDims;
   validators?: Validator[];
+  onFilesSelected?: (data: SelectedFilesOrErrors) => void;
+  onFilesSuccessfulySelected?: (data: SelectedFiles) => void;
+  onFilesRejected?: (data: FileErrors) => void;
   initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
 }
 
-export interface FileContent {
+export interface FileContent extends Blob {
   lastModified: number;
   name: string;
   content: string;
 }
 
-export type FilePickerReturnTypes = [() => void, { filesContent: FileContent[]; errors: FileError[]; loading: boolean; plainFiles: File[]; clear: () => void }];
+export type FilePickerReturnTypes = [
+  () => void,
+  { filesContent: FileContent[]; errors: FileError[]; loading: boolean; plainFiles: File[]; clear: () => void }
+];
 
 export interface ImageDims {
   minWidth?: number;
@@ -44,6 +62,7 @@ export interface Options {
 
 export interface FileError extends FileSizeError, FileReaderError, FileLimitError, ImageDimensionError {
   name?: string;
+  plainFile: FileWithPath;
 }
 
 export interface FileReaderError {

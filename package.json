@@ -1,49 +1,68 @@
 {
-  "version": "1.5.2",
+  "name": "use-file-picker",
+  "description": "Simple react hook to open browser file selector.",
+  "version": "1.6.0",
   "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
-  "engines": {
-    "node": ">=10"
-  },
+  "author": "Milosz Jankiewicz",
   "homepage": "https://github.com/Jaaneek/useFilePicker",
   "repository": {
     "url": "https://github.com/Jaaneek/useFilePicker",
     "type": "git"
   },
+  "main": "dist/index.js",
+  "module": "dist/use-file-picker.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --passWithNoTests",
-    "lint": "tsdx lint",
-    "lint:fix": "tsdx lint --fix",
-    "prepare": "tsdx build",
-    "size": "size-limit",
     "analyze": "size-limit --why",
+    "build": "dts build",
+    "build-storybook": "build-storybook",
+    "lint": "dts lint",
+    "lint:fix": "dts lint --fix",
+    "prepare": "dts build",
+    "size": "size-limit",
+    "start": "dts watch",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "test": "dts test --passWithNoTests"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "dts lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "arrowParens": "avoid",
+    "endOfLine": "lf"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
   },
   "peerDependencies": {
     "react": ">=16"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
+  "engines": {
+    "node": ">=12"
+  },
+  "size-limit": [
+    {
+      "path": "dist/use-file-picker.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/use-file-picker.esm.js",
+      "limit": "10 KB"
     }
-  },
-  "prettier": {
-    "printWidth": 160,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "arrowParens": "avoid"
-  },
-  "name": "use-file-picker",
-  "description": "Simple react hook to open browser file selector.",
+  ],
   "keywords": [
     "file",
     "fileselector",
@@ -55,39 +74,34 @@
     "react-file-picker",
     "react-file-selector"
   ],
-  "author": "Milosz Jankiewicz",
-  "module": "dist/use-file-picker.esm.js",
-  "size-limit": [
-    {
-      "path": "dist/use-file-picker.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/use-file-picker.esm.js",
-      "limit": "10 KB"
-    }
-  ],
-  "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@size-limit/preset-small-lib": "^4.9.1",
-    "@storybook/addon-essentials": "^6.1.11",
-    "@storybook/addon-info": "^5.3.21",
-    "@storybook/addon-links": "^6.1.11",
-    "@storybook/addons": "^6.1.11",
-    "@storybook/react": "^6.1.11",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "babel-loader": "^8.2.2",
-    "husky": "^4.3.6",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-is": "^17.0.1",
-    "size-limit": "^4.9.1",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.0.3",
-    "typescript": "3.9.7"
-  },
   "dependencies": {
     "file-selector": "0.2.4"
+  },
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^4.9.1",
+    "@storybook/addon-essentials": "6.5.16",
+    "@storybook/addon-info": "^5.3.21",
+    "@storybook/addon-links": "6.5.16",
+    "@storybook/addons": "6.5.16",
+    "@storybook/react": "6.5.16",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "14.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/react": "^18.0.33",
+    "@types/react-dom": "^18.0.11",
+    "babel-loader": "^8.2.2",
+    "dts-cli": "^1.6.3",
+    "eslint": "^8.37.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^4.3.6",
+    "jest": "^29.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-is": "^17.0.1",
+    "size-limit": "^4.9.1",
+    "ts-jest": "^29.0.5",
+    "ts-xor": "1.1.0",
+    "tslib": "2.5.0",
+    "typescript": "4.9.5"
   }
 }

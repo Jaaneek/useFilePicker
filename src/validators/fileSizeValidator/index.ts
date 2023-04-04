@@ -11,7 +11,9 @@ export default class FileSizeValidator implements Validator {
       return Promise.resolve();
     }
 
-    const errors = plainFiles.map(file => getFileSizeError({ minFileSize, maxFileSize, fileSize: file.size })).filter(error => !!error);
+    const errors = plainFiles
+      .map(file => getFileSizeError({ minFileSize, maxFileSize, fileSize: file.size }))
+      .filter(error => !!error);
 
     return errors.length > 0 ? Promise.reject(errors[0]) : Promise.resolve();
   }
@@ -20,7 +22,15 @@ export default class FileSizeValidator implements Validator {
   }
 }
 
-const getFileSizeError = ({ fileSize, maxFileSize, minFileSize }: { minFileSize: number | undefined; maxFileSize: number | undefined; fileSize: number }) => {
+const getFileSizeError = ({
+  fileSize,
+  maxFileSize,
+  minFileSize,
+}: {
+  minFileSize: number | undefined;
+  maxFileSize: number | undefined;
+  fileSize: number;
+}) => {
   if (minFileSize) {
     const minBytes = minFileSize * BYTES_PER_MEGABYTE;
     if (fileSize < minBytes) {
