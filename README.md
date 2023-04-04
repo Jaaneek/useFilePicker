@@ -28,7 +28,7 @@ or
 
 ## StoryBook
 
-https://use-file-picker-storybook-b0wsuz1yj-mrkampla.vercel.app/
+https://use-file-picker.vercel.app/
 
 ## Usage
 
@@ -235,10 +235,13 @@ Validators must return Promise object - resolved promise means that file passed 
  * validateAfterParsing allows the user to select only files that have not been modified in the last 24 hours
  */
 const customValidator: Validator = {
-  validateBeforeParsing: async (config, plainFiles) => new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true }))),
+  validateBeforeParsing: async (config, plainFiles) =>
+    new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true }))),
   validateAfterParsing: async (config, file, reader) =>
     new Promise((res, rej) =>
-      file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000 ? res() : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
+      file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000
+        ? res()
+        : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
     ),
 };
 ```
