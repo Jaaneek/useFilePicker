@@ -5,7 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "vite",
+    "start": "vite --host",
     "build": "vite build"
   },
   "dependencies": {
