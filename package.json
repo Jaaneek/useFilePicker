@@ -51,7 +51,7 @@
     "react": ">=16"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=14 <=16"
   },
   "size-limit": [
     {
