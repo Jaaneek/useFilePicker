@@ -188,21 +188,21 @@ export default function App() {
 
 ### Props
 
-| Prop name                      | Description                                                     | Default value | Example values                                    |
-| ------------------------------ | --------------------------------------------------------------- | ------------- | ------------------------------------------------- |
-| multiple                       | Allow user to pick multiple files at once                       | true          | true, false                                       |
-| accept                         | Set type of files that user can choose from the list            | "\*"          | [".png", ".txt"], "image/\*", ".txt"              |
-| readAs                         | Set a return type of [filesContent](#returns)                   | "Text"        | "DataURL", "Text", "BinaryString", "ArrayBuffer"  |
-| limitFilesConfig               | Set maximum and minimum files that user can select              | n/a           | {min: 1, max: 2}, {max: 1}                        |
-| readFilesContent               | Ignores files content and omits reading process if set to false | true          | true, false                                       |
-| minFileSize                    | Set minimum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
-| maxFileSize                    | Set maximum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
-| imageSizeRestrictions          | Set maximum and minimum constraints for image size in pixels    | n/a           | { maxHeight: 1024, minWidth: 768, minHeight:480 } |
-| validators                     | Add custom [validation](#Custom-validation) logic               | []            | [MyValidator, MySecondValidator]                  |
-| initializeWithCustomParameters | Allows customizing the input element as needed                  | n/a           | (input) => input.setAttribute("disabled", "")     |
-| onFilesSelected                | Allows working with selected files along with errors            | n/a           | (data) => console.log(data)                       |
-| onFilesSuccessfulySelected     | Allows working with only successfuly selected files             | n/a           | (data) => console.log(data)                       |
-| onFilesRejected                | Allows working with only rejected files errors                  | n/a           | (data) => console.log(data)                       |
+| Prop name                      | Description                                                                                                                                                                                                                    | Default value | Example values                                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ------------------------------------------------- |
+| multiple                       | Allow user to pick multiple files at once                                                                                                                                                                                      | true          | true, false                                       |
+| accept                         | Set type of files that user can choose from the list                                                                                                                                                                           | "\*"          | [".png", ".txt"], "image/\*", ".txt"              |
+| readAs                         | Set a return type of [filesContent](#returns)                                                                                                                                                                                  | "Text"        | "DataURL", "Text", "BinaryString", "ArrayBuffer"  |
+| limitFilesConfig               | Set maximum and minimum files that user can select                                                                                                                                                                             | n/a           | {min: 1, max: 2}, {max: 1}                        |
+| readFilesContent               | Ignores files content and omits reading process if set to false                                                                                                                                                                | true          | true, false                                       |
+| minFileSize                    | Set minimum limit of file size in megabytes                                                                                                                                                                                    | n/a           | 0.01 - 50                                         |
+| maxFileSize                    | Set maximum limit of file size in megabytes                                                                                                                                                                                    | n/a           | 0.01 - 50                                         |
+| imageSizeRestrictions          | Set maximum and minimum constraints for image size in pixels                                                                                                                                                                   | n/a           | { maxHeight: 1024, minWidth: 768, minHeight:480 } |
+| validators                     | Add custom [validation](#Custom-validation) logic                                                                                                                                                                              | []            | [MyValidator, MySecondValidator]                  |
+| initializeWithCustomParameters | allows for customization of the input element that is created by the file picker. It accepts a function that takes in the input element as a parameter and can be used to set any desired attributes or styles on the element. | n/a           | (input) => input.setAttribute("disabled", "")     |
+| onFilesSelected                | A callback function that is called when files are successfully selected. The function is passed an array of objects with information about each successfully selected file                                                     | n/a           | (data) => console.log(data)                       |
+| onFilesSuccessfulySelected     | A callback function that is called when files are successfully selected. The function is passed an array of objects with information about each successfully selected file                                                     | n/a           | (data) => console.log(data)                       |
+| onFilesRejected                | A callback function that is called when files are rejected due to validation errors or other issues. The function is passed an array of objects with information about each rejected file                                      | n/a           | (data) => console.log(data)                       |
 
 ### Returns
 
@@ -266,11 +266,16 @@ LimitFilesConfig {
 ```ts
 UseFilePickerConfig extends Options {
 	multiple?: boolean;
-	accept?: string | string[];
-	readAs?: ReadType;
-	limitFilesConfig?: LimitFilesConfig;
-	readFilesContent?: boolean;
-	imageSizeRestrictions?: ImageDims;
+  accept?: string | string[];
+  readAs?: ReadType;
+  limitFilesConfig?: LimitFilesConfig;
+  readFilesContent?: boolean;
+  imageSizeRestrictions?: ImageDims;
+  validators?: Validator[];
+  onFilesSelected?: (data: SelectedFilesOrErrors) => void;
+  onFilesSuccessfulySelected?: (data: SelectedFiles) => void;
+  onFilesRejected?: (data: FileErrors) => void;
+  initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
 }
 ```
 
@@ -347,6 +352,37 @@ ImageDimensionError {
 	imageHeightTooBig?: boolean;
 	imageHeightTooSmall?: boolean;
 	imageNotLoaded?: boolean;
+}
+```
+
+#### SelectedFiles
+
+```ts
+SelectedFiles {
+  plainFiles: FileWithPath[];
+  filesContent: FileContent[];
+}
+```
+
+#### FileErrors
+
+```ts
+FileErrors {
+  errors: FileError[];
+}
+```
+
+#### ImageDimensionError
+
+```ts
+ImageDimensionError {
+    plainFiles?: undefined;
+    filesContent?: undefined;
+    errors: FileError[];
+} | {
+    errors?: undefined;
+    plainFiles: FileWithPath[];
+    filesContent: FileContent[];
 }
 ```
 
