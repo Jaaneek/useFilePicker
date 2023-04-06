@@ -55,7 +55,7 @@ export default function App() {
         onClick={() => {
           try {
             // you can also get values directly from the openFileSelector
-            const result = await openFileSelector();
+            const result = openFileSelector();
             console.log('result.errors', result.errors);
             console.log('result.filesContent', result.filesContent);
             console.log('result.plainFiles', result.plainFiles);
@@ -199,7 +199,10 @@ export default function App() {
 | maxFileSize                    | Set maximum limit of file size in megabytes                     | n/a           | 0.01 - 50                                         |
 | imageSizeRestrictions          | Set maximum and minimum constraints for image size in pixels    | n/a           | { maxHeight: 1024, minWidth: 768, minHeight:480 } |
 | validators                     | Add custom [validation](#Custom-validation) logic               | []            | [MyValidator, MySecondValidator]                  |
-| initializeWithCustomParameters | Allows to add custom initializing parameters                    | n/a           | (input) => input.setAttribute("disabled", "")     |
+| initializeWithCustomParameters | Allows customizing the input element as needed                  | n/a           | (input) => input.setAttribute("disabled", "")     |
+| onFilesSelected                | Allows working with selected files along with errors            | n/a           | (data) => console.log(data)                       |
+| onFilesSuccessfulySelected     | Allows working with only successfuly selected files             | n/a           | (data) => console.log(data)                       |
+| onFilesRejected                | Allows working with only rejected files errors                  | n/a           | (data) => console.log(data)                       |
 
 ### Returns
 

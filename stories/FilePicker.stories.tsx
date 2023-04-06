@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { useFilePicker, Validator } from '../src';
-import { FileContent, ReadType, UseFilePickerConfig } from '../src/interfaces';
+import { FileContent, ReadType, SelectedFilesOrErrors, UseFilePickerConfig } from '../src/interfaces';
 
 const renderDependingOnReaderType = (file: FileContent, readAs: ReadType) => {
   switch (readAs) {
@@ -103,8 +103,19 @@ const meta: Meta = {
       },
       description: 'Ignores files content and omits reading process if set to false',
     },
+    onFilesRejected: {
+      description: 'Callback that is invoked when selected files are rejected due to an error',
+    },
+    onFilesSuccessfulySelected: {
+      description: 'Callback that is invoked when selected files are successfully selected',
+    },
+    onFilesSelected: {
+      description:
+        'Callback that is invoked when selected files are selected, regardless of whether they are to be rejected or not',
+    },
     initializeWithCustomParameters: {
-      description: 'Allows user to provide custom parameters to a file picking input',
+      description:
+        'Callback that is invoked with the HTMLInputElement as an argument when the file input is initialized. This function can be used to customize the input element as needed, such as adding additional attributes or event listeners',
     },
     storyTitle: {
       name: '',
@@ -202,5 +213,32 @@ export const customParameters = Template.bind(
   {
     storyTitle: 'Allows for adding custom parameters. In this example the button was initialized as disabled',
     initializeWithCustomParameters: input => input.setAttribute('disabled', ''),
+  }
+);
+export const onFilesSelected = Template.bind(
+  {},
+  {
+    storyTitle:
+      'Triggers when user selects files. The onFilesSelected callback runs with selected files, regardless of whether they are to be rejected or not',
+    onFilesSelected: data => {
+      alert(data.errors ? `found ${data.errors.length} errors` : `selected ${data.plainFiles.length} files`);
+    },
+  }
+);
+export const onFilesSuccessfulySelected = Template.bind(
+  {},
+  {
+    storyTitle:
+      'Triggers when user selects files without errors. The onFilesSuccessfulySelected callback runs with sucessfuly selected files',
+    onFilesSuccessfulySelected: data => alert(`successfuly selected ${data.plainFiles.length} files`),
+  }
+);
+
+export const onFilesRejected = Template.bind(
+  {},
+  {
+    storyTitle:
+      'Triggers when user selects files that do not meet file picker criteria. The onFilesRejected callback runs with errors of rejected files',
+    onFilesRejected: data => alert(`rejected ${data.FileError.length} files`),
   }
 );
