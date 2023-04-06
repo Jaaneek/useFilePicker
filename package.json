@@ -1,7 +1,7 @@
 {
   "name": "use-file-picker",
   "description": "Simple react hook to open browser file selector.",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "license": "MIT",
   "author": "Milosz Jankiewicz",
   "homepage": "https://github.com/Jaaneek/useFilePicker",
