@@ -372,10 +372,10 @@ FileErrors {
 }
 ```
 
-#### ImageDimensionError
+#### SelectedFilesOrErrors
 
 ```ts
-ImageDimensionError {
+SelectedFilesOrErrors {
     plainFiles?: undefined;
     filesContent?: undefined;
     errors: FileError[];
