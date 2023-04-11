@@ -51,19 +51,7 @@ export default function App() {
 
   return (
     <div>
-      <button
-        onClick={() => {
-          try {
-            // you can also get values directly from the openFileSelector
-            const result = openFileSelector();
-          } catch (err) {
-            console.log(err);
-            console.log('Something went wrong or validation failed');
-          }
-        }}
-      >
-        Select files{' '}
-      </button>
+      <button onClick={() => openFileSelector()}>Select files </button>
       <br />
       {filesContent.map((file, index) => (
         <div>
