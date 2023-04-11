@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { useFilePicker, Validator } from '../src';
-import { FileContent, ReadType, UseFilePickerConfig } from '../src/interfaces';
+import { FileContent, ReadType, SelectedFilesOrErrors, UseFilePickerConfig } from '../src/interfaces';
 
 const renderDependingOnReaderType = (file: FileContent, readAs: ReadType) => {
   switch (readAs) {
@@ -103,6 +103,20 @@ const meta: Meta = {
       },
       description: 'Ignores files content and omits reading process if set to false',
     },
+    onFilesRejected: {
+      description: 'Callback that is invoked when selected files are rejected due to an error',
+    },
+    onFilesSuccessfulySelected: {
+      description: 'Callback that is invoked when selected files are successfully selected',
+    },
+    onFilesSelected: {
+      description:
+        'Callback that is invoked when selected files are selected, regardless of whether they are to be rejected or not',
+    },
+    initializeWithCustomParameters: {
+      description:
+        'Callback that is invoked with the HTMLInputElement as an argument when the file input is initialized. This function can be used to customize the input element as needed, such as adding additional attributes or event listeners',
+    },
     storyTitle: {
       name: '',
       control: {
@@ -122,7 +136,13 @@ const Template: Story<any> = args => <FilePickerComponent {...args} />;
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
 export const DefaultPicker = Template.bind({});
-DefaultPicker.args = { storyTitle: 'Picker with default props', multiple: true, accept: '*', readAs: 'Text', readFilesContent: true };
+DefaultPicker.args = {
+  storyTitle: 'Picker with default props',
+  multiple: true,
+  accept: '*',
+  readAs: 'Text',
+  readFilesContent: true,
+};
 
 export const SingleFilePicker = Template.bind({}, { storyTitle: 'Allows to pick only one file', multiple: false });
 export const PickCertainFileType = Template.bind({}, { storyTitle: 'Selects only .txt files', accept: '.txt' });
@@ -142,14 +162,20 @@ export const LimitAmountOfFiles = Template.bind(
 );
 export const DontReadFileContent = Template.bind(
   {},
-  { storyTitle: 'Selected files are not read, plainFiles array contains File objects for selected files', readFilesContent: false }
+  {
+    storyTitle: 'Selected files are not read, plainFiles array contains File objects for selected files',
+    readFilesContent: false,
+  }
 );
 (DontReadFileContent as any).story = {
   name: "Don't Read File Content",
 };
 export const MaximumFileSize = Template.bind(
   {},
-  { storyTitle: 'File size can be restricted. Picker allows only files that are smaller than 1 megabyte', maxFileSize: 1 }
+  {
+    storyTitle: 'File size can be restricted. Picker allows only files that are smaller than 1 megabyte',
+    maxFileSize: 1,
+  }
 );
 export const ImageSizeRestrictions = Template.bind(
   {},
@@ -165,10 +191,13 @@ export const ImageSizeRestrictions = Template.bind(
 );
 
 const customValidator: Validator = {
-  validateBeforeParsing: async (_config, plainFiles) => new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true }))),
+  validateBeforeParsing: async (_config, plainFiles) =>
+    new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true }))),
   validateAfterParsing: async (_config, file, _reader) =>
     new Promise((res, rej) =>
-      file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000 ? res() : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
+      file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000
+        ? res()
+        : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
     ),
 };
 export const CustomValidators = Template.bind(
@@ -177,5 +206,39 @@ export const CustomValidators = Template.bind(
     storyTitle:
       'If there is specific validation logic needed, custom validator can be passed to the hook. In this example, custom validator allows only to select files that have not been modified in the last 24 hours and the number of selected files must be even.',
     validators: [customValidator],
+  }
+);
+export const customParameters = Template.bind(
+  {},
+  {
+    storyTitle: 'Allows for adding custom parameters. In this example the button was initialized as disabled',
+    initializeWithCustomParameters: input => input.setAttribute('disabled', ''),
+  }
+);
+export const onFilesSelected = Template.bind(
+  {},
+  {
+    storyTitle:
+      'Triggers when user selects files. The onFilesSelected callback runs with selected files, regardless of whether they are to be rejected or not',
+    onFilesSelected: data => {
+      alert(data.errors ? `found ${data.errors.length} errors` : `selected ${data.plainFiles.length} files`);
+    },
+  }
+);
+export const onFilesSuccessfulySelected = Template.bind(
+  {},
+  {
+    storyTitle:
+      'Triggers when user selects files without errors. The onFilesSuccessfulySelected callback runs with sucessfuly selected files',
+    onFilesSuccessfulySelected: data => alert(`successfuly selected ${data.plainFiles.length} files`),
+  }
+);
+
+export const onFilesRejected = Template.bind(
+  {},
+  {
+    storyTitle:
+      'Triggers when user selects files that do not meet file picker criteria. The onFilesRejected callback runs with errors of rejected files',
+    onFilesRejected: data => alert(`rejected ${data.FileError.length} files`),
   }
 );
