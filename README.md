@@ -56,9 +56,6 @@ export default function App() {
           try {
             // you can also get values directly from the openFileSelector
             const result = openFileSelector();
-            console.log('result.errors', result.errors);
-            console.log('result.filesContent', result.filesContent);
-            console.log('result.plainFiles', result.plainFiles);
           } catch (err) {
             console.log(err);
             console.log('Something went wrong or validation failed');
