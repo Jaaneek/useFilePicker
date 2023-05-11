@@ -141,4 +141,23 @@ describe('FileRestrictions', () => {
 
     expect(screen.getByText(/Files length : 2/i)).toBeInTheDocument();
   });
+  it('should display loading indicator when loading and remove it when done loading', async () => {
+    render(<TestComponent></TestComponent>);
+
+    let uploader = screen.getByRole('button', {});
+    await userEvent.click(uploader);
+
+    let input = screen.getByTestId('tested');
+
+    if (!isInputElement(input)) throw new Error('Input not found');
+
+    const files = [new File([''], 'file1'), new File([''], 'file2')];
+    await userEvent.upload(input, files);
+
+    expect(screen.queryByText(/loading.../i)).toBeInTheDocument();
+    expect(screen.queryByTestId('tested')).not.toBeInTheDocument();
+
+    await waitForElementToBeRemoved(() => screen.queryByText(/loading.../i));
+    expect(screen.queryByText(/loading.../i)).not.toBeInTheDocument();
+  });
 });
