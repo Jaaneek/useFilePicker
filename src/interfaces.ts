@@ -11,7 +11,7 @@ export interface LimitFilesConfig {
 }
 
 export type SelectedFiles = {
-  plainFiles: FileWithPath[];
+  plainFiles: File[];
   filesContent: FileContent[];
 };
 
@@ -48,7 +48,7 @@ export type FilePickerReturnTypes = [
 
 export type ImperativeFilePickerReturnTypes = [
   FilePickerReturnTypes[0],
-  FilePickerReturnTypes[1] & { removeFileByIndex: (index: number) => void }
+  FilePickerReturnTypes[1] & { removeFileByIndex: (index: number) => void; removeFileByReference: (file: File) => void }
 ];
 
 export interface ImageDims {

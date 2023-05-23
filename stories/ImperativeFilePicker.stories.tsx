@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { useFilePicker, Validator } from '../src';
+import { useImperativeFilePicker, Validator } from '../src';
 import { FileContent, ReadType, UseFilePickerConfig } from '../src/interfaces';
 
 const renderDependingOnReaderType = (file: FileContent, readAs: ReadType) => {
@@ -30,8 +30,8 @@ const renderDependingOnReaderType = (file: FileContent, readAs: ReadType) => {
   }
 };
 
-const FilePickerComponent = (props: UseFilePickerConfig & { storyTitle: string }) => {
-  const [open, { filesContent, errors, plainFiles, loading }] = useFilePicker({ ...props });
+const ImperativeFilePickerComponent = (props: UseFilePickerConfig & { storyTitle: string }) => {
+  const [open, { filesContent, errors, plainFiles, loading }] = useImperativeFilePicker({ ...props });
 
   return (
     <>
@@ -72,7 +72,7 @@ const FilePickerComponent = (props: UseFilePickerConfig & { storyTitle: string }
 
 const meta: Meta = {
   title: 'use-file-picker',
-  component: FilePickerComponent,
+  component: ImperativeFilePickerComponent,
   argTypes: {
     multiple: {
       defaultValue: true,
@@ -131,12 +131,12 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: Story<any> = args => <FilePickerComponent {...args} />;
+const Template: Story<any> = args => <ImperativeFilePickerComponent {...args} />;
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
-export const DefaultPicker = Template.bind({});
-DefaultPicker.args = {
+export const ImperativePicker = Template.bind({});
+ImperativePicker.args = {
   storyTitle: 'Picker with default props',
   multiple: true,
   accept: '*',
@@ -144,13 +144,19 @@ DefaultPicker.args = {
   readFilesContent: true,
 };
 
-export const SingleFilePicker = Template.bind({}, { storyTitle: 'Allows to pick only one file', multiple: false });
-export const PickCertainFileType = Template.bind({}, { storyTitle: 'Selects only .txt files', accept: '.txt' });
-export const ReadContentAsImage = Template.bind(
+export const ImperativeSingleFilePicker = Template.bind(
+  {},
+  { storyTitle: 'Allows to pick only one file', multiple: false }
+);
+export const ImperativePickCertainFileType = Template.bind(
+  {},
+  { storyTitle: 'Selects only .txt files', accept: '.txt' }
+);
+export const ImperativeReadContentAsImage = Template.bind(
   {},
   { storyTitle: 'Reads selected files as DataURLs so they can be displayed by a browser', readAs: 'DataURL' }
 );
-export const LimitAmountOfFiles = Template.bind(
+export const ImperativeLimitAmountOfFiles = Template.bind(
   {},
   {
     storyTitle: 'Limit max and min amount of files. In this example picker allows to choose between 2 to 3 files.',
@@ -160,24 +166,24 @@ export const LimitAmountOfFiles = Template.bind(
     },
   }
 );
-export const DontReadFileContent = Template.bind(
+export const ImperativeDontReadFileContent = Template.bind(
   {},
   {
     storyTitle: 'Selected files are not read, plainFiles array contains File objects for selected files',
     readFilesContent: false,
   }
 );
-(DontReadFileContent as any).story = {
+(ImperativeDontReadFileContent as any).story = {
   name: "Don't Read File Content",
 };
-export const MaximumFileSize = Template.bind(
+export const ImperativeMaximumFileSize = Template.bind(
   {},
   {
     storyTitle: 'File size can be restricted. Picker allows only files that are smaller than 1 megabyte',
     maxFileSize: 1,
   }
 );
-export const ImageSizeRestrictions = Template.bind(
+export const ImperativeImageSizeRestrictions = Template.bind(
   {},
   {
     storyTitle:
@@ -200,7 +206,7 @@ const customValidator: Validator = {
         : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
     ),
 };
-export const CustomValidators = Template.bind(
+export const ImperativeCustomValidators = Template.bind(
   {},
   {
     storyTitle:
@@ -208,14 +214,14 @@ export const CustomValidators = Template.bind(
     validators: [customValidator],
   }
 );
-export const customParameters = Template.bind(
+export const ImperativeCustomParameters = Template.bind(
   {},
   {
     storyTitle: 'Allows for adding custom parameters. In this example the button was initialized as disabled',
     initializeWithCustomParameters: (input: HTMLInputElement) => input.setAttribute('disabled', ''),
   }
 );
-export const onFilesSelected = Template.bind(
+export const ImperativeOnFilesSelected = Template.bind(
   {},
   {
     storyTitle:
@@ -225,7 +231,7 @@ export const onFilesSelected = Template.bind(
     },
   }
 );
-export const onFilesSuccessfulySelected = Template.bind(
+export const ImperativeOnFilesSuccessfulySelected = Template.bind(
   {},
   {
     storyTitle:
@@ -234,7 +240,7 @@ export const onFilesSuccessfulySelected = Template.bind(
   }
 );
 
-export const onFilesRejected = Template.bind(
+export const ImperativeOnFilesRejected = Template.bind(
   {},
   {
     storyTitle:

@@ -85,7 +85,7 @@ const App = () => {
       <button onClick={async () => openFileSelector()}>Select file</button>
       <button onClick={() => clear()}>Clear</button>
       <br />
-      Number of selected files:
+      Amount of selected files:
       {plainFiles.length}
       <br />
       {/* If readAs is set to DataURL, You can display an image */}
