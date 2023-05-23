@@ -46,6 +46,11 @@ export type FilePickerReturnTypes = [
   { filesContent: FileContent[]; errors: FileError[]; loading: boolean; plainFiles: File[]; clear: () => void }
 ];
 
+export type ImperativeFilePickerReturnTypes = [
+  FilePickerReturnTypes[0],
+  FilePickerReturnTypes[1] & { removeFileByIndex: (index: number) => void }
+];
+
 export interface ImageDims {
   minWidth?: number;
   maxWidth?: number;
