@@ -8,14 +8,11 @@
 
 ## Documentation
 
-#### Usage
-
 - [Simple txt reader](#simple-txt-file-content-reading)
 - [Image reader](#reading-and-rendering-images)
+- [On change callbacks](#on-change-callbacks)
 - [Advanced usage](#advanced-usage)
-
-#### API
-
+- [Imperative picker](#keeping-the-previously-selected-files-and-removing-them-from-selection)
 - [Props](#props)
 - [Returns](#returns)
 - [Interfaces](#interfaces)
@@ -28,13 +25,13 @@ or
 
 ## StoryBook
 
-https://use-file-picker.vercel.app/
+<https://use-file-picker.vercel.app/>
 
 ## Usage
 
-#### Simple txt file content reading
+### Simple txt file content reading
 
-https://codesandbox.io/s/inspiring-swartz-pjxze?file=/src/App.js
+<https://codesandbox.io/s/inspiring-swartz-pjxze?file=/src/App.js>
 
 ```jsx
 import { useFilePicker } from 'use-file-picker';
@@ -65,9 +62,9 @@ export default function App() {
 }
 ```
 
-#### Reading and rendering Images
+### Reading and rendering Images
 
-https://codesandbox.io/s/busy-nightingale-oox7z?file=/src/App.js
+<https://codesandbox.io/s/busy-nightingale-oox7z?file=/src/App.js>
 
 ```ts
 import { useFilePicker } from 'use-file-picker';
@@ -113,9 +110,58 @@ export default function App() {
 }
 ```
 
+### On change callbacks
+
+```ts
+import { useFilePicker } from 'use-file-picker';
+import React from 'react';
+
+export default function App() {
+  const [openFileSelector, { filesContent, loading, errors }] = useFilePicker({
+    readAs: 'DataURL',
+    accept: 'image/*',
+    multiple: true,
+    onFilesSelected: ({ plainFiles, filesContent, errors }) => {
+      // this callback is always called, even if there are errors
+      console.log('onFilesSelected', plainFiles, filesContent, errors);
+    },
+    onFilesRejected: ({ errors }) => {
+      // this callback is called when there were validation errors
+      console.log('onFilesRejected', errors);
+    },
+    onFilesSuccessfulySelected: ({ plainFiles, filesContent }) => {
+      // this callback is called when there were no validation errors
+      console.log('onFilesSuccessfulySelected', plainFiles, filesContent);
+    },
+  });
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (errors.length) {
+    return <div>Error...</div>;
+  }
+
+  return (
+    <div>
+      <button onClick={() => openFileSelector()}>Select files </button>
+      <br />
+      {filesContent.map((file, index) => (
+        <div key={index}>
+          <h2>{file.name}</h2>
+          <img alt={file.name} src={file.content}></img>
+          <br />
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
 ### Advanced usage
 
-https://codesandbox.io/s/musing-moon-wuq4u?file=/src/App.js
+<https://codesandbox.io/s/musing-moon-wuq4u?file=/src/App.js>
 
 ```ts
 import { useFilePicker } from 'use-file-picker';
@@ -169,6 +215,86 @@ export default function App() {
 }
 ```
 
+### Keeping the previously selected files and removing them from selection on demand
+
+If you want to keep the previously selected files and remove them from the selection, you can use a separate hook called `useImperativeFilePicker` that is also exported in this package. For files removal, you can use `removeFileByIndex` or `removeFileByReference` functions.
+
+```ts
+import React from 'react';
+import { useImperativeFilePicker } from 'use-file-picker';
+
+const Imperative = () => {
+  const [
+    openFileSelector,
+    { filesContent, loading, errors, plainFiles, clear, removeFileByIndex, removeFileByReference },
+  ] = useImperativeFilePicker({
+    multiple: true,
+    readAs: 'Text',
+    readFilesContent: true,
+    onFilesSelected: ({ plainFiles, filesContent, errors }) => {
+      // this callback is always called, even if there are errors
+      console.log('onFilesSelected', plainFiles, filesContent, errors);
+    },
+    onFilesRejected: ({ errors }) => {
+      // this callback is called when there were validation errors
+      console.log('onFilesRejected', errors);
+    },
+    onFilesSuccessfulySelected: ({ plainFiles, filesContent }) => {
+      // this callback is called when there were no validation errors
+      console.log('onFilesSuccessfulySelected', plainFiles, filesContent);
+    },
+  });
+
+  if (errors.length) {
+    return (
+      <div>
+        <button onClick={() => openFileSelector()}>Something went wrong, retry! </button>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {console.log(errors)}
+          {Object.entries(errors[0])
+            .filter(([key, value]) => key !== 'name' && value)
+            .map(([key]) => (
+              <div key={key}>{key}</div>
+            ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div>
+      <button onClick={async () => openFileSelector()}>Select file</button>
+      <button onClick={() => clear()}>Clear</button>
+      <br />
+      Amount of selected files:
+      {plainFiles.length}
+      <br />
+      Amount of filesContent:
+      {filesContent.length}
+      <br />
+      {plainFiles.map((file, i) => (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center' }} key={file.name}>
+            <div>{file.name}</div>
+            <button style={{ marginLeft: 24 }} onClick={() => removeFileByReference(file)}>
+              Remove by reference
+            </button>
+            <button style={{ marginLeft: 24 }} onClick={() => removeFileByIndex(i)}>
+              Remove by index
+            </button>
+          </div>
+          <div>{filesContent[i]?.content}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+```
+
 ## API
 
 ### Props
@@ -183,7 +309,7 @@ export default function App() {
 | minFileSize                    | Set minimum limit of file size in megabytes                                                                                                                                                                                    | n/a           | 0.01 - 50                                         |
 | maxFileSize                    | Set maximum limit of file size in megabytes                                                                                                                                                                                    | n/a           | 0.01 - 50                                         |
 | imageSizeRestrictions          | Set maximum and minimum constraints for image size in pixels                                                                                                                                                                   | n/a           | { maxHeight: 1024, minWidth: 768, minHeight:480 } |
-| validators                     | Add custom [validation](#Custom-validation) logic                                                                                                                                                                              | []            | [MyValidator, MySecondValidator]                  |
+| validators                     | Add custom [validation](#custom-validation) logic                                                                                                                                                                              | []            | [MyValidator, MySecondValidator]                  |
 | initializeWithCustomParameters | allows for customization of the input element that is created by the file picker. It accepts a function that takes in the input element as a parameter and can be used to set any desired attributes or styles on the element. | n/a           | (input) => input.setAttribute("disabled", "")     |
 | onFilesSelected                | A callback function that is called when files are successfully selected. The function is passed an array of objects with information about each successfully selected file                                                     | n/a           | (data) => console.log(data)                       |
 | onFilesSuccessfulySelected     | A callback function that is called when files are successfully selected. The function is passed an array of objects with information about each successfully selected file                                                     | n/a           | (data) => console.log(data)                       |
@@ -241,8 +367,8 @@ const customValidator: Validator = {
 
 ```ts
 LimitFilesConfig {
-	min?: number;
-	max?: number;
+  min?: number;
+  max?: number;
 }
 ```
 
@@ -250,7 +376,7 @@ LimitFilesConfig {
 
 ```ts
 UseFilePickerConfig extends Options {
-	multiple?: boolean;
+  multiple?: boolean;
   accept?: string | string[];
   readAs?: ReadType;
   limitFilesConfig?: LimitFilesConfig;
@@ -268,9 +394,9 @@ UseFilePickerConfig extends Options {
 
 ```ts
 FileContent {
-	lastModified: number;
-	name: string;
-	content: string;
+  lastModified: number;
+  name: string;
+  content: string;
 }
 ```
 
@@ -278,10 +404,10 @@ FileContent {
 
 ```ts
 ImageDims {
-	minWidth?: number;
-	maxWidth?: number;
-	minHeight?: number;
-	maxHeight?: number;
+  minWidth?: number;
+  maxWidth?: number;
+  minHeight?: number;
+  maxHeight?: number;
 }
 ```
 
@@ -289,8 +415,8 @@ ImageDims {
 
 ```ts
 Options extends ImageDims {
-	minFileSize?: number;
-	maxFileSize?: number;
+  minFileSize?: number;
+  maxFileSize?: number;
 }
 ```
 
@@ -298,7 +424,7 @@ Options extends ImageDims {
 
 ```ts
 FileError extends FileSizeError, FileReaderError, FileLimitError, ImageDimensionError {
-	name?: string;
+  name?: string;
 }
 ```
 
@@ -306,7 +432,7 @@ FileError extends FileSizeError, FileReaderError, FileLimitError, ImageDimension
 
 ```ts
 FileReaderError {
-	readerError?: DOMException | null;
+  readerError?: DOMException | null;
 }
 ```
 
@@ -314,8 +440,8 @@ FileReaderError {
 
 ```ts
 FileLimitError {
-	minLimitNotReached?: boolean;
-	maxLimitExceeded?: boolean;
+  minLimitNotReached?: boolean;
+  maxLimitExceeded?: boolean;
 }
 ```
 
@@ -323,8 +449,8 @@ FileLimitError {
 
 ```ts
 FileSizeError {
-	fileSizeToolarge?: boolean;
-	fileSizeTooSmall?: boolean;
+  fileSizeToolarge?: boolean;
+  fileSizeTooSmall?: boolean;
 }
 ```
 
@@ -332,11 +458,11 @@ FileSizeError {
 
 ```ts
 ImageDimensionError {
-	imageWidthTooBig?: boolean;
-	imageWidthTooSmall?: boolean;
-	imageHeightTooBig?: boolean;
-	imageHeightTooSmall?: boolean;
-	imageNotLoaded?: boolean;
+  imageWidthTooBig?: boolean;
+  imageWidthTooSmall?: boolean;
+  imageHeightTooBig?: boolean;
+  imageHeightTooSmall?: boolean;
+  imageNotLoaded?: boolean;
 }
 ```
 
