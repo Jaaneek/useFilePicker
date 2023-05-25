@@ -12,7 +12,7 @@
 - [Image reader](#reading-and-rendering-images)
 - [On change callbacks](#on-change-callbacks)
 - [Advanced usage](#advanced-usage)
-- [Imperative picker](#keeping-the-previously-selected-files-and-removing-them-from-selection)
+- [Imperative picker](#keeping-the-previously-selected-files-and-removing-them-from-selection-on-demand)
 - [Props](#props)
 - [Returns](#returns)
 - [Interfaces](#interfaces)
