@@ -11,7 +11,7 @@ export interface LimitFilesConfig {
 }
 
 export type SelectedFiles = {
-  plainFiles: FileWithPath[];
+  plainFiles: File[];
   filesContent: FileContent[];
 };
 
@@ -44,6 +44,11 @@ export interface FileContent extends Blob {
 export type FilePickerReturnTypes = [
   () => void,
   { filesContent: FileContent[]; errors: FileError[]; loading: boolean; plainFiles: File[]; clear: () => void }
+];
+
+export type ImperativeFilePickerReturnTypes = [
+  FilePickerReturnTypes[0],
+  FilePickerReturnTypes[1] & { removeFileByIndex: (index: number) => void; removeFileByReference: (file: File) => void }
 ];
 
 export interface ImageDims {

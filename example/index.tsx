@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { useFilePicker } from '../src';
 import type { Validator } from '../src';
+import Imperative from './imperative';
 
 const customValidator: Validator = {
   /**
@@ -84,7 +85,7 @@ const App = () => {
       <button onClick={async () => openFileSelector()}>Select file</button>
       <button onClick={() => clear()}>Clear</button>
       <br />
-      Number of selected files:
+      Amount of selected files:
       {plainFiles.length}
       <br />
       {/* If readAs is set to DataURL, You can display an image */}
@@ -97,4 +98,12 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <>
+    <h2>useFilePicker</h2>
+    <App />
+    <h2>useImperativeFilePicker</h2>
+    <Imperative />
+  </>,
+  document.getElementById('root')
+);
