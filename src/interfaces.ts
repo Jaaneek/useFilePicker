@@ -10,55 +10,86 @@ export interface LimitFilesConfig {
   max?: number;
 }
 
-export type SelectedFiles = {
+export type SelectedFiles<ContentType> = {
   plainFiles: File[];
-  filesContent: FileContent[];
+  filesContent: FileContent<ContentType>[];
 };
 
 export type FileErrors = {
   errors: FileError[];
 };
 
-export type SelectedFilesOrErrors = XOR<SelectedFiles, FileErrors>;
+export type SelectedFilesOrErrors<ContentType> = XOR<SelectedFiles<ContentType>, FileErrors>;
 
-export interface UseFilePickerConfig extends Options {
+type UseFilePickerConfigCommon = {
   multiple?: boolean;
   accept?: string | string[];
-  readAs?: ReadType;
   limitFilesConfig?: LimitFilesConfig;
-  readFilesContent?: boolean;
-  imageSizeRestrictions?: ImageDims;
+  imageSizeRestrictions?: ImageDimensionRestrictionsConfig;
   validators?: Validator[];
-  onFilesSelected?: (data: SelectedFilesOrErrors) => void;
-  onFilesSuccessfulySelected?: (data: SelectedFiles) => void;
   onFilesRejected?: (data: FileErrors) => void;
   initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
-}
+};
 
-export interface FileContent extends Blob {
+type ReadFileContentConfig =
+  | ({
+      readFilesContent?: true | undefined | never;
+    } & (
+      | {
+          readAs?: 'ArrayBuffer';
+          onFilesSelected?: (data: SelectedFilesOrErrors<ArrayBuffer>) => void;
+          onFilesSuccessfulySelected?: (data: SelectedFiles<ArrayBuffer>) => void;
+        }
+      | {
+          readAs?: Exclude<ReadType, 'ArrayBuffer'>;
+          onFilesSelected?: (data: SelectedFilesOrErrors<string>) => void;
+          onFilesSuccessfulySelected?: (data: SelectedFiles<string>) => void;
+        }
+    ))
+  | {
+      readFilesContent: false;
+      readAs?: never;
+      onFilesSelected?: (data: SelectedFilesOrErrors<undefined>) => void;
+      onFilesSuccessfulySelected?: (data: SelectedFiles<undefined>) => void;
+    };
+
+export type ExtractContentTypeFromConfig<Config> = Config extends { readAs: 'ArrayBuffer' } ? ArrayBuffer : string;
+
+export type UseFilePickerConfig = UseFilePickerConfigCommon & FileSizeRestrictions & ReadFileContentConfig;
+
+export interface FileContent<ContentType> extends Blob {
   lastModified: number;
   name: string;
-  content: string;
+  content: ContentType;
 }
 
-export type FilePickerReturnTypes = [
+export type FilePickerReturnTypes<ContentType> = [
   () => void,
-  { filesContent: FileContent[]; errors: FileError[]; loading: boolean; plainFiles: File[]; clear: () => void }
+  {
+    filesContent: FileContent<ContentType>[];
+    errors: FileError[];
+    loading: boolean;
+    plainFiles: File[];
+    clear: () => void;
+  }
 ];
 
-export type ImperativeFilePickerReturnTypes = [
-  FilePickerReturnTypes[0],
-  FilePickerReturnTypes[1] & { removeFileByIndex: (index: number) => void; removeFileByReference: (file: File) => void }
+export type ImperativeFilePickerReturnTypes<ContentType> = [
+  FilePickerReturnTypes<ContentType>[0],
+  FilePickerReturnTypes<ContentType>[1] & {
+    removeFileByIndex: (index: number) => void;
+    removeFileByReference: (file: File) => void;
+  }
 ];
 
-export interface ImageDims {
+export interface ImageDimensionRestrictionsConfig {
   minWidth?: number;
   maxWidth?: number;
   minHeight?: number;
   maxHeight?: number;
 }
 
-export interface Options {
+export interface FileSizeRestrictions {
   /**Minimum file size in mb**/
   minFileSize?: number;
   /**Maximum file size in mb**/

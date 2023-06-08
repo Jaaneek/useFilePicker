@@ -1,6 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 import useFilePicker from '../src/useFilePicker';
-import { ImperativeFilePickerReturnTypes, UseFilePickerConfig, useImperativeFilePicker } from '../src';
+import {
+  ExtractContentTypeFromConfig,
+  ImperativeFilePickerReturnTypes,
+  UseFilePickerConfig,
+  useImperativeFilePicker,
+} from '../src';
 
 export const isInputElement = (el: HTMLElement): el is HTMLInputElement => el instanceof HTMLInputElement;
 
@@ -38,10 +43,10 @@ const invokeFilePicker = (props: UseFilePickerConfig, usePickerHook: UseFilePick
 
 export const invokeUseFilePicker = (props: UseFilePickerConfig) => invokeFilePicker(props, useFilePicker);
 
-export const invokeUseImperativeFilePicker = (props: UseFilePickerConfig) =>
+export const invokeUseImperativeFilePicker = <T extends UseFilePickerConfig>(props: T) =>
   invokeFilePicker(props, useImperativeFilePicker) as {
     result: {
-      current: ImperativeFilePickerReturnTypes;
+      current: ImperativeFilePickerReturnTypes<ExtractContentTypeFromConfig<T>>;
     };
     input: { current: HTMLInputElement };
   };

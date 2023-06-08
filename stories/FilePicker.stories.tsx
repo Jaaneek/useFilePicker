@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { useFilePicker, Validator } from '../src';
 import { FileContent, ReadType, UseFilePickerConfig } from '../src/interfaces';
 
-const renderDependingOnReaderType = (file: FileContent, readAs: ReadType) => {
+const renderDependingOnReaderType = (file: FileContent<string>, readAs: ReadType) => {
   switch (readAs) {
     case 'DataURL':
       return (

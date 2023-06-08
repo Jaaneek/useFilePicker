@@ -1,21 +1,30 @@
 import { useCallback, useState } from 'react';
-import { FileContent, ImperativeFilePickerReturnTypes, UseFilePickerConfig } from './interfaces';
+import {
+  ExtractContentTypeFromConfig,
+  FileContent,
+  ImperativeFilePickerReturnTypes,
+  SelectedFiles,
+  SelectedFilesOrErrors,
+  UseFilePickerConfig,
+} from './interfaces';
 import useFilePicker from './useFilePicker';
 import persistentFileLimitValidator from './validators/persistentFilesLimitValidator';
 
 /**
  * A version of useFilePicker hook that keeps selected files between selections. On top of that it allows to remove files from the selection.
  */
-function useImperativeFilePicker(props: UseFilePickerConfig): ImperativeFilePickerReturnTypes {
+function useImperativeFilePicker<ConfigType extends UseFilePickerConfig>(
+  props: ConfigType
+): ImperativeFilePickerReturnTypes<ExtractContentTypeFromConfig<ConfigType>> {
   const { readFilesContent, onFilesSelected, onFilesSuccessfulySelected } = props;
 
   const [allPlainFiles, setAllPlainFiles] = useState<File[]>([]);
-  const [allFilesContent, setAllFilesContent] = useState<FileContent[]>([]);
+  const [allFilesContent, setAllFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
 
   const [open, { loading, errors, clear }] = useFilePicker({
     ...props,
     validators: [persistentFileLimitValidator(allPlainFiles), ...(props.validators || [])],
-    onFilesSelected: data => {
+    onFilesSelected: (data: SelectedFilesOrErrors<any>) => {
       if (!onFilesSelected) return;
       if (data.errors?.length) {
         return onFilesSelected(data);
@@ -27,7 +36,7 @@ function useImperativeFilePicker(props: UseFilePickerConfig): ImperativeFilePick
         filesContent: [...allFilesContent, ...(data.filesContent || [])],
       });
     },
-    onFilesSuccessfulySelected: data => {
+    onFilesSuccessfulySelected: (data: SelectedFiles<any>) => {
       setAllPlainFiles(previousPlainFiles => previousPlainFiles.concat(data.plainFiles));
       setAllFilesContent(previousFilesContent => previousFilesContent.concat(data.filesContent));
 
@@ -40,17 +49,14 @@ function useImperativeFilePicker(props: UseFilePickerConfig): ImperativeFilePick
     },
   });
 
-  const clearPreviousFiles = useCallback(() => {
+  const clearAll = useCallback(() => {
+    clear();
+    // clear previous files
     setAllPlainFiles([]);
     if (readFilesContent) {
       setAllFilesContent([]);
     }
-  }, [readFilesContent]);
-
-  const clearAll = useCallback(() => {
-    clear();
-    clearPreviousFiles();
-  }, [clear, clearPreviousFiles]);
+  }, [clear, readFilesContent]);
 
   const removeFileByIndex = useCallback((index: number) => {
     setAllPlainFiles(previousPlainFiles => [

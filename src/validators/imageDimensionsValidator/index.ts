@@ -1,5 +1,5 @@
 import { FileWithPath } from 'file-selector';
-import { ImageDimensionError, ImageDims, UseFilePickerConfig } from '../../interfaces';
+import { ImageDimensionError, ImageDimensionRestrictionsConfig, UseFilePickerConfig } from '../../interfaces';
 import { Validator } from '../validatorInterface';
 
 export default class ImageDimensionsValidator implements Validator {
@@ -17,7 +17,7 @@ export default class ImageDimensionsValidator implements Validator {
 
 const isImage = (fileType: string) => fileType.startsWith('image');
 
-const checkImageDimensions = (imgDataURL: string, imageSizeRestrictions: ImageDims) =>
+const checkImageDimensions = (imgDataURL: string, imageSizeRestrictions: ImageDimensionRestrictionsConfig) =>
   new Promise<void>((resolve, reject) => {
     const img = new Image();
     img.onload = function () {

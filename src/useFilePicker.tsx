@@ -1,6 +1,13 @@
 import { useState, useCallback } from 'react';
 import { fromEvent, FileWithPath } from 'file-selector';
-import { UseFilePickerConfig, FileContent, FilePickerReturnTypes, FileError, ReaderMethod } from './interfaces';
+import {
+  UseFilePickerConfig,
+  FileContent,
+  FilePickerReturnTypes,
+  FileError,
+  ReaderMethod,
+  ExtractContentTypeFromConfig,
+} from './interfaces';
 import FileSizeValidator from './validators/fileSizeValidator';
 import FilesLimitValidator from './validators/filesLimitValidator';
 import { Validator } from './validators/validatorInterface';
@@ -9,7 +16,9 @@ import ImageDimensionsValidator from './validators/imageDimensionsValidator';
 
 const VALIDATORS: Validator[] = [new FileSizeValidator(), new FilesLimitValidator(), new ImageDimensionsValidator()];
 
-function useFilePicker(props: UseFilePickerConfig): FilePickerReturnTypes {
+function useFilePicker<ConfigType extends UseFilePickerConfig>(
+  props: ConfigType
+): FilePickerReturnTypes<ExtractContentTypeFromConfig<ConfigType>> {
   const {
     accept = '*',
     multiple = true,
@@ -22,7 +31,7 @@ function useFilePicker(props: UseFilePickerConfig): FilePickerReturnTypes {
     initializeWithCustomParameters,
   } = props;
   const [plainFiles, setPlainFiles] = useState<File[]>([]);
-  const [filesContent, setFilesContent] = useState<FileContent[]>([]);
+  const [filesContent, setFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
   const [fileErrors, setFileErrors] = useState<FileError[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -33,8 +42,11 @@ function useFilePicker(props: UseFilePickerConfig): FilePickerReturnTypes {
   }, []);
 
   const parseFile = (file: FileWithPath) =>
-    new Promise<FileContent>(
-      async (resolve: (fileContent: FileContent) => void, reject: (reason: FileError) => void) => {
+    new Promise<FileContent<ExtractContentTypeFromConfig<ConfigType>>>(
+      async (
+        resolve: (fileContent: FileContent<ExtractContentTypeFromConfig<ConfigType>>) => void,
+        reject: (reason: FileError) => void
+      ) => {
         const reader = new FileReader();
 
         //availible reader methods: readAsText, readAsBinaryString, readAsArrayBuffer, readAsDataURL
@@ -57,7 +69,7 @@ function useFilePicker(props: UseFilePickerConfig): FilePickerReturnTypes {
                 content: reader.result as string,
                 name: file.name,
                 lastModified: file.lastModified,
-              } as FileContent)
+              } as FileContent<ExtractContentTypeFromConfig<ConfigType>>)
             )
             .catch(() => {});
 
@@ -112,7 +124,7 @@ function useFilePicker(props: UseFilePickerConfig): FilePickerReturnTypes {
               fileErrors.push(fileError);
             })
           )
-        )) as FileContent[];
+        )) as FileContent<ExtractContentTypeFromConfig<ConfigType>>[];
         setLoading(false);
 
         if (fileErrors.length) {
@@ -129,10 +141,10 @@ function useFilePicker(props: UseFilePickerConfig): FilePickerReturnTypes {
         setFilesContent(filesContent);
         setPlainFiles(plainFileObjects);
         setFileErrors([]);
-        onFilesSuccessfulySelected?.({ filesContent, plainFiles: plainFileObjects });
+        onFilesSuccessfulySelected?.({ filesContent: filesContent as any, plainFiles: plainFileObjects });
         onFilesSelected?.({
           plainFiles: plainFileObjects,
-          filesContent,
+          filesContent: filesContent as any,
         });
       },
       initializeWithCustomParameters
