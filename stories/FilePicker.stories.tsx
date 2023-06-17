@@ -106,7 +106,7 @@ const meta: Meta = {
     onFilesRejected: {
       description: 'Callback that is invoked when selected files are rejected due to an error',
     },
-    onFilesSuccessfulySelected: {
+    onFilesSuccessfullySelected: {
       description: 'Callback that is invoked when selected files are successfully selected',
     },
     onFilesSelected: {
@@ -225,12 +225,12 @@ export const onFilesSelected = Template.bind(
     },
   }
 );
-export const onFilesSuccessfulySelected = Template.bind(
+export const onFilesSuccessfullySelected = Template.bind(
   {},
   {
     storyTitle:
-      'Triggers when user selects files without errors. The onFilesSuccessfulySelected callback runs with sucessfuly selected files',
-    onFilesSuccessfulySelected: (data: any) => alert(`successfuly selected ${data.plainFiles.length} files`),
+      'Triggers when user selects files without errors. The onFilesSuccessfullySelected callback runs with sucessfuly selected files',
+    onFilesSuccessfullySelected: (data: any) => alert(`successfully selected ${data.plainFiles.length} files`),
   }
 );
 

@@ -17,7 +17,7 @@ function useFilePicker(props: UseFilePickerConfig): FilePickerReturnTypes {
     readFilesContent = true,
     validators = [],
     onFilesSelected,
-    onFilesSuccessfulySelected,
+    onFilesSuccessfullySelected,
     onFilesRejected,
     initializeWithCustomParameters,
   } = props;
@@ -129,7 +129,7 @@ function useFilePicker(props: UseFilePickerConfig): FilePickerReturnTypes {
         setFilesContent(filesContent);
         setPlainFiles(plainFileObjects);
         setFileErrors([]);
-        onFilesSuccessfulySelected?.({ filesContent, plainFiles: plainFileObjects });
+        onFilesSuccessfullySelected?.({ filesContent, plainFiles: plainFileObjects });
         onFilesSelected?.({
           plainFiles: plainFileObjects,
           filesContent,

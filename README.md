@@ -129,9 +129,9 @@ export default function App() {
       // this callback is called when there were validation errors
       console.log('onFilesRejected', errors);
     },
-    onFilesSuccessfulySelected: ({ plainFiles, filesContent }) => {
+    onFilesSuccessfullySelected: ({ plainFiles, filesContent }) => {
       // this callback is called when there were no validation errors
-      console.log('onFilesSuccessfulySelected', plainFiles, filesContent);
+      console.log('onFilesSuccessfullySelected', plainFiles, filesContent);
     },
   });
 
@@ -239,9 +239,9 @@ const Imperative = () => {
       // this callback is called when there were validation errors
       console.log('onFilesRejected', errors);
     },
-    onFilesSuccessfulySelected: ({ plainFiles, filesContent }) => {
+    onFilesSuccessfullySelected: ({ plainFiles, filesContent }) => {
       // this callback is called when there were no validation errors
-      console.log('onFilesSuccessfulySelected', plainFiles, filesContent);
+      console.log('onFilesSuccessfullySelected', plainFiles, filesContent);
     },
   });
 
@@ -312,7 +312,7 @@ const Imperative = () => {
 | validators                     | Add custom [validation](#custom-validation) logic                                                                                                                                                                              | []            | [MyValidator, MySecondValidator]                  |
 | initializeWithCustomParameters | allows for customization of the input element that is created by the file picker. It accepts a function that takes in the input element as a parameter and can be used to set any desired attributes or styles on the element. | n/a           | (input) => input.setAttribute("disabled", "")     |
 | onFilesSelected                | A callback function that is called when files are successfully selected. The function is passed an array of objects with information about each successfully selected file                                                     | n/a           | (data) => console.log(data)                       |
-| onFilesSuccessfulySelected     | A callback function that is called when files are successfully selected. The function is passed an array of objects with information about each successfully selected file                                                     | n/a           | (data) => console.log(data)                       |
+| onFilesSuccessfullySelected     | A callback function that is called when files are successfully selected. The function is passed an array of objects with information about each successfully selected file                                                     | n/a           | (data) => console.log(data)                       |
 | onFilesRejected                | A callback function that is called when files are rejected due to validation errors or other issues. The function is passed an array of objects with information about each rejected file                                      | n/a           | (data) => console.log(data)                       |
 
 ### Returns
@@ -384,7 +384,7 @@ UseFilePickerConfig extends Options {
   imageSizeRestrictions?: ImageDims;
   validators?: Validator[];
   onFilesSelected?: (data: SelectedFilesOrErrors) => void;
-  onFilesSuccessfulySelected?: (data: SelectedFiles) => void;
+  onFilesSuccessfullySelected?: (data: SelectedFiles) => void;
   onFilesRejected?: (data: FileErrors) => void;
   initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
 }

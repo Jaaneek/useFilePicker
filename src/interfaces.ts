@@ -30,7 +30,7 @@ export interface UseFilePickerConfig extends Options {
   imageSizeRestrictions?: ImageDims;
   validators?: Validator[];
   onFilesSelected?: (data: SelectedFilesOrErrors) => void;
-  onFilesSuccessfulySelected?: (data: SelectedFiles) => void;
+  onFilesSuccessfullySelected?: (data: SelectedFiles) => void;
   onFilesRejected?: (data: FileErrors) => void;
   initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
 }

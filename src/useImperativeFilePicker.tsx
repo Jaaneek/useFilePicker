@@ -7,7 +7,7 @@ import persistentFileLimitValidator from './validators/persistentFilesLimitValid
  * A version of useFilePicker hook that keeps selected files between selections. On top of that it allows to remove files from the selection.
  */
 function useImperativeFilePicker(props: UseFilePickerConfig): ImperativeFilePickerReturnTypes {
-  const { readFilesContent, onFilesSelected, onFilesSuccessfulySelected } = props;
+  const { readFilesContent, onFilesSelected, onFilesSuccessfullySelected } = props;
 
   const [allPlainFiles, setAllPlainFiles] = useState<File[]>([]);
   const [allFilesContent, setAllFilesContent] = useState<FileContent[]>([]);
@@ -27,13 +27,13 @@ function useImperativeFilePicker(props: UseFilePickerConfig): ImperativeFilePick
         filesContent: [...allFilesContent, ...(data.filesContent || [])],
       });
     },
-    onFilesSuccessfulySelected: data => {
+    onFilesSuccessfullySelected: data => {
       setAllPlainFiles(previousPlainFiles => previousPlainFiles.concat(data.plainFiles));
       setAllFilesContent(previousFilesContent => previousFilesContent.concat(data.filesContent));
 
-      if (!onFilesSuccessfulySelected) return;
+      if (!onFilesSuccessfullySelected) return;
       // override the files property to return all files that were selected previously and in the current batch
-      onFilesSuccessfulySelected({
+      onFilesSuccessfullySelected({
         plainFiles: [...allPlainFiles, ...(data.plainFiles || [])],
         filesContent: [...allFilesContent, ...(data.filesContent || [])],
       });
