@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { fromEvent, FileWithPath } from 'file-selector';
 import {
   UseFilePickerConfig,
@@ -8,13 +8,8 @@ import {
   ReaderMethod,
   ExtractContentTypeFromConfig,
 } from './interfaces';
-import FileSizeValidator from './validators/fileSizeValidator';
-import FilesLimitValidator from './validators/filesLimitValidator';
-import { Validator } from './validators/validatorInterface';
 import { openFileDialog } from './helpers/openFileDialog';
-import ImageDimensionsValidator from './validators/imageDimensionsValidator';
-
-const VALIDATORS: Validator[] = [new FileSizeValidator(), new FilesLimitValidator(), new ImageDimensionsValidator()];
+import { useValidators } from './validators/useValidators';
 
 function useFilePicker<ConfigType extends UseFilePickerConfig>(
   props: ConfigType
@@ -25,21 +20,29 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
     readAs = 'Text',
     readFilesContent = true,
     validators = [],
-    onFilesSelected,
-    onFilesSuccessfulySelected,
-    onFilesRejected,
     initializeWithCustomParameters,
   } = props;
+
   const [plainFiles, setPlainFiles] = useState<File[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
   const [fileErrors, setFileErrors] = useState<FileError[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const uniqueHookId = useMemo(() => crypto.randomUUID(), []);
+  const { onFilesSelected, onFilesSuccessfulySelected, onFilesRejected, onClear } = useValidators({
+    ...props,
+    uniqueHookId,
+  } as any);
 
   const clear: () => void = useCallback(() => {
     setPlainFiles([]);
     setFilesContent([]);
     setFileErrors([]);
   }, []);
+
+  const clearWithEventListener: () => void = useCallback(() => {
+    clear();
+    onClear?.();
+  }, [onClear]);
 
   const parseFile = (file: FileWithPath) =>
     new Promise<FileContent<ExtractContentTypeFromConfig<ConfigType>>>(
@@ -59,7 +62,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
 
         reader.onload = async () =>
           Promise.all(
-            VALIDATORS.concat(validators).map(validator =>
+            validators.map(validator =>
               validator.validateAfterParsing(props, file, reader).catch(err => Promise.reject(addError(err)))
             )
           )
@@ -79,7 +82,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
       }
     );
 
-  const openFileSelector = () => {
+  const openFilePicker = () => {
     const fileExtensions = accept instanceof Array ? accept.join(',') : accept;
     openFileDialog(
       fileExtensions,
@@ -91,20 +94,21 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
 
         setLoading(true);
 
-        const validations = (
+        const validationsBeforeParsing = (
           (await Promise.all(
-            VALIDATORS.concat(validators).map(validator =>
+            validators.map(validator =>
               validator.validateBeforeParsing(props, plainFileObjects).catch((err: FileError) => err)
             )
           )) as FileError[]
         ).filter(Boolean);
 
         setPlainFiles(plainFileObjects);
-        setFileErrors(validations);
-        if (validations.length) {
+        setFileErrors(validationsBeforeParsing);
+        if (validationsBeforeParsing.length) {
           setLoading(false);
-          onFilesRejected?.({ errors: validations });
-          onFilesSelected?.({ errors: validations });
+          setPlainFiles([]);
+          onFilesRejected?.({ errors: validationsBeforeParsing });
+          onFilesSelected?.({ errors: validationsBeforeParsing });
           return;
         }
 
@@ -116,24 +120,24 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
 
         const files = (await fromEvent(evt)) as FileWithPath[];
 
-        const fileErrors: FileError[] = [];
+        const validationsAfterParsing: FileError[] = [];
         const filesContent = (await Promise.all(
           files.map(file =>
             parseFile(file).catch(fileError => {
               fileError.plainFile = file;
-              fileErrors.push(fileError);
+              validationsAfterParsing.push(fileError);
             })
           )
         )) as FileContent<ExtractContentTypeFromConfig<ConfigType>>[];
         setLoading(false);
 
-        if (fileErrors.length) {
+        if (validationsAfterParsing.length) {
           setPlainFiles([]);
           setFilesContent([]);
-          setFileErrors(errors => [...errors, ...fileErrors]);
-          onFilesRejected?.({ errors: fileErrors });
+          setFileErrors(errors => [...errors, ...validationsAfterParsing]);
+          onFilesRejected?.({ errors: validationsAfterParsing });
           onFilesSelected?.({
-            errors: validations.concat(fileErrors),
+            errors: validationsBeforeParsing.concat(validationsAfterParsing),
           });
           return;
         }
@@ -151,7 +155,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
     );
   };
 
-  return [openFileSelector, { filesContent, errors: fileErrors, loading, plainFiles, clear }];
+  return { openFilePicker, filesContent, errors: fileErrors, loading, plainFiles, clear: clearWithEventListener };
 }
 
 export default useFilePicker;

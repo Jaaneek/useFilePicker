@@ -1,14 +1,9 @@
 import { FileWithPath } from 'file-selector';
-import { Validator } from './validators/validatorInterface';
+import { Validator } from './validators/validatorBase';
 import { XOR } from 'ts-xor';
 export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
 export type ReaderMethod = keyof FileReader;
-
-export interface LimitFilesConfig {
-  min?: number;
-  max?: number;
-}
 
 export type SelectedFiles<ContentType> = {
   plainFiles: File[];
@@ -24,10 +19,9 @@ export type SelectedFilesOrErrors<ContentType> = XOR<SelectedFiles<ContentType>,
 type UseFilePickerConfigCommon = {
   multiple?: boolean;
   accept?: string | string[];
-  limitFilesConfig?: LimitFilesConfig;
-  imageSizeRestrictions?: ImageDimensionRestrictionsConfig;
   validators?: Validator[];
   onFilesRejected?: (data: FileErrors) => void;
+  onClear?: () => void;
   initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
 };
 
@@ -55,7 +49,7 @@ type ReadFileContentConfig =
 
 export type ExtractContentTypeFromConfig<Config> = Config extends { readAs: 'ArrayBuffer' } ? ArrayBuffer : string;
 
-export type UseFilePickerConfig = UseFilePickerConfigCommon & FileSizeRestrictions & ReadFileContentConfig;
+export type UseFilePickerConfig = UseFilePickerConfigCommon & ReadFileContentConfig;
 
 export interface FileContent<ContentType> extends Blob {
   lastModified: number;
@@ -63,24 +57,21 @@ export interface FileContent<ContentType> extends Blob {
   content: ContentType;
 }
 
-export type FilePickerReturnTypes<ContentType> = [
-  () => void,
-  {
-    filesContent: FileContent<ContentType>[];
-    errors: FileError[];
-    loading: boolean;
-    plainFiles: File[];
-    clear: () => void;
-  }
-];
+export type FilePickerReturnTypes<ContentType> = {
+  openFilePicker: () => void;
+  filesContent: FileContent<ContentType>[];
+  errors: FileError[];
+  loading: boolean;
+  plainFiles: File[];
+  clear: () => void;
+};
 
-export type ImperativeFilePickerReturnTypes<ContentType> = [
-  FilePickerReturnTypes<ContentType>[0],
-  FilePickerReturnTypes<ContentType>[1] & {
-    removeFileByIndex: (index: number) => void;
-    removeFileByReference: (file: File) => void;
-  }
-];
+export type ImperativeFilePickerReturnTypes<ContentType> = FilePickerReturnTypes<ContentType> & {
+  removeFileByIndex: (index: number) => void;
+  removeFileByReference: (file: File) => void;
+};
+
+// ========== VALIDATOR CONFIGS ==========
 
 export interface ImageDimensionRestrictionsConfig {
   minWidth?: number;
@@ -95,6 +86,13 @@ export interface FileSizeRestrictions {
   /**Maximum file size in mb**/
   maxFileSize?: number;
 }
+
+export interface LimitAmountOfFilesConfig {
+  min?: number;
+  max?: number;
+}
+
+// ========== ERRORS ==========
 
 export interface FileError extends FileSizeError, FileReaderError, FileLimitError, ImageDimensionError {
   name?: string;

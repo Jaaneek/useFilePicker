@@ -1,11 +1,14 @@
 import { FileWithPath } from 'file-selector';
-import { BYTES_PER_MEGABYTE } from '../../constants/bytesPerMegabyte';
-import { UseFilePickerConfig } from '../../interfaces';
-import { Validator } from '../validatorInterface';
+import { FileSizeRestrictions, UseFilePickerConfig } from '../../interfaces';
+import { Validator } from '../validatorBase';
 
-export default class FileSizeValidator implements Validator {
-  async validateBeforeParsing(config: UseFilePickerConfig, plainFiles: File[]): Promise<void> {
-    const { minFileSize, maxFileSize } = config;
+export default class FileSizeValidator extends Validator {
+  constructor(private fileSizeRestrictions: FileSizeRestrictions) {
+    super();
+  }
+
+  async validateBeforeParsing(_config: UseFilePickerConfig, plainFiles: File[]): Promise<void> {
+    const { minFileSize, maxFileSize } = this.fileSizeRestrictions;
 
     if (!minFileSize && !maxFileSize) {
       return Promise.resolve();
@@ -32,13 +35,13 @@ const getFileSizeError = ({
   fileSize: number;
 }) => {
   if (minFileSize) {
-    const minBytes = minFileSize * BYTES_PER_MEGABYTE;
+    const minBytes = minFileSize;
     if (fileSize < minBytes) {
       return { fileSizeTooSmall: true };
     }
   }
   if (maxFileSize) {
-    const maxBytes = maxFileSize * BYTES_PER_MEGABYTE;
+    const maxBytes = maxFileSize;
     if (fileSize > maxBytes) {
       return { fileSizeToolarge: true };
     }

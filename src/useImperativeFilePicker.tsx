@@ -8,7 +8,6 @@ import {
   UseFilePickerConfig,
 } from './interfaces';
 import useFilePicker from './useFilePicker';
-import persistentFileLimitValidator from './validators/persistentFilesLimitValidator';
 
 /**
  * A version of useFilePicker hook that keeps selected files between selections. On top of that it allows to remove files from the selection.
@@ -21,9 +20,8 @@ function useImperativeFilePicker<ConfigType extends UseFilePickerConfig>(
   const [allPlainFiles, setAllPlainFiles] = useState<File[]>([]);
   const [allFilesContent, setAllFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
 
-  const [open, { loading, errors, clear }] = useFilePicker({
+  const { openFilePicker, loading, errors, clear } = useFilePicker({
     ...props,
-    validators: [persistentFileLimitValidator(allPlainFiles), ...(props.validators || [])],
     onFilesSelected: (data: SelectedFilesOrErrors<any>) => {
       if (!onFilesSelected) return;
       if (data.errors?.length) {
@@ -78,18 +76,16 @@ function useImperativeFilePicker<ConfigType extends UseFilePickerConfig>(
     [removeFileByIndex, allPlainFiles]
   );
 
-  return [
-    open,
-    {
-      plainFiles: allPlainFiles,
-      filesContent: allFilesContent,
-      loading,
-      errors,
-      clear: clearAll,
-      removeFileByIndex,
-      removeFileByReference,
-    },
-  ];
+  return {
+    openFilePicker,
+    plainFiles: allPlainFiles,
+    filesContent: allFilesContent,
+    loading,
+    errors,
+    clear: clearAll,
+    removeFileByIndex,
+    removeFileByReference,
+  };
 }
 
 export default useImperativeFilePicker;

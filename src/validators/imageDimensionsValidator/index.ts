@@ -1,15 +1,19 @@
 import { FileWithPath } from 'file-selector';
 import { ImageDimensionError, ImageDimensionRestrictionsConfig, UseFilePickerConfig } from '../../interfaces';
-import { Validator } from '../validatorInterface';
+import { Validator } from '../validatorBase';
 
-export default class ImageDimensionsValidator implements Validator {
+export default class ImageDimensionsValidator extends Validator {
+  constructor(private imageSizeRestrictions: ImageDimensionRestrictionsConfig) {
+    super();
+  }
+
   validateBeforeParsing(): Promise<void> {
     return Promise.resolve();
   }
   validateAfterParsing(config: UseFilePickerConfig, file: FileWithPath, reader: FileReader): Promise<void> {
-    const { readAs, imageSizeRestrictions } = config;
-    if (readAs === 'DataURL' && imageSizeRestrictions && isImage(file.type)) {
-      return checkImageDimensions(reader.result as string, imageSizeRestrictions);
+    const { readAs } = config;
+    if (readAs === 'DataURL' && this.imageSizeRestrictions && isImage(file.type)) {
+      return checkImageDimensions(reader.result as string, this.imageSizeRestrictions);
     }
     return Promise.resolve();
   }
