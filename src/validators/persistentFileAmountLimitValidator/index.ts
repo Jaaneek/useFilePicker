@@ -1,10 +1,10 @@
-import { LimitAmountOfFilesConfig, UseFilePickerConfig } from '../../interfaces';
+import { FileAmountLimitConfig, FileAmountLimitError, UseFilePickerConfig } from '../../interfaces';
 import { Validator } from '../validatorBase';
 
-class PersistentAmountOfFilesLimitValidator extends Validator {
+class PersistentFileAmountLimitValidator extends Validator {
   private previousPlainFiles: File[] = [];
 
-  constructor(private limitFilesConfig: LimitAmountOfFilesConfig) {
+  constructor(private limitFilesConfig: FileAmountLimitConfig) {
     super();
   }
 
@@ -20,11 +20,17 @@ class PersistentAmountOfFilesLimitValidator extends Validator {
     const fileAmount = this.previousPlainFiles.length + plainFiles.length;
     const { min, max } = this.limitFilesConfig;
     if (max && fileAmount > max) {
-      return Promise.reject({ maxLimitExceeded: true });
+      return Promise.reject({
+        name: 'FileAmountLimitError',
+        reason: 'MAX_AMOUNT_OF_FILES_EXCEEDED',
+      } as FileAmountLimitError);
     }
 
     if (min && fileAmount < min) {
-      return Promise.reject({ minLimitNotReached: true });
+      return Promise.reject({
+        name: 'FileAmountLimitError',
+        reason: 'MIN_AMOUNT_OF_FILES_NOT_REACHED',
+      } as FileAmountLimitError);
     }
 
     this.previousPlainFiles = [...this.previousPlainFiles, ...plainFiles];
@@ -37,4 +43,4 @@ class PersistentAmountOfFilesLimitValidator extends Validator {
   }
 }
 
-export default PersistentAmountOfFilesLimitValidator;
+export default PersistentFileAmountLimitValidator;

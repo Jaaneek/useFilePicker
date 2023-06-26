@@ -43,14 +43,16 @@ const FilePickerComponent = (props: UseFilePickerConfig & { storyTitle: string }
         <div>
           errors:
           <br />
-          {Object.entries(errors[0])
-            .filter(([, value]) => value === true)
-            .map(([key]) => key)
-            .map(key => (
-              <div key={key} style={{ color: 'red' }}>
-                {key}
-              </div>
-            ))}
+          {errors.map((error, index) => (
+            <div key={error.name}>
+              <span>{index + 1}.</span>
+              {Object.entries(error).map(([key, value]) => (
+                <div key={key}>
+                  {key}: {typeof value === 'string' ? value : Array.isArray(value) ? value.join(', ') : null}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       ) : null}
       <br />

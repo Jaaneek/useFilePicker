@@ -4,7 +4,7 @@ import {
   UseFilePickerConfig,
   FileContent,
   FilePickerReturnTypes,
-  FileError,
+  UseFilePickerError,
   ReaderMethod,
   ExtractContentTypeFromConfig,
 } from './interfaces';
@@ -25,7 +25,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
 
   const [plainFiles, setPlainFiles] = useState<File[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
-  const [fileErrors, setFileErrors] = useState<FileError[]>([]);
+  const [fileErrors, setFileErrors] = useState<UseFilePickerError[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const { onFilesSelected, onFilesSuccessfulySelected, onFilesRejected, onClear } = useValidators(props as any);
 
@@ -44,7 +44,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
     new Promise<FileContent<ExtractContentTypeFromConfig<ConfigType>>>(
       async (
         resolve: (fileContent: FileContent<ExtractContentTypeFromConfig<ConfigType>>) => void,
-        reject: (reason: FileError) => void
+        reject: (reason: UseFilePickerError) => void
       ) => {
         const reader = new FileReader();
 
@@ -52,8 +52,8 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
         const readStrategy = reader[`readAs${readAs}` as ReaderMethod] as typeof reader.readAsText;
         readStrategy.call(reader, file);
 
-        const addError = ({ name = file.name, ...others }: FileError) => {
-          reject({ name, fileSizeToolarge: false, fileSizeTooSmall: false, ...others });
+        const addError = ({ fileName = file.name, ...others }: UseFilePickerError) => {
+          reject({ fileName, ...others });
         };
 
         reader.onload = async () =>
@@ -73,7 +73,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
             .catch(() => {});
 
         reader.onerror = () => {
-          addError({ readerError: reader.error, plainFile: file });
+          addError({ name: 'FileReaderError', fileName: file.name, readerError: reader.error, causedByFile: file });
         };
       }
     );
@@ -91,12 +91,16 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
         setLoading(true);
 
         const validationsBeforeParsing = (
-          (await Promise.all(
+          await Promise.all(
             validators.map(validator =>
-              validator.validateBeforeParsing(props, plainFileObjects).catch((err: FileError) => err)
+              validator
+                .validateBeforeParsing(props, plainFileObjects)
+                .catch((err: UseFilePickerError | UseFilePickerError[]) => (Array.isArray(err) ? err : [err]))
             )
-          )) as FileError[]
-        ).filter(Boolean);
+          )
+        )
+          .flat(1)
+          .filter(Boolean) as UseFilePickerError[];
 
         setPlainFiles(plainFileObjects);
         setFileErrors(validationsBeforeParsing);
@@ -116,12 +120,11 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
 
         const files = (await fromEvent(evt)) as FileWithPath[];
 
-        const validationsAfterParsing: FileError[] = [];
+        const validationsAfterParsing: UseFilePickerError[] = [];
         const filesContent = (await Promise.all(
           files.map(file =>
-            parseFile(file).catch(fileError => {
-              fileError.plainFile = file;
-              validationsAfterParsing.push(fileError);
+            parseFile(file).catch((fileError: UseFilePickerError | UseFilePickerError[]) => {
+              validationsAfterParsing.push(...(Array.isArray(fileError) ? fileError : [fileError]));
             })
           )
         )) as FileContent<ExtractContentTypeFromConfig<ConfigType>>[];

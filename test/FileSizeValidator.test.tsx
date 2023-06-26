@@ -1,5 +1,5 @@
-import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/react';
 import { createFileOfSize, invokeUseFilePicker } from './testUtils';
 import { FileSizeValidator } from '../src';
@@ -14,7 +14,11 @@ describe('FileSizeRestrictions', () => {
 
     await waitFor(() => result.current.loading === false);
 
-    expect(result.current.errors[0].fileSizeToolarge).toBe(true);
+    if (result.current.errors[0].name === 'FileSizeError') {
+      expect(result.current.errors[0].reason === 'FILE_SIZE_TOO_LARGE').toBe(true);
+    } else {
+      fail('Expected FileSizeError');
+    }
   });
 
   it('should check minimum file size', async () => {
@@ -25,6 +29,10 @@ describe('FileSizeRestrictions', () => {
     await userEvent.upload(input.current!, bigFile);
 
     await waitFor(() => result.current.loading === false);
-    expect(result.current.errors[0].fileSizeTooSmall).toBe(true);
+    if (result.current.errors[0].name === 'FileSizeError') {
+      expect(result.current.errors[0].reason === 'FILE_SIZE_TOO_SMALL').toBe(true);
+    } else {
+      fail('Expected FileSizeError');
+    }
   });
 });

@@ -1,6 +1,72 @@
 import { FileWithPath } from 'file-selector';
 import { Validator } from './validators/validatorBase';
 import { XOR } from 'ts-xor';
+
+// ========== ERRORS ==========
+
+export type UseFilePickerError = { fileName: string } & (
+  | FileSizeError
+  | FileReaderError
+  | FileAmountLimitError
+  | ImageDimensionError
+);
+
+export interface FileReaderError {
+  name: 'FileReaderError';
+  causedByFile: FileWithPath;
+  readerError?: DOMException | null;
+}
+
+export interface FileAmountLimitError {
+  name: 'FileAmountLimitError';
+  reason: 'MIN_AMOUNT_OF_FILES_NOT_REACHED' | 'MAX_AMOUNT_OF_FILES_EXCEEDED';
+}
+
+export interface FileSizeError {
+  name: 'FileSizeError';
+  causedByFile: FileWithPath;
+  reason: 'FILE_SIZE_TOO_LARGE' | 'FILE_SIZE_TOO_SMALL';
+}
+
+export interface ImageDimensionError {
+  name: 'ImageDimensionError';
+  causedByFile: FileWithPath;
+  reasons: (
+    | 'IMAGE_WIDTH_TOO_BIG'
+    | 'IMAGE_WIDTH_TOO_SMALL'
+    | 'IMAGE_HEIGHT_TOO_BIG'
+    | 'IMAGE_HEIGHT_TOO_SMALL'
+    | 'IMAGE_NOT_LOADED'
+  )[];
+}
+
+export type FileErrors = {
+  errors: UseFilePickerError[];
+};
+
+// ========== VALIDATOR CONFIGS ==========
+
+export interface ImageDimensionRestrictionsConfig {
+  minWidth?: number;
+  maxWidth?: number;
+  minHeight?: number;
+  maxHeight?: number;
+}
+
+export interface FileSizeRestrictions {
+  /**Minimum file size in mb**/
+  minFileSize?: number;
+  /**Maximum file size in mb**/
+  maxFileSize?: number;
+}
+
+export interface FileAmountLimitConfig {
+  min?: number;
+  max?: number;
+}
+
+// ========== MAIN TYPES ==========
+
 export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
 export type ReaderMethod = keyof FileReader;
@@ -8,10 +74,6 @@ export type ReaderMethod = keyof FileReader;
 export type SelectedFiles<ContentType> = {
   plainFiles: File[];
   filesContent: FileContent<ContentType>[];
-};
-
-export type FileErrors = {
-  errors: FileError[];
 };
 
 export type SelectedFilesOrErrors<ContentType> = XOR<SelectedFiles<ContentType>, FileErrors>;
@@ -60,7 +122,7 @@ export interface FileContent<ContentType> extends Blob {
 export type FilePickerReturnTypes<ContentType> = {
   openFilePicker: () => void;
   filesContent: FileContent<ContentType>[];
-  errors: FileError[];
+  errors: UseFilePickerError[];
   loading: boolean;
   plainFiles: File[];
   clear: () => void;
@@ -70,53 +132,3 @@ export type ImperativeFilePickerReturnTypes<ContentType> = FilePickerReturnTypes
   removeFileByIndex: (index: number) => void;
   removeFileByReference: (file: File) => void;
 };
-
-// ========== VALIDATOR CONFIGS ==========
-
-export interface ImageDimensionRestrictionsConfig {
-  minWidth?: number;
-  maxWidth?: number;
-  minHeight?: number;
-  maxHeight?: number;
-}
-
-export interface FileSizeRestrictions {
-  /**Minimum file size in mb**/
-  minFileSize?: number;
-  /**Maximum file size in mb**/
-  maxFileSize?: number;
-}
-
-export interface LimitAmountOfFilesConfig {
-  min?: number;
-  max?: number;
-}
-
-// ========== ERRORS ==========
-
-export interface FileError extends FileSizeError, FileReaderError, FileLimitError, ImageDimensionError {
-  name?: string;
-  plainFile: FileWithPath;
-}
-
-export interface FileReaderError {
-  readerError?: DOMException | null;
-}
-
-export interface FileLimitError {
-  minLimitNotReached?: boolean;
-  maxLimitExceeded?: boolean;
-}
-
-export interface FileSizeError {
-  fileSizeToolarge?: boolean;
-  fileSizeTooSmall?: boolean;
-}
-
-export interface ImageDimensionError {
-  imageWidthTooBig?: boolean;
-  imageWidthTooSmall?: boolean;
-  imageHeightTooBig?: boolean;
-  imageHeightTooSmall?: boolean;
-  imageNotLoaded?: boolean;
-}

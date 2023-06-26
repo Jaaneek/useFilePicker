@@ -1,10 +1,10 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
-import { PersistentAmountOfFilesLimitValidator, useImperativeFilePicker } from '../src';
+import { PersistentFileAmountLimitValidator, useImperativeFilePicker } from '../src';
 
 const Imperative = () => {
   // for imperative file picker, if you want to limit amount of files selected by user, you need to pass persistent validator
-  const validators = React.useMemo(() => [new PersistentAmountOfFilesLimitValidator({ min: 2, max: 3 })], []);
+  const validators = React.useMemo(() => [new PersistentFileAmountLimitValidator({ min: 2, max: 3 })], []);
 
   const { openFilePicker, filesContent, loading, errors, plainFiles, clear, removeFileByIndex, removeFileByReference } =
     useImperativeFilePicker({
@@ -44,14 +44,16 @@ const Imperative = () => {
       {!!errors.length && (
         <>
           Errors:
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {console.log(errors)}
-            {Object.entries(errors[0])
-              .filter(([key, value]) => key !== 'name' && value)
-              .map(([key]) => (
-                <div key={key}>{key}</div>
+          {errors.map((error, index) => (
+            <div key={error.name}>
+              <span>{index + 1}.</span>
+              {Object.entries(error).map(([key, value]) => (
+                <div key={key}>
+                  {key}: {typeof value === 'string' ? value : Array.isArray(value) ? value.join(', ') : null}
+                </div>
               ))}
-          </div>
+            </div>
+          ))}
         </>
       )}
       <br />

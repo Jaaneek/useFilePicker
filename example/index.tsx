@@ -1,13 +1,7 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {
-  useFilePicker,
-  FileSizeValidator,
-  AmountOfFilesLimitValidator,
-  UseFilePickerConfig,
-  ImageDimensionsValidator,
-} from '../src';
+import { useFilePicker, FileAmountLimitValidator, UseFilePickerConfig, ImageDimensionsValidator } from '../src';
 import { Validator } from '../src';
 import Imperative from './imperative';
 import { FileWithPath } from 'file-selector';
@@ -45,7 +39,7 @@ const App = () => {
     accept: ['.png', '.jpeg', '.heic'],
     // readFilesContent: false, // ignores file content,
     validators: [
-      new AmountOfFilesLimitValidator({ min: 1, max: 3 }),
+      new FileAmountLimitValidator({ min: 1, max: 3 }),
       // new FileSizeValidator({ maxFileSize: 100_000 /* 100kb in bytes */ }),
       new ImageDimensionsValidator({ maxHeight: 600 }),
     ],
@@ -78,11 +72,16 @@ const App = () => {
       {errors.length ? (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ marginTop: '10px' }}>Errors:</div>
-          {Object.entries(errors[0])
-            .filter(([key, value]) => key !== 'name' && value)
-            .map(([key]) => (
-              <div key={key}>{key}</div>
-            ))}
+          {errors.map((error, index) => (
+            <div key={error.name}>
+              <span>{index + 1}.</span>
+              {Object.entries(error).map(([key, value]) => (
+                <div key={key}>
+                  {key}: {typeof value === 'string' ? value : Array.isArray(value) ? value.join(', ') : null}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       ) : null}
       {/* If readAs is set to DataURL, You can display an image */}
