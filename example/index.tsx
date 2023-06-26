@@ -1,7 +1,13 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { useFilePicker, FileSizeValidator, AmountOfFilesLimitValidator, UseFilePickerConfig } from '../src';
+import {
+  useFilePicker,
+  FileSizeValidator,
+  AmountOfFilesLimitValidator,
+  UseFilePickerConfig,
+  ImageDimensionsValidator,
+} from '../src';
 import { Validator } from '../src';
 import Imperative from './imperative';
 import { FileWithPath } from 'file-selector';
@@ -40,7 +46,8 @@ const App = () => {
     // readFilesContent: false, // ignores file content,
     validators: [
       new AmountOfFilesLimitValidator({ min: 1, max: 3 }),
-      new FileSizeValidator({ maxFileSize: 100_000 /* 100kb in bytes */ }),
+      // new FileSizeValidator({ maxFileSize: 100_000 /* 100kb in bytes */ }),
+      new ImageDimensionsValidator({ maxHeight: 600 }),
     ],
     onFilesSelected: ({ plainFiles, filesContent, errors }) => {
       // this callback is always called, even if there are errors
@@ -91,9 +98,8 @@ const App = () => {
 ReactDOM.render(
   <>
     <h2>useFilePicker</h2>
-    {/* <App /> */}
+    <App />
     <h2>useImperativeFilePicker</h2>
-    <Imperative />
     <Imperative />
   </>,
   document.getElementById('root')

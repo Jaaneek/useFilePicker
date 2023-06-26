@@ -56,16 +56,20 @@ function useImperativeFilePicker<ConfigType extends UseFilePickerConfig>(
     }
   }, [clear, readFilesContent]);
 
-  const removeFileByIndex = useCallback((index: number) => {
-    setAllPlainFiles(previousPlainFiles => [
-      ...previousPlainFiles.slice(0, index),
-      ...previousPlainFiles.slice(index + 1),
-    ]);
-    setAllFilesContent(previousFilesContent => [
-      ...previousFilesContent.slice(0, index),
-      ...previousFilesContent.slice(index + 1),
-    ]);
-  }, []);
+  const removeFileByIndex = useCallback(
+    (index: number) => {
+      setAllPlainFiles(previousPlainFiles => [
+        ...previousPlainFiles.slice(0, index),
+        ...previousPlainFiles.slice(index + 1),
+      ]);
+      setAllFilesContent(previousFilesContent => [
+        ...previousFilesContent.slice(0, index),
+        ...previousFilesContent.slice(index + 1),
+      ]);
+      props.validators?.forEach(validator => validator.onFileRemoved?.(index));
+    },
+    [props.validators]
+  );
 
   const removeFileByReference = useCallback(
     (file: File) => {

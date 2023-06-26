@@ -2,6 +2,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { useFilePicker, Validator } from '../src';
 import { FileContent, ReadType, UseFilePickerConfig } from '../src/interfaces';
+import { FileWithPath } from 'file-selector';
 
 const renderDependingOnReaderType = (file: FileContent<string>, readAs: ReadType) => {
   switch (readAs) {
@@ -31,7 +32,7 @@ const renderDependingOnReaderType = (file: FileContent<string>, readAs: ReadType
 };
 
 const FilePickerComponent = (props: UseFilePickerConfig & { storyTitle: string }) => {
-  const [open, { filesContent, errors, plainFiles, loading }] = useFilePicker({ ...props });
+  const { openFilePicker, filesContent, errors, plainFiles, loading } = useFilePicker({ ...props });
 
   return (
     <>
@@ -53,7 +54,7 @@ const FilePickerComponent = (props: UseFilePickerConfig & { storyTitle: string }
         </div>
       ) : null}
       <br />
-      <button onClick={open}>Open File Picker</button>
+      <button onClick={openFilePicker}>Open File Picker</button>
       {filesContent?.map(file => (file ? renderDependingOnReaderType(file, props.readAs!) : null))}
       {plainFiles?.map(file => (
         <div style={{ margin: '8px' }}>
@@ -190,22 +191,24 @@ export const ImageSizeRestrictions = Template.bind(
   }
 );
 
-const customValidator: Validator = {
-  validateBeforeParsing: async (_config, plainFiles) =>
-    new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true }))),
-  validateAfterParsing: async (_config, file, _reader) =>
-    new Promise((res, rej) =>
+class CustomValidator extends Validator {
+  validateBeforeParsing(_config: UseFilePickerConfig, plainFiles: File[]): Promise<void> {
+    return new Promise((res, rej) => (plainFiles.length % 2 === 0 ? res() : rej({ oddNumberOfFiles: true })));
+  }
+  validateAfterParsing(_config: UseFilePickerConfig, file: FileWithPath, _reader: FileReader): Promise<void> {
+    return new Promise((res, rej) =>
       file.lastModified < new Date().getTime() - 24 * 60 * 60 * 1000
         ? res()
         : rej({ fileRecentlyModified: true, lastModified: file.lastModified })
-    ),
-};
+    );
+  }
+}
 export const CustomValidators = Template.bind(
   {},
   {
     storyTitle:
       'If there is specific validation logic needed, custom validator can be passed to the hook. In this example, custom validator allows only to select files that have not been modified in the last 24 hours and the number of selected files must be even.',
-    validators: [customValidator],
+    validators: [new CustomValidator()],
   }
 );
 export const customParameters = Template.bind(

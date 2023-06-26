@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { fromEvent, FileWithPath } from 'file-selector';
 import {
   UseFilePickerConfig,
@@ -27,11 +27,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
   const [filesContent, setFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
   const [fileErrors, setFileErrors] = useState<FileError[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const uniqueHookId = useMemo(() => crypto.randomUUID(), []);
-  const { onFilesSelected, onFilesSuccessfulySelected, onFilesRejected, onClear } = useValidators({
-    ...props,
-    uniqueHookId,
-  } as any);
+  const { onFilesSelected, onFilesSuccessfulySelected, onFilesRejected, onClear } = useValidators(props as any);
 
   const clear: () => void = useCallback(() => {
     setPlainFiles([]);
@@ -42,7 +38,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
   const clearWithEventListener: () => void = useCallback(() => {
     clear();
     onClear?.();
-  }, [onClear]);
+  }, [clear, onClear]);
 
   const parseFile = (file: FileWithPath) =>
     new Promise<FileContent<ExtractContentTypeFromConfig<ConfigType>>>(

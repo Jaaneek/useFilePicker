@@ -17,11 +17,11 @@ export function createFileOfSize(sizeInBytes: number) {
 
 type UseFilePickerHook = typeof useFilePicker | typeof useImperativeFilePicker;
 
-const invokeFilePicker = (props: UseFilePickerConfig, usePickerHook: UseFilePickerHook) => {
+const invokeFilePicker = (props: UseFilePickerConfig, useFilePicker: UseFilePickerHook) => {
   let input: { current: HTMLInputElement | null } = { current: null };
 
   const { result } = renderHook(() =>
-    usePickerHook({
+    useFilePicker({
       ...props,
       initializeWithCustomParameters(inputElement) {
         input.current = inputElement;
@@ -30,7 +30,7 @@ const invokeFilePicker = (props: UseFilePickerConfig, usePickerHook: UseFilePick
   );
 
   act(() => {
-    result.current[0]();
+    result.current.openFilePicker();
   });
 
   if (!isInputElement(input.current!)) throw new Error('Input not found');

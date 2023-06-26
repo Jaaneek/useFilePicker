@@ -24,9 +24,9 @@ describe('DefaultPicker', () => {
     ];
     await user.upload(input.current!, files);
 
-    await waitFor(() => result.current[1].loading === false);
+    await waitFor(() => result.current.loading === false);
 
-    expect(result.current[1].plainFiles.length).toBe(2);
+    expect(result.current.plainFiles.length).toBe(2);
     expect(input.current!.files).toHaveLength(2);
     expect(input.current!.files?.[0]).toStrictEqual(files[0]);
     expect(input.current!.files?.[1]).toStrictEqual(files[1]);

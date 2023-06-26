@@ -1,34 +1,20 @@
-import { useEffect } from 'react';
 import { Validator } from './validatorBase';
 import { SelectedFilesOrErrors, ExtractContentTypeFromConfig } from '../interfaces';
 
 export const useValidators = <ConfigType>({
   validators,
-  uniqueHookId,
   onFilesSuccessfulySelected: onFilesSuccessfulySelectedProp,
   onFilesRejected: onFilesRejectedProp,
   onFilesSelected: onFilesSelectedProp,
   onClear: onClearProp,
 }: {
   validators?: Validator[];
-  uniqueHookId: string;
   onFilesSelected?: (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => void;
   onFilesSuccessfulySelected?: (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => void;
   onFilesRejected?: (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => void;
   onClear?: () => void;
 }) => {
-  // setup validators' lifecycle methods
-  useEffect(() => {
-    validators?.forEach(validator => {
-      validator.initialize(uniqueHookId);
-    });
-    return () => {
-      validators?.forEach(validator => {
-        validator.destroy(uniqueHookId);
-      });
-    };
-  }, [validators]);
-
+  // setup validators' event handlers
   const onFilesSelected = (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => {
     onFilesSelectedProp?.(data as any);
     validators?.forEach(validator => {

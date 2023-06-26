@@ -13,7 +13,7 @@ export default class AmountOfFilesLimitValidator extends Validator {
     }
 
     if (min && plainFiles.length < min) {
-      return Promise.reject({ mFinLimitNotReached: true });
+      return Promise.reject({ minLimitNotReached: true });
     }
     return Promise.resolve();
   }
