@@ -11,9 +11,10 @@ import {
 import { openFileDialog } from './helpers/openFileDialog';
 import { useValidators } from './validators/useValidators';
 
-function useFilePicker<ConfigType extends UseFilePickerConfig>(
-  props: ConfigType
-): FilePickerReturnTypes<ExtractContentTypeFromConfig<ConfigType>> {
+function useFilePicker<
+  CustomErrors = unknown,
+  ConfigType extends UseFilePickerConfig<CustomErrors> = UseFilePickerConfig<CustomErrors>
+>(props: ConfigType): FilePickerReturnTypes<ExtractContentTypeFromConfig<ConfigType>, CustomErrors> {
   const {
     accept = '*',
     multiple = true,
@@ -25,9 +26,10 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
 
   const [plainFiles, setPlainFiles] = useState<File[]>([]);
   const [filesContent, setFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
-  const [fileErrors, setFileErrors] = useState<UseFilePickerError[]>([]);
+  const [fileErrors, setFileErrors] = useState<UseFilePickerError<CustomErrors>[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const { onFilesSelected, onFilesSuccessfulySelected, onFilesRejected, onClear } = useValidators(props as any);
+  const { onFilesSelected, onFilesSuccessfulySelected, onFilesRejected, onClear } =
+    useValidators<ConfigType, CustomErrors>(props);
 
   const clear: () => void = useCallback(() => {
     setPlainFiles([]);
@@ -52,8 +54,8 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
         const readStrategy = reader[`readAs${readAs}` as ReaderMethod] as typeof reader.readAsText;
         readStrategy.call(reader, file);
 
-        const addError = ({ fileName = file.name, ...others }: UseFilePickerError) => {
-          reject({ fileName, ...others });
+        const addError = ({ ...others }: UseFilePickerError) => {
+          reject({ ...others });
         };
 
         reader.onload = async () =>
@@ -73,7 +75,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
             .catch(() => {});
 
         reader.onerror = () => {
-          addError({ name: 'FileReaderError', fileName: file.name, readerError: reader.error, causedByFile: file });
+          addError({ name: 'FileReaderError', readerError: reader.error, causedByFile: file });
         };
       }
     );
@@ -100,7 +102,7 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
           )
         )
           .flat(1)
-          .filter(Boolean) as UseFilePickerError[];
+          .filter(Boolean) as UseFilePickerError<CustomErrors>[];
 
         setPlainFiles(plainFileObjects);
         setFileErrors(validationsBeforeParsing);
@@ -120,12 +122,14 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
 
         const files = (await fromEvent(evt)) as FileWithPath[];
 
-        const validationsAfterParsing: UseFilePickerError[] = [];
+        const validationsAfterParsing: UseFilePickerError<CustomErrors>[] = [];
         const filesContent = (await Promise.all(
           files.map(file =>
-            parseFile(file).catch((fileError: UseFilePickerError | UseFilePickerError[]) => {
-              validationsAfterParsing.push(...(Array.isArray(fileError) ? fileError : [fileError]));
-            })
+            parseFile(file).catch(
+              (fileError: UseFilePickerError<CustomErrors> | UseFilePickerError<CustomErrors>[]) => {
+                validationsAfterParsing.push(...(Array.isArray(fileError) ? fileError : [fileError]));
+              }
+            )
           )
         )) as FileContent<ExtractContentTypeFromConfig<ConfigType>>[];
         setLoading(false);
@@ -144,17 +148,24 @@ function useFilePicker<ConfigType extends UseFilePickerConfig>(
         setFilesContent(filesContent);
         setPlainFiles(plainFileObjects);
         setFileErrors([]);
-        onFilesSuccessfulySelected?.({ filesContent: filesContent as any, plainFiles: plainFileObjects });
+        onFilesSuccessfulySelected?.({ filesContent: filesContent, plainFiles: plainFileObjects });
         onFilesSelected?.({
           plainFiles: plainFileObjects,
-          filesContent: filesContent as any,
+          filesContent: filesContent,
         });
       },
       initializeWithCustomParameters
     );
   };
 
-  return { openFilePicker, filesContent, errors: fileErrors, loading, plainFiles, clear: clearWithEventListener };
+  return {
+    openFilePicker,
+    filesContent,
+    errors: fileErrors,
+    loading,
+    plainFiles,
+    clear: clearWithEventListener,
+  };
 }
 
 export default useFilePicker;

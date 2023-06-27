@@ -1,36 +1,35 @@
-import { Validator } from './validatorBase';
-import { SelectedFilesOrErrors, ExtractContentTypeFromConfig } from '../interfaces';
+import {
+  SelectedFilesOrErrors,
+  ExtractContentTypeFromConfig,
+  UseFilePickerConfig,
+  SelectedFiles,
+  FileErrors,
+} from '../interfaces';
 
-export const useValidators = <ConfigType>({
-  validators,
+export const useValidators = <ConfigType extends UseFilePickerConfig<CustomErrors>, CustomErrors>({
+  onFilesSelected: onFilesSelectedProp,
   onFilesSuccessfulySelected: onFilesSuccessfulySelectedProp,
   onFilesRejected: onFilesRejectedProp,
-  onFilesSelected: onFilesSelectedProp,
   onClear: onClearProp,
-}: {
-  validators?: Validator[];
-  onFilesSelected?: (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => void;
-  onFilesSuccessfulySelected?: (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => void;
-  onFilesRejected?: (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => void;
-  onClear?: () => void;
-}) => {
+  validators,
+}: ConfigType) => {
   // setup validators' event handlers
-  const onFilesSelected = (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => {
+  const onFilesSelected = (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>, CustomErrors>) => {
     onFilesSelectedProp?.(data as any);
     validators?.forEach(validator => {
-      validator.onFilesSelected(data);
+      validator.onFilesSelected(data as any);
     });
   };
-  const onFilesSuccessfulySelected = (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => {
+  const onFilesSuccessfulySelected = (data: SelectedFiles<ExtractContentTypeFromConfig<ConfigType>>) => {
     onFilesSuccessfulySelectedProp?.(data as any);
     validators?.forEach(validator => {
-      validator.onFilesSuccessfulySelected(data as any);
+      validator.onFilesSuccessfulySelected(data);
     });
   };
-  const onFilesRejected = (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>>) => {
-    onFilesRejectedProp?.(data as any);
+  const onFilesRejected = (errors: FileErrors<CustomErrors>) => {
+    onFilesRejectedProp?.(errors);
     validators?.forEach(validator => {
-      validator.onFilesRejected(data as any);
+      validator.onFilesRejected(errors);
     });
   };
   const onClear = () => {

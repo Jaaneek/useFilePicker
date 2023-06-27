@@ -1,15 +1,16 @@
-import { FileWithPath } from 'file-selector';
+import { FileWithPath as FileWithPathFromSelector } from 'file-selector';
 import { Validator } from './validators/validatorBase';
 import { XOR } from 'ts-xor';
 
+export type FileWithPath = FileWithPathFromSelector;
+
 // ========== ERRORS ==========
 
-export type UseFilePickerError = { fileName: string } & (
-  | FileSizeError
-  | FileReaderError
-  | FileAmountLimitError
-  | ImageDimensionError
-);
+type BaseErrors = FileSizeError | FileReaderError | FileAmountLimitError | ImageDimensionError;
+
+export type UseFilePickerError<CustomErrors = unknown> = CustomErrors extends {}
+  ? BaseErrors | CustomErrors
+  : BaseErrors;
 
 export interface FileReaderError {
   name: 'FileReaderError';
@@ -40,8 +41,8 @@ export interface ImageDimensionError {
   )[];
 }
 
-export type FileErrors = {
-  errors: UseFilePickerError[];
+export type FileErrors<CustomErrors = unknown> = {
+  errors: UseFilePickerError<CustomErrors>[];
 };
 
 // ========== VALIDATOR CONFIGS ==========
@@ -76,7 +77,10 @@ export type SelectedFiles<ContentType> = {
   filesContent: FileContent<ContentType>[];
 };
 
-export type SelectedFilesOrErrors<ContentType> = XOR<SelectedFiles<ContentType>, FileErrors>;
+export type SelectedFilesOrErrors<ContentType, CustomErrors = unknown> = XOR<
+  SelectedFiles<ContentType>,
+  FileErrors<CustomErrors>
+>;
 
 type UseFilePickerConfigCommon = {
   multiple?: boolean;
@@ -87,31 +91,32 @@ type UseFilePickerConfigCommon = {
   initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
 };
 
-type ReadFileContentConfig =
+type ReadFileContentConfig<CustomErrors> =
   | ({
       readFilesContent?: true | undefined | never;
     } & (
       | {
           readAs?: 'ArrayBuffer';
-          onFilesSelected?: (data: SelectedFilesOrErrors<ArrayBuffer>) => void;
+          onFilesSelected?: (data: SelectedFilesOrErrors<ArrayBuffer, CustomErrors>) => void;
           onFilesSuccessfulySelected?: (data: SelectedFiles<ArrayBuffer>) => void;
         }
       | {
           readAs?: Exclude<ReadType, 'ArrayBuffer'>;
-          onFilesSelected?: (data: SelectedFilesOrErrors<string>) => void;
+          onFilesSelected?: (data: SelectedFilesOrErrors<string, CustomErrors>) => void;
           onFilesSuccessfulySelected?: (data: SelectedFiles<string>) => void;
         }
     ))
   | {
       readFilesContent: false;
       readAs?: never;
-      onFilesSelected?: (data: SelectedFilesOrErrors<undefined>) => void;
+      onFilesSelected?: (data: SelectedFilesOrErrors<undefined, CustomErrors>) => void;
       onFilesSuccessfulySelected?: (data: SelectedFiles<undefined>) => void;
     };
 
 export type ExtractContentTypeFromConfig<Config> = Config extends { readAs: 'ArrayBuffer' } ? ArrayBuffer : string;
 
-export type UseFilePickerConfig = UseFilePickerConfigCommon & ReadFileContentConfig;
+export type UseFilePickerConfig<CustomErrors = unknown> = UseFilePickerConfigCommon &
+  ReadFileContentConfig<CustomErrors>;
 
 export interface FileContent<ContentType> extends Blob {
   lastModified: number;
@@ -119,16 +124,19 @@ export interface FileContent<ContentType> extends Blob {
   content: ContentType;
 }
 
-export type FilePickerReturnTypes<ContentType> = {
+export type FilePickerReturnTypes<ContentType, CustomErrors = unknown> = {
   openFilePicker: () => void;
   filesContent: FileContent<ContentType>[];
-  errors: UseFilePickerError[];
+  errors: UseFilePickerError<CustomErrors>[];
   loading: boolean;
   plainFiles: File[];
   clear: () => void;
 };
 
-export type ImperativeFilePickerReturnTypes<ContentType> = FilePickerReturnTypes<ContentType> & {
+export type ImperativeFilePickerReturnTypes<ContentType, CustomErrors = unknown> = FilePickerReturnTypes<
+  ContentType,
+  CustomErrors
+> & {
   removeFileByIndex: (index: number) => void;
   removeFileByReference: (file: File) => void;
 };

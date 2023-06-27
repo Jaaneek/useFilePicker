@@ -12,17 +12,18 @@ import useFilePicker from './useFilePicker';
 /**
  * A version of useFilePicker hook that keeps selected files between selections. On top of that it allows to remove files from the selection.
  */
-function useImperativeFilePicker<ConfigType extends UseFilePickerConfig>(
-  props: ConfigType
-): ImperativeFilePickerReturnTypes<ExtractContentTypeFromConfig<ConfigType>> {
+function useImperativeFilePicker<
+  CustomErrors = unknown,
+  ConfigType extends UseFilePickerConfig<CustomErrors> = UseFilePickerConfig<CustomErrors>
+>(props: ConfigType): ImperativeFilePickerReturnTypes<ExtractContentTypeFromConfig<ConfigType>, CustomErrors> {
   const { readFilesContent, onFilesSelected, onFilesSuccessfulySelected } = props;
 
   const [allPlainFiles, setAllPlainFiles] = useState<File[]>([]);
   const [allFilesContent, setAllFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
 
-  const { openFilePicker, loading, errors, clear } = useFilePicker({
+  const { openFilePicker, loading, errors, clear } = useFilePicker<CustomErrors, ConfigType>({
     ...props,
-    onFilesSelected: (data: SelectedFilesOrErrors<any>) => {
+    onFilesSelected: (data: SelectedFilesOrErrors<ExtractContentTypeFromConfig<ConfigType>, CustomErrors>) => {
       if (!onFilesSelected) return;
       if (data.errors?.length) {
         return onFilesSelected(data);
@@ -31,7 +32,7 @@ function useImperativeFilePicker<ConfigType extends UseFilePickerConfig>(
       onFilesSelected({
         errors: undefined,
         plainFiles: [...allPlainFiles, ...(data.plainFiles || [])],
-        filesContent: [...allFilesContent, ...(data.filesContent || [])],
+        filesContent: [...allFilesContent, ...(data.filesContent || [])] as any,
       });
     },
     onFilesSuccessfulySelected: (data: SelectedFiles<any>) => {
