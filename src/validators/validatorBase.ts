@@ -21,24 +21,24 @@ export abstract class Validator {
   /**
    * lifecycle method called after user selection (regardless of validation result)
    */
-  onFilesSelected(_data: SelectedFilesOrErrors<any>): void {}
+  onFilesSelected(_data: SelectedFilesOrErrors<any>): Promise<void> | void {}
   /**
    * lifecycle method called after successful validation
    */
-  onFilesSuccessfulySelected(_data: SelectedFiles<any>): void {}
+  onFilesSuccessfulySelected(_data: SelectedFiles<any>): Promise<void> | void {}
   /**
    * lifecycle method called after failed validation
    */
-  onFilesRejected(_data: FileErrors): void {}
+  onFilesRejected(_data: FileErrors): Promise<void> | void {}
   /**
    * lifecycle method called after the selection is cleared
    */
-  onClear(): void {}
+  onClear(): Promise<void> | void {}
 
   /**
    * This method is called when file is removed from the list of selected files.
    * Invoked only by the useImperativeFilePicker hook
    * @param _removedIndex index of removed file
    */
-  onFileRemoved(_removedIndex: number): void {}
+  onFileRemoved(_removedIndex: number): Promise<void> | void {}
 }
