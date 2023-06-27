@@ -1,6 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { useImperativeFilePicker, Validator } from '../src';
+import { useImperativeFilePicker } from '../src';
+import { Validator } from '../src/validators';
 import { FileContent, ReadType, UseFilePickerConfig } from '../src/interfaces';
 import { FileWithPath } from 'file-selector';
 

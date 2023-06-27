@@ -1,7 +1,7 @@
 {
   "name": "use-file-picker",
   "description": "Simple react hook to open browser file selector.",
-  "version": "1.7.1",
+  "version": "2.0.0-beta.1",
   "license": "MIT",
   "author": "Milosz Jankiewicz",
   "homepage": "https://github.com/Jaaneek/useFilePicker",
@@ -9,16 +9,27 @@
     "url": "https://github.com/Jaaneek/useFilePicker",
     "type": "git"
   },
-  "main": "dist/index.js",
-  "module": "dist/use-file-picker.esm.js",
-  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./validators": {
+      "import": "./dist/validators.esm.js",
+      "require": "./dist/validators.js",
+      "types": "./dist/validators/index.d.ts"
+    },
+    "./types": "./dist/types.d.ts"
+  },
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
     "analyze": "size-limit --why",
-    "build": "dts build",
+    "build": "dts build -i src/index.tsx -o dist/index.js -f esm,cjs -i src/validators.ts -o dist/validators.js -f esm,cjs",
     "build-storybook": "build-storybook",
     "lint": "dts lint",
     "lint:fix": "dts lint --fix",

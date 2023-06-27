@@ -1,8 +1,9 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { useFilePicker, FileAmountLimitValidator, UseFilePickerConfig, ImageDimensionsValidator } from '../src';
-import { Validator } from '../src';
+import { useFilePicker } from '../src';
+import { Validator, ImageDimensionsValidator, FileAmountLimitValidator } from '../src/validators';
+import { UseFilePickerConfig } from '../src/types';
 import Imperative from './imperative';
 import { FileWithPath } from 'file-selector';
 

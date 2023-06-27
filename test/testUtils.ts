@@ -1,11 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import useFilePicker from '../src/useFilePicker';
-import {
-  ExtractContentTypeFromConfig,
-  ImperativeFilePickerReturnTypes,
-  UseFilePickerConfig,
-  useImperativeFilePicker,
-} from '../src';
+import { useImperativeFilePicker } from '../src';
+import { ExtractContentTypeFromConfig, ImperativeFilePickerReturnTypes, UseFilePickerConfig } from '../src/types';
 
 export const isInputElement = (el: HTMLElement): el is HTMLInputElement => el instanceof HTMLInputElement;
 

@@ -1,6 +1,7 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
-import { PersistentFileAmountLimitValidator, useImperativeFilePicker } from '../src';
+import { useImperativeFilePicker } from '../src';
+import { PersistentFileAmountLimitValidator } from '../src/validators';
 
 const Imperative = () => {
   // for imperative file picker, if you want to limit amount of files selected by user, you need to pass persistent validator

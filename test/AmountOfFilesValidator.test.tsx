@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { waitFor } from '@testing-library/react';
 import { invokeUseFilePicker } from './testUtils';
-import { FileAmountLimitValidator } from '../src';
+import { FileAmountLimitValidator } from '../src/validators';
 
 describe('AmountOfFilesRestrictions', () => {
   it('should not allow to put more files than maximum specified', async () => {

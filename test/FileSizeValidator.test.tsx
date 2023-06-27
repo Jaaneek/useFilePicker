@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/react';
 import { createFileOfSize, invokeUseFilePicker } from './testUtils';
-import { FileSizeValidator } from '../src';
+import { FileSizeValidator } from '../src/validators';
 
 describe('FileSizeRestrictions', () => {
   it('should check maximum file size', async () => {
