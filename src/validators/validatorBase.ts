@@ -36,7 +36,7 @@ export abstract class Validator<
   /**
    * lifecycle method called after successful validation
    */
-  onFilesSuccessfulySelected(_data: SelectedFiles<ExtractContentTypeFromConfig<ConfigType>>): Promise<void> | void {}
+  onFilesSuccessfullySelected(_data: SelectedFiles<ExtractContentTypeFromConfig<ConfigType>>): Promise<void> | void {}
   /**
    * lifecycle method called after failed validation
    */

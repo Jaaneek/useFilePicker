@@ -98,19 +98,19 @@ type ReadFileContentConfig<CustomErrors> =
       | {
           readAs?: 'ArrayBuffer';
           onFilesSelected?: (data: SelectedFilesOrErrors<ArrayBuffer, CustomErrors>) => void;
-          onFilesSuccessfulySelected?: (data: SelectedFiles<ArrayBuffer>) => void;
+          onFilesSuccessfullySelected?: (data: SelectedFiles<ArrayBuffer>) => void;
         }
       | {
           readAs?: Exclude<ReadType, 'ArrayBuffer'>;
           onFilesSelected?: (data: SelectedFilesOrErrors<string, CustomErrors>) => void;
-          onFilesSuccessfulySelected?: (data: SelectedFiles<string>) => void;
+          onFilesSuccessfullySelected?: (data: SelectedFiles<string>) => void;
         }
     ))
   | {
       readFilesContent: false;
       readAs?: never;
       onFilesSelected?: (data: SelectedFilesOrErrors<undefined, CustomErrors>) => void;
-      onFilesSuccessfulySelected?: (data: SelectedFiles<undefined>) => void;
+      onFilesSuccessfullySelected?: (data: SelectedFiles<undefined>) => void;
     };
 
 export type ExtractContentTypeFromConfig<Config> = Config extends { readAs: 'ArrayBuffer' } ? ArrayBuffer : string;

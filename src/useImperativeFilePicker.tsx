@@ -16,7 +16,7 @@ function useImperativeFilePicker<
   CustomErrors = unknown,
   ConfigType extends UseFilePickerConfig<CustomErrors> = UseFilePickerConfig<CustomErrors>
 >(props: ConfigType): ImperativeFilePickerReturnTypes<ExtractContentTypeFromConfig<ConfigType>, CustomErrors> {
-  const { readFilesContent, onFilesSelected, onFilesSuccessfulySelected } = props;
+  const { readFilesContent, onFilesSelected, onFilesSuccessfullySelected } = props;
 
   const [allPlainFiles, setAllPlainFiles] = useState<File[]>([]);
   const [allFilesContent, setAllFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
@@ -35,13 +35,13 @@ function useImperativeFilePicker<
         filesContent: [...allFilesContent, ...(data.filesContent || [])] as any,
       });
     },
-    onFilesSuccessfulySelected: (data: SelectedFiles<any>) => {
+    onFilesSuccessfullySelected: (data: SelectedFiles<any>) => {
       setAllPlainFiles(previousPlainFiles => previousPlainFiles.concat(data.plainFiles));
       setAllFilesContent(previousFilesContent => previousFilesContent.concat(data.filesContent));
 
-      if (!onFilesSuccessfulySelected) return;
+      if (!onFilesSuccessfullySelected) return;
       // override the files property to return all files that were selected previously and in the current batch
-      onFilesSuccessfulySelected({
+      onFilesSuccessfullySelected({
         plainFiles: [...allPlainFiles, ...(data.plainFiles || [])],
         filesContent: [...allFilesContent, ...(data.filesContent || [])],
       });

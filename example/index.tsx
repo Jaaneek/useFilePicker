@@ -52,9 +52,9 @@ const App = () => {
       // this callback is called when there were validation errors
       console.log('onFilesRejected', errors);
     },
-    onFilesSuccessfulySelected: ({ plainFiles, filesContent }) => {
+    onFilesSuccessfullySelected: ({ plainFiles, filesContent }) => {
       // this callback is called when there were no validation errors
-      console.log('onFilesSuccessfulySelected', plainFiles, filesContent);
+      console.log('onFilesSuccessfullySelected', plainFiles, filesContent);
     },
   });
 

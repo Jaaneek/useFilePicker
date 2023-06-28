@@ -8,7 +8,7 @@ import {
 
 export const useValidators = <ConfigType extends UseFilePickerConfig<CustomErrors>, CustomErrors>({
   onFilesSelected: onFilesSelectedProp,
-  onFilesSuccessfulySelected: onFilesSuccessfulySelectedProp,
+  onFilesSuccessfullySelected: onFilesSuccessfullySelectedProp,
   onFilesRejected: onFilesRejectedProp,
   onClear: onClearProp,
   validators,
@@ -20,10 +20,10 @@ export const useValidators = <ConfigType extends UseFilePickerConfig<CustomError
       validator.onFilesSelected(data as any);
     });
   };
-  const onFilesSuccessfulySelected = (data: SelectedFiles<ExtractContentTypeFromConfig<ConfigType>>) => {
-    onFilesSuccessfulySelectedProp?.(data as any);
+  const onFilesSuccessfullySelected = (data: SelectedFiles<ExtractContentTypeFromConfig<ConfigType>>) => {
+    onFilesSuccessfullySelectedProp?.(data as any);
     validators?.forEach(validator => {
-      validator.onFilesSuccessfulySelected(data);
+      validator.onFilesSuccessfullySelected(data);
     });
   };
   const onFilesRejected = (errors: FileErrors<CustomErrors>) => {
@@ -41,7 +41,7 @@ export const useValidators = <ConfigType extends UseFilePickerConfig<CustomError
 
   return {
     onFilesSelected,
-    onFilesSuccessfulySelected,
+    onFilesSuccessfullySelected,
     onFilesRejected,
     onClear,
   };

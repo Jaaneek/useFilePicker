@@ -28,7 +28,7 @@ function useFilePicker<
   const [filesContent, setFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
   const [fileErrors, setFileErrors] = useState<UseFilePickerError<CustomErrors>[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const { onFilesSelected, onFilesSuccessfulySelected, onFilesRejected, onClear } =
+  const { onFilesSelected, onFilesSuccessfullySelected, onFilesRejected, onClear } =
     useValidators<ConfigType, CustomErrors>(props);
 
   const clear: () => void = useCallback(() => {
@@ -148,7 +148,7 @@ function useFilePicker<
         setFilesContent(filesContent);
         setPlainFiles(plainFileObjects);
         setFileErrors([]);
-        onFilesSuccessfulySelected?.({ filesContent: filesContent, plainFiles: plainFileObjects });
+        onFilesSuccessfullySelected?.({ filesContent: filesContent, plainFiles: plainFileObjects });
         onFilesSelected?.({
           plainFiles: plainFileObjects,
           filesContent: filesContent,
