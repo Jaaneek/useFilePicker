@@ -237,7 +237,7 @@ export const ImperativeOnFilesSelected = Template.bind(
     },
   }
 );
-export const ImperativeonFilesSuccessfullySelected = Template.bind(
+export const ImperativeOnFilesSuccessfullySelected = Template.bind(
   {},
   {
     storyTitle:
