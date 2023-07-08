@@ -1,7 +1,7 @@
 {
   "name": "use-file-picker",
   "description": "Simple react hook to open browser file selector.",
-  "version": "2.0.0-canary-3",
+  "version": "2.0.0-canary-4",
   "license": "MIT",
   "author": "Milosz Jankiewicz",
   "homepage": "https://github.com/Jaaneek/useFilePicker",
@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "analyze": "size-limit --why",
-    "build": "dts build -i src/index.tsx -o dist/index.js -f esm,cjs -i src/validators.ts -o dist/validators.js -f esm,cjs",
+    "build": "dts build -i ./src/index.ts -o ./dist/index.js -i ./src/validators.ts -o ./dist/validators.js -f esm,cjs",
     "build-storybook": "build-storybook",
     "lint": "dts lint",
     "lint:fix": "dts lint --fix",
@@ -104,7 +104,7 @@
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
     "babel-loader": "^8.2.2",
-    "dts-cli": "^1.6.3",
+    "dts-cli": "^2.0.3",
     "eslint": "^8.37.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^4.3.6",
@@ -116,6 +116,6 @@
     "ts-jest": "^29.0.5",
     "ts-xor": "1.1.0",
     "tslib": "2.5.0",
-    "typescript": "4.9.5"
+    "typescript": "^5.1.3"
   }
 }
