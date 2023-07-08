@@ -1,7 +1,7 @@
 {
   "name": "use-file-picker",
   "description": "Simple react hook to open browser file selector.",
-  "version": "2.0.0-canary-4",
+  "version": "2.0.0-canary-5",
   "license": "MIT",
   "author": "Milosz Jankiewicz",
   "homepage": "https://github.com/Jaaneek/useFilePicker",
@@ -36,7 +36,7 @@
     "build-storybook": "build-storybook",
     "lint": "dts lint",
     "lint:fix": "dts lint --fix",
-    "prepare": "dts build",
+    "prepare": "yarn build",
     "size": "size-limit",
     "start": "dts watch",
     "storybook": "start-storybook -p 6006",
