@@ -87,6 +87,7 @@ const App = () => {
       ) : null}
       {/* If readAs is set to DataURL, You can display an image */}
       {!!filesContent.length ? <img src={filesContent[0].content} /> : null}
+      {!!filesContent.length ? <div>{filesContent[0].content}</div> : null}
       <br />
       {plainFiles.map(file => (
         <div key={file.name}>{file.name}</div>
