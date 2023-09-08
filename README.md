@@ -8,27 +8,24 @@
 
 ## Documentation
 
-- [Welcome to use-file-picker](#welcome-to-use-file-picker)
-  - [_Simple react hook to open browser file selector._](#simple-react-hook-to-open-browser-file-selector)
-  - [Documentation](#documentation)
-  - [Install](#install)
-  - [StoryBook](#storybook)
-  - [Usage](#usage)
-    - [Simple txt file content reading](#simple-txt-file-content-reading)
-    - [Reading and rendering Images](#reading-and-rendering-images)
-    - [On change callbacks](#on-change-callbacks)
-    - [Advanced usage](#advanced-usage)
-    - [Callbacks](#callbacks)
-    - [Keeping the previously selected files and removing them from selection on demand](#keeping-the-previously-selected-files-and-removing-them-from-selection-on-demand)
-  - [API](#api)
-    - [Props](#props)
-    - [Returns](#returns)
-    - [Built-in validators](#built-in-validators)
-    - [Custom validation](#custom-validation)
-      - [Example validator](#example-validator)
-  - [Authors](#authors)
-  - [🤝 Contributing](#-contributing)
-  - [Show your support](#show-your-support)
+- [Install](#install)
+- [StoryBook](#storybook)
+- [Usage](#usage)
+  - [Simple txt file content reading](#simple-txt-file-content-reading)
+  - [Reading and rendering Images](#reading-and-rendering-images)
+  - [On change callbacks](#on-change-callbacks)
+  - [Advanced usage](#advanced-usage)
+  - [Callbacks](#callbacks)
+  - [Keeping the previously selected files and removing them from selection on demand](#keeping-the-previously-selected-files-and-removing-them-from-selection-on-demand)
+- [API](#api)
+  - [Props](#props)
+  - [Returns](#returns)
+  - [Built-in validators](#built-in-validators)
+  - [Custom validation](#custom-validation)
+    - [Example validator](#example-validator)
+- [Authors](#authors)
+- [🤝 Contributing](#-contributing)
+- [Show your support](#show-your-support)
 
 ## Install
 
@@ -352,10 +349,10 @@ const Imperative = () => {
 | -------------- | ---------------------------------------------------------------------------------------- |
 | openFilePicker | Opens file selector                                                                      |
 | clear          | Clears all files and errors                                                              |
-| filesContent   | Get files array of type [FileContent](#filecontent)                                      |
+| filesContent   | Get files array of type FileContent                                      |
 | plainFiles     | Get array of the [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) objects |
 | loading        | True if the reading files is in progress, otherwise False                                |
-| errors         | Get errors array of type [FileError](#fileerror) if any appears                          |
+| errors         | Get errors array of type FileError if any appears                          |
 
 ### Built-in validators
 
@@ -440,7 +437,7 @@ class CustomValidator extends Validator {
 
 👤 **Milosz Jankiewicz**
 
-- Twitter: [@twitter.com/JankiewiczMi/](https://twitter.com/JankiewiczMi/)
+- Twitter: [@twitter.com/jaaneek/](https://twitter.com/jaaneek)
 - Github: [@Jaaneek](https://github.com/Jaaneek)
 - LinkedIn: [@https://www.linkedin.com/in/jaaneek](https://www.linkedin.com/in/mi%C5%82osz-jankiewicz-554562168/)
 
