@@ -1,93 +1,142 @@
-import { FileWithPath } from 'file-selector';
-import { Validator } from './validators/validatorInterface';
+import { FileWithPath as FileWithPathFromSelector } from 'file-selector';
+import { Validator } from './validators/validatorBase';
 import { XOR } from 'ts-xor';
-export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
 
-export type ReaderMethod = keyof FileReader;
+export type FileWithPath = FileWithPathFromSelector;
 
-export interface LimitFilesConfig {
-  min?: number;
-  max?: number;
+// ========== ERRORS ==========
+
+type BaseErrors = FileSizeError | FileReaderError | FileAmountLimitError | ImageDimensionError;
+
+export type UseFilePickerError<CustomErrors = unknown> = CustomErrors extends {}
+  ? BaseErrors | CustomErrors
+  : BaseErrors;
+
+export interface FileReaderError {
+  name: 'FileReaderError';
+  causedByFile: FileWithPath;
+  readerError?: DOMException | null;
 }
 
-export type SelectedFiles = {
-  plainFiles: File[];
-  filesContent: FileContent[];
+export interface FileAmountLimitError {
+  name: 'FileAmountLimitError';
+  reason: 'MIN_AMOUNT_OF_FILES_NOT_REACHED' | 'MAX_AMOUNT_OF_FILES_EXCEEDED';
+}
+
+export interface FileSizeError {
+  name: 'FileSizeError';
+  causedByFile: FileWithPath;
+  reason: 'FILE_SIZE_TOO_LARGE' | 'FILE_SIZE_TOO_SMALL';
+}
+
+export interface ImageDimensionError {
+  name: 'ImageDimensionError';
+  causedByFile: FileWithPath;
+  reasons: (
+    | 'IMAGE_WIDTH_TOO_BIG'
+    | 'IMAGE_WIDTH_TOO_SMALL'
+    | 'IMAGE_HEIGHT_TOO_BIG'
+    | 'IMAGE_HEIGHT_TOO_SMALL'
+    | 'IMAGE_NOT_LOADED'
+  )[];
+}
+
+export type FileErrors<CustomErrors = unknown> = {
+  errors: UseFilePickerError<CustomErrors>[];
 };
 
-export type FileErrors = {
-  errors: FileError[];
-};
+// ========== VALIDATOR CONFIGS ==========
 
-export type SelectedFilesOrErrors = XOR<SelectedFiles, FileErrors>;
-
-export interface UseFilePickerConfig extends Options {
-  multiple?: boolean;
-  accept?: string | string[];
-  readAs?: ReadType;
-  limitFilesConfig?: LimitFilesConfig;
-  readFilesContent?: boolean;
-  imageSizeRestrictions?: ImageDims;
-  validators?: Validator[];
-  onFilesSelected?: (data: SelectedFilesOrErrors) => void;
-  onFilesSuccessfulySelected?: (data: SelectedFiles) => void;
-  onFilesRejected?: (data: FileErrors) => void;
-  initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
-}
-
-export interface FileContent extends Blob {
-  lastModified: number;
-  name: string;
-  content: string;
-}
-
-export type FilePickerReturnTypes = [
-  () => void,
-  { filesContent: FileContent[]; errors: FileError[]; loading: boolean; plainFiles: File[]; clear: () => void }
-];
-
-export type ImperativeFilePickerReturnTypes = [
-  FilePickerReturnTypes[0],
-  FilePickerReturnTypes[1] & { removeFileByIndex: (index: number) => void; removeFileByReference: (file: File) => void }
-];
-
-export interface ImageDims {
+export interface ImageDimensionRestrictionsConfig {
   minWidth?: number;
   maxWidth?: number;
   minHeight?: number;
   maxHeight?: number;
 }
 
-export interface Options {
+export interface FileSizeRestrictions {
   /**Minimum file size in mb**/
   minFileSize?: number;
   /**Maximum file size in mb**/
   maxFileSize?: number;
 }
 
-export interface FileError extends FileSizeError, FileReaderError, FileLimitError, ImageDimensionError {
-  name?: string;
-  plainFile: FileWithPath;
+export interface FileAmountLimitConfig {
+  min?: number;
+  max?: number;
 }
 
-export interface FileReaderError {
-  readerError?: DOMException | null;
+// ========== MAIN TYPES ==========
+
+export type ReadType = 'Text' | 'BinaryString' | 'ArrayBuffer' | 'DataURL';
+
+export type ReaderMethod = keyof FileReader;
+
+export type SelectedFiles<ContentType> = {
+  plainFiles: File[];
+  filesContent: FileContent<ContentType>[];
+};
+
+export type SelectedFilesOrErrors<ContentType, CustomErrors = unknown> = XOR<
+  SelectedFiles<ContentType>,
+  FileErrors<CustomErrors>
+>;
+
+type UseFilePickerConfigCommon = {
+  multiple?: boolean;
+  accept?: string | string[];
+  validators?: Validator[];
+  onFilesRejected?: (data: FileErrors) => void;
+  onClear?: () => void;
+  initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
+};
+
+type ReadFileContentConfig<CustomErrors> =
+  | ({
+      readFilesContent?: true | undefined | never;
+    } & (
+      | {
+          readAs?: 'ArrayBuffer';
+          onFilesSelected?: (data: SelectedFilesOrErrors<ArrayBuffer, CustomErrors>) => void;
+          onFilesSuccessfullySelected?: (data: SelectedFiles<ArrayBuffer>) => void;
+        }
+      | {
+          readAs?: Exclude<ReadType, 'ArrayBuffer'>;
+          onFilesSelected?: (data: SelectedFilesOrErrors<string, CustomErrors>) => void;
+          onFilesSuccessfullySelected?: (data: SelectedFiles<string>) => void;
+        }
+    ))
+  | {
+      readFilesContent: false;
+      readAs?: never;
+      onFilesSelected?: (data: SelectedFilesOrErrors<undefined, CustomErrors>) => void;
+      onFilesSuccessfullySelected?: (data: SelectedFiles<undefined>) => void;
+    };
+
+export type ExtractContentTypeFromConfig<Config> = Config extends { readAs: 'ArrayBuffer' } ? ArrayBuffer : string;
+
+export type UseFilePickerConfig<CustomErrors = unknown> = UseFilePickerConfigCommon &
+  ReadFileContentConfig<CustomErrors>;
+
+export interface FileContent<ContentType> extends Blob {
+  lastModified: number;
+  name: string;
+  content: ContentType;
 }
 
-export interface FileLimitError {
-  minLimitNotReached?: boolean;
-  maxLimitExceeded?: boolean;
-}
+export type FilePickerReturnTypes<ContentType, CustomErrors = unknown> = {
+  openFilePicker: () => void;
+  filesContent: FileContent<ContentType>[];
+  errors: UseFilePickerError<CustomErrors>[];
+  loading: boolean;
+  plainFiles: File[];
+  clear: () => void;
+};
 
-export interface FileSizeError {
-  fileSizeToolarge?: boolean;
-  fileSizeTooSmall?: boolean;
-}
-
-export interface ImageDimensionError {
-  imageWidthTooBig?: boolean;
-  imageWidthTooSmall?: boolean;
-  imageHeightTooBig?: boolean;
-  imageHeightTooSmall?: boolean;
-  imageNotLoaded?: boolean;
-}
+export type ImperativeFilePickerReturnTypes<ContentType, CustomErrors = unknown> = FilePickerReturnTypes<
+  ContentType,
+  CustomErrors
+> & {
+  removeFileByIndex: (index: number) => void;
+  removeFileByReference: (file: File) => void;
+};

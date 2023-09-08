@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import useFilePicker from '../src/useFilePicker';
-import { ImperativeFilePickerReturnTypes, UseFilePickerConfig, useImperativeFilePicker } from '../src';
+import { useImperativeFilePicker } from '../src';
+import { ExtractContentTypeFromConfig, ImperativeFilePickerReturnTypes, UseFilePickerConfig } from '../src/types';
 
 export const isInputElement = (el: HTMLElement): el is HTMLInputElement => el instanceof HTMLInputElement;
 
@@ -12,11 +13,11 @@ export function createFileOfSize(sizeInBytes: number) {
 
 type UseFilePickerHook = typeof useFilePicker | typeof useImperativeFilePicker;
 
-const invokeFilePicker = (props: UseFilePickerConfig, usePickerHook: UseFilePickerHook) => {
+const invokeFilePicker = (props: UseFilePickerConfig, useFilePicker: UseFilePickerHook) => {
   let input: { current: HTMLInputElement | null } = { current: null };
 
   const { result } = renderHook(() =>
-    usePickerHook({
+    useFilePicker({
       ...props,
       initializeWithCustomParameters(inputElement) {
         input.current = inputElement;
@@ -25,7 +26,7 @@ const invokeFilePicker = (props: UseFilePickerConfig, usePickerHook: UseFilePick
   );
 
   act(() => {
-    result.current[0]();
+    result.current.openFilePicker();
   });
 
   if (!isInputElement(input.current!)) throw new Error('Input not found');
@@ -38,10 +39,10 @@ const invokeFilePicker = (props: UseFilePickerConfig, usePickerHook: UseFilePick
 
 export const invokeUseFilePicker = (props: UseFilePickerConfig) => invokeFilePicker(props, useFilePicker);
 
-export const invokeUseImperativeFilePicker = (props: UseFilePickerConfig) =>
+export const invokeUseImperativeFilePicker = <T extends UseFilePickerConfig>(props: T) =>
   invokeFilePicker(props, useImperativeFilePicker) as {
     result: {
-      current: ImperativeFilePickerReturnTypes;
+      current: ImperativeFilePickerReturnTypes<ExtractContentTypeFromConfig<T>>;
     };
     input: { current: HTMLInputElement };
   };

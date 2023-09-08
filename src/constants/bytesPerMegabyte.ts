@@ -1,1 +1,0 @@
-export const BYTES_PER_MEGABYTE = 1000000;

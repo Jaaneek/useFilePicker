@@ -1,44 +1,31 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import { useImperativeFilePicker } from '../src';
+import { PersistentFileAmountLimitValidator } from '../src/validators';
 
 const Imperative = () => {
-  const [
-    openFileSelector,
-    { filesContent, loading, errors, plainFiles, clear, removeFileByIndex, removeFileByReference },
-  ] = useImperativeFilePicker({
-    multiple: true,
-    readAs: 'Text',
-    readFilesContent: true,
-    onFilesSelected: ({ plainFiles, filesContent, errors }) => {
-      // this callback is always called, even if there are errors
-      console.log('onFilesSelected', plainFiles, filesContent, errors);
-    },
-    onFilesRejected: ({ errors }) => {
-      // this callback is called when there were validation errors
-      console.log('onFilesRejected', errors);
-    },
-    onFilesSuccessfulySelected: ({ plainFiles, filesContent }) => {
-      // this callback is called when there were no validation errors
-      console.log('onFilesSuccessfulySelected', plainFiles, filesContent);
-    },
-  });
+  // for imperative file picker, if you want to limit amount of files selected by user, you need to pass persistent validator
+  const validators = React.useMemo(() => [new PersistentFileAmountLimitValidator({ min: 2, max: 3 })], []);
 
-  if (errors.length) {
-    return (
-      <div>
-        <button onClick={() => openFileSelector()}>Something went wrong, retry! </button>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {console.log(errors)}
-          {Object.entries(errors[0])
-            .filter(([key, value]) => key !== 'name' && value)
-            .map(([key]) => (
-              <div key={key}>{key}</div>
-            ))}
-        </div>
-      </div>
-    );
-  }
+  const { openFilePicker, filesContent, loading, errors, plainFiles, clear, removeFileByIndex, removeFileByReference } =
+    useImperativeFilePicker({
+      multiple: true,
+      readAs: 'Text',
+      readFilesContent: true,
+      validators,
+      onFilesSelected: ({ plainFiles, filesContent, errors }) => {
+        // this callback is always called, even if there are errors
+        console.log('onFilesSelected', plainFiles, filesContent, errors);
+      },
+      onFilesRejected: ({ errors }) => {
+        // this callback is called when there were validation errors
+        console.log('onFilesRejected', errors);
+      },
+      onFilesSuccessfullySelected: ({ plainFiles, filesContent }) => {
+        // this callback is called when there were no validation errors
+        console.log('onFilesSuccessfullySelected', plainFiles, filesContent);
+      },
+    });
 
   if (loading) {
     return <div>Loading...</div>;
@@ -46,7 +33,7 @@ const Imperative = () => {
 
   return (
     <div>
-      <button onClick={async () => openFileSelector()}>Select file</button>
+      <button onClick={async () => openFilePicker()}>Select file</button>
       <button onClick={() => clear()}>Clear</button>
       <br />
       Amount of selected files:
@@ -54,6 +41,22 @@ const Imperative = () => {
       <br />
       Amount of filesContent:
       {filesContent.length}
+      <br />
+      {!!errors.length && (
+        <>
+          Errors:
+          {errors.map((error, index) => (
+            <div key={error.name}>
+              <span>{index + 1}.</span>
+              {Object.entries(error).map(([key, value]) => (
+                <div key={key}>
+                  {key}: {typeof value === 'string' ? value : Array.isArray(value) ? value.join(', ') : null}
+                </div>
+              ))}
+            </div>
+          ))}
+        </>
+      )}
       <br />
       {plainFiles.map((file, i) => (
         <div>
