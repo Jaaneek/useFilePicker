@@ -55,9 +55,9 @@ export interface ImageDimensionRestrictionsConfig {
 }
 
 export interface FileSizeRestrictions {
-  /**Minimum file size in mb**/
+  /**Minimum file size in bytes*/
   minFileSize?: number;
-  /**Maximum file size in mb**/
+  /**Maximum file size in bytes*/
   maxFileSize?: number;
 }
 
