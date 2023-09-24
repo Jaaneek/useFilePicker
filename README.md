@@ -1,10 +1,10 @@
-# <center>Welcome to use-file-picker</center>
+# <center>Welcome to use-file-picker 👋</center>
 
 ## _Simple react hook to open browser file selector._
 
-[![alt Version](https://img.shields.io/npm/v/use-file-picker?color=blue)](https://www.npmjs.com/package/use-file-picker) [![alt License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#) [![alt Twitter: twitter.com/JankiewiczMi/](https://img.shields.io/twitter/follow/JankiewiczMi.svg?style=social)](https://twitter.com/twitter.com/JankiewiczMi)
+[![alt Version](https://img.shields.io/npm/v/use-file-picker?color=blue)](https://www.npmjs.com/package/use-file-picker) [![alt License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#) [![alt Twitter: twitter.com/jaaneek/](https://img.shields.io/twitter/follow/jaaneek.svg?style=social)](https://twitter.com/twitter.com/jaaneek)
 
-**🏠 [Homepage](https://github.com/Jaaneek/useFilePicker 'user-file-picker Github')**
+**🏠 [Homepage](https://github.com/Jaaneek/useFilePicker 'use-file-picker Github')**
 
 ## Documentation
 
@@ -87,7 +87,7 @@ export default function App() {
     multiple: true,
     validators: [
       new FileAmountLimitValidator({ max: 1 }),
-      new FileSizeValidator({ maxFileSize: 50 /* in megabytes */ }),
+      new FileSizeValidator({ maxFileSize: 50 * 1024 * 1024 /* 50 MB */ }),
       new ImageDimensionsValidator({
         maxHeight: 900, // in pixels
         maxWidth: 1600,
@@ -349,17 +349,17 @@ const Imperative = () => {
 | -------------- | ---------------------------------------------------------------------------------------- |
 | openFilePicker | Opens file selector                                                                      |
 | clear          | Clears all files and errors                                                              |
-| filesContent   | Get files array of type FileContent                                      |
+| filesContent   | Get files array of type FileContent                                                      |
 | plainFiles     | Get array of the [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) objects |
 | loading        | True if the reading files is in progress, otherwise False                                |
-| errors         | Get errors array of type FileError if any appears                          |
+| errors         | Get errors array of type FileError if any appears                                        |
 
 ### Built-in validators
 
 useFilePicker has some built-in validators that can be used out of the box. These are:
 
 - FileAmountLimitValidator - allows to select a specific number of files (min and max) that will pass validation. This will work great with simple useFilePicker use cases, it will run on every file selection.
-- FileSizeValidator - allows to select files of a specific size (min and max) that will pass validation.
+- FileSizeValidator - allows to select files of a specific size (min and max) in bytes that will pass validation.
 - ImageDimensionsValidator - allows to select images of a specific size (min and max) that will pass validation.
 - PersistentFileAmountLimitValidator - allows to select a specific number of files (min and max) that will pass validation but it takes into consideration the previously selected files. This will work great with useImperativeFilePicker hook when you want to keep track of how many files are selected even when user is allowed to trigger selection multiple times before submitting the files.
 
