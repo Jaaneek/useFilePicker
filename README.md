@@ -423,10 +423,10 @@ Since version 2.0, validators also have optional callback handlers that will be 
   /**
    * This method is called when file is removed from the list of selected files.
    * Invoked only by the useImperativeFilePicker hook
-   * @param _removedIndex index of removed file
    * @param _removedFile removed file
+   * @param _removedIndex index of removed file
    */
-  onFileRemoved(_removedIndex: number, _removedFile: File): Promise<void> | void {}
+  onFileRemoved(_removedFile: File, _removedIndex: number): Promise<void> | void {}
 ```
 
 #### Example validator
