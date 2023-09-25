@@ -118,6 +118,10 @@ export type ExtractContentTypeFromConfig<Config> = Config extends { readAs: 'Arr
 export type UseFilePickerConfig<CustomErrors = unknown> = UseFilePickerConfigCommon &
   ReadFileContentConfig<CustomErrors>;
 
+export type useImperativeFilePickerConfig<CustomErrors = unknown> = UseFilePickerConfig<CustomErrors> & {
+  onFileRemoved?: (file: FileWithPath, removedIndex: number) => void | Promise<void>;
+};
+
 export interface FileContent<ContentType> extends Blob {
   lastModified: number;
   name: string;

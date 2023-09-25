@@ -5,7 +5,7 @@ import {
   ImperativeFilePickerReturnTypes,
   SelectedFiles,
   SelectedFilesOrErrors,
-  UseFilePickerConfig,
+  useImperativeFilePickerConfig,
 } from './interfaces';
 import useFilePicker from './useFilePicker';
 
@@ -14,9 +14,9 @@ import useFilePicker from './useFilePicker';
  */
 function useImperativeFilePicker<
   CustomErrors = unknown,
-  ConfigType extends UseFilePickerConfig<CustomErrors> = UseFilePickerConfig<CustomErrors>
+  ConfigType extends useImperativeFilePickerConfig<CustomErrors> = useImperativeFilePickerConfig<CustomErrors>
 >(props: ConfigType): ImperativeFilePickerReturnTypes<ExtractContentTypeFromConfig<ConfigType>, CustomErrors> {
-  const { readFilesContent, onFilesSelected, onFilesSuccessfullySelected } = props;
+  const { readFilesContent, onFilesSelected, onFilesSuccessfullySelected, validators, onFileRemoved } = props;
 
   const [allPlainFiles, setAllPlainFiles] = useState<File[]>([]);
   const [allFilesContent, setAllFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
@@ -59,17 +59,18 @@ function useImperativeFilePicker<
 
   const removeFileByIndex = useCallback(
     (index: number) => {
-      setAllPlainFiles(previousPlainFiles => [
-        ...previousPlainFiles.slice(0, index),
-        ...previousPlainFiles.slice(index + 1),
-      ]);
       setAllFilesContent(previousFilesContent => [
         ...previousFilesContent.slice(0, index),
         ...previousFilesContent.slice(index + 1),
       ]);
-      props.validators?.forEach(validator => validator.onFileRemoved?.(index));
+      setAllPlainFiles(previousPlainFiles => {
+        const removedFile = previousPlainFiles[index];
+        validators?.forEach(validator => validator.onFileRemoved?.(removedFile, index));
+        onFileRemoved?.(removedFile, index);
+        return [...previousPlainFiles.slice(0, index), ...previousPlainFiles.slice(index + 1)];
+      });
     },
-    [props.validators]
+    [validators, onFileRemoved]
   );
 
   const removeFileByReference = useCallback(

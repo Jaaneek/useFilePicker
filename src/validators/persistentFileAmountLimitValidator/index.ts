@@ -12,7 +12,7 @@ class PersistentFileAmountLimitValidator extends Validator {
     this.previousPlainFiles = [];
   }
 
-  onFileRemoved(removedIndex: number): void {
+  onFileRemoved(_removedFile: File, removedIndex: number): void {
     this.previousPlainFiles.splice(removedIndex, 1);
   }
 
