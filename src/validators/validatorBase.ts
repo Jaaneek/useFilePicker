@@ -49,7 +49,8 @@ export abstract class Validator<
   /**
    * This method is called when file is removed from the list of selected files.
    * Invoked only by the useImperativeFilePicker hook
+   * @param _removedFile removed file
    * @param _removedIndex index of removed file
    */
-  onFileRemoved(_removedIndex: number): Promise<void> | void {}
+  onFileRemoved(_removedFile: File, _removedIndex: number): Promise<void> | void {}
 }

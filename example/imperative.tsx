@@ -25,6 +25,10 @@ const Imperative = () => {
         // this callback is called when there were no validation errors
         console.log('onFilesSuccessfullySelected', plainFiles, filesContent);
       },
+      onFileRemoved(file, removedIndex) {
+        // this callback is called when file is removed
+        console.log('onFileRemoved', file, removedIndex);
+      },
     });
 
   if (loading) {

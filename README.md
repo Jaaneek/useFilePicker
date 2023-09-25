@@ -255,6 +255,25 @@ export default function App() {
       // this callback is called when there were no validation errors
       console.log('onFilesSuccessfullySelected', plainFiles, filesContent);
     },
+    onClear: () => {
+      // this callback is called when the selection is cleared
+      console.log('onClear');
+    },
+  });
+}
+```
+
+`useImperativePicker` hook also accepts the callbacks listed above. Additionally, it accepts the `onFileRemoved` callback, which is called when a file is removed from the list of selected files.
+
+```ts
+import { useImperativeFilePicker } from 'use-file-picker';
+
+export default function App() {
+  const { openFilePicker, filesContent, loading, errors, plainFiles, clear } = useImperativeFilePicker({
+    onFileRemoved: (removedFile, removedIndex) => {
+      // this callback is called when a file is removed from the list of selected files
+      console.log('onFileRemoved', removedFile, removedIndex);
+    },
   });
 }
 ```
@@ -405,8 +424,9 @@ Since version 2.0, validators also have optional callback handlers that will be 
    * This method is called when file is removed from the list of selected files.
    * Invoked only by the useImperativeFilePicker hook
    * @param _removedIndex index of removed file
+   * @param _removedFile removed file
    */
-  onFileRemoved(_removedIndex: number): Promise<void> | void {}
+  onFileRemoved(_removedIndex: number, _removedFile: File): Promise<void> | void {}
 ```
 
 #### Example validator
