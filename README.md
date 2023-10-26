@@ -2,14 +2,13 @@
 
 ## _Simple react hook to open browser file selector._
 
-[![alt Version](https://img.shields.io/npm/v/use-file-picker?color=blue)](https://www.npmjs.com/package/use-file-picker) [![alt License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#) [![alt Twitter: twitter.com/jaaneek/](https://img.shields.io/twitter/follow/jaaneek.svg?style=social)](https://twitter.com/twitter.com/jaaneek)
+[![alt Version](https://img.shields.io/npm/v/use-file-picker?color=blue)](https://www.npmjs.com/package/use-file-picker) ![alt License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) [![alt Twitter: twitter.com/jaaneek/](https://img.shields.io/twitter/follow/jaaneek.svg?style=social)](https://twitter.com/twitter.com/jaaneek)
 
 **🏠 [Homepage](https://github.com/Jaaneek/useFilePicker 'use-file-picker Github')**
 
 ## Documentation
 
 - [Install](#install)
-- [StoryBook](#storybook)
 - [Usage](#usage)
   - [Simple txt file content reading](#simple-txt-file-content-reading)
   - [Reading and rendering Images](#reading-and-rendering-images)
@@ -33,15 +32,9 @@
 or
 `yarn add use-file-picker`
 
-## StoryBook
-
-<https://use-file-picker.vercel.app/>
-
 ## Usage
 
 ### Simple txt file content reading
-
-<https://codesandbox.io/s/inspiring-swartz-pjxze?file=/src/App.js>
 
 ```jsx
 import { useFilePicker } from 'use-file-picker';
@@ -74,11 +67,14 @@ export default function App() {
 
 ### Reading and rendering Images
 
-<https://codesandbox.io/s/busy-nightingale-oox7z?file=/src/App.js>
-
 ```ts
 import { useFilePicker } from 'use-file-picker';
-import { FileAmountLimitValidator, FileSizeValidator, ImageDimensionsValidator } from 'use-file-picker/validators';
+import {
+  FileAmountLimitValidator,
+  FileTypeValidator,
+  FileSizeValidator,
+  ImageDimensionsValidator,
+} from 'use-file-picker/validators';
 
 export default function App() {
   const { openFilePicker, filesContent, loading, errors } = useFilePicker({
@@ -87,6 +83,7 @@ export default function App() {
     multiple: true,
     validators: [
       new FileAmountLimitValidator({ max: 1 }),
+      new FileTypeValidator(['jpg', 'png']),
       new FileSizeValidator({ maxFileSize: 50 * 1024 * 1024 /* 50 MB */ }),
       new ImageDimensionsValidator({
         maxHeight: 900, // in pixels
@@ -170,8 +167,6 @@ export default function App() {
 ```
 
 ### Advanced usage
-
-<https://codesandbox.io/s/musing-moon-wuq4u?file=/src/App.js>
 
 ```ts
 import { useFilePicker } from 'use-file-picker';
@@ -378,6 +373,7 @@ const Imperative = () => {
 useFilePicker has some built-in validators that can be used out of the box. These are:
 
 - FileAmountLimitValidator - allows to select a specific number of files (min and max) that will pass validation. This will work great with simple useFilePicker use cases, it will run on every file selection.
+- FileTypeValidator - allows to select files with a specific extension that will pass validation.
 - FileSizeValidator - allows to select files of a specific size (min and max) in bytes that will pass validation.
 - ImageDimensionsValidator - allows to select images of a specific size (min and max) that will pass validation.
 - PersistentFileAmountLimitValidator - allows to select a specific number of files (min and max) that will pass validation but it takes into consideration the previously selected files. This will work great with useImperativeFilePicker hook when you want to keep track of how many files are selected even when user is allowed to trigger selection multiple times before submitting the files.

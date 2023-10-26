@@ -102,6 +102,7 @@ describe('ImperativeFilePicker', () => {
 
     await waitFor(() => result.current.loading === false);
     expect(result.current.plainFiles.length).toBe(3);
+    expect(result.current.filesContent.length).toBe(3);
 
     act(() => {
       result.current.clear();
@@ -109,5 +110,6 @@ describe('ImperativeFilePicker', () => {
 
     await waitFor(() => result.current.loading === false);
     expect(result.current.plainFiles.length).toBe(0);
+    expect(result.current.filesContent.length).toBe(0);
   });
 });
