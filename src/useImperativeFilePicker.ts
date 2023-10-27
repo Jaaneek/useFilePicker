@@ -16,7 +16,7 @@ function useImperativeFilePicker<
   CustomErrors = unknown,
   ConfigType extends useImperativeFilePickerConfig<CustomErrors> = useImperativeFilePickerConfig<CustomErrors>
 >(props: ConfigType): ImperativeFilePickerReturnTypes<ExtractContentTypeFromConfig<ConfigType>, CustomErrors> {
-  const { readFilesContent, onFilesSelected, onFilesSuccessfullySelected, validators, onFileRemoved } = props;
+  const { onFilesSelected, onFilesSuccessfullySelected, validators, onFileRemoved } = props;
 
   const [allPlainFiles, setAllPlainFiles] = useState<File[]>([]);
   const [allFilesContent, setAllFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
@@ -52,10 +52,8 @@ function useImperativeFilePicker<
     clear();
     // clear previous files
     setAllPlainFiles([]);
-    if (readFilesContent) {
-      setAllFilesContent([]);
-    }
-  }, [clear, readFilesContent]);
+    setAllFilesContent([]);
+  }, [clear]);
 
   const removeFileByIndex = useCallback(
     (index: number) => {

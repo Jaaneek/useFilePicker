@@ -6,7 +6,7 @@ export type FileWithPath = FileWithPathFromSelector;
 
 // ========== ERRORS ==========
 
-type BaseErrors = FileSizeError | FileReaderError | FileAmountLimitError | ImageDimensionError;
+type BaseErrors = FileSizeError | FileReaderError | FileAmountLimitError | ImageDimensionError | FileTypeError;
 
 export type UseFilePickerError<CustomErrors = unknown> = CustomErrors extends {}
   ? BaseErrors | CustomErrors
@@ -39,6 +39,12 @@ export interface ImageDimensionError {
     | 'IMAGE_HEIGHT_TOO_SMALL'
     | 'IMAGE_NOT_LOADED'
   )[];
+}
+
+export interface FileTypeError {
+  name: 'FileTypeError';
+  causedByFile: FileWithPath;
+  reason: 'FILE_TYPE_NOT_ACCEPTED';
 }
 
 export type FileErrors<CustomErrors = unknown> = {

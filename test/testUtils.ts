@@ -17,13 +17,14 @@ const invokeFilePicker = (props: UseFilePickerConfig, useFilePicker: UseFilePick
   let input: { current: HTMLInputElement | null } = { current: null };
 
   const { result } = renderHook(() =>
+    //@ts-ignore
     useFilePicker({
       ...props,
-      initializeWithCustomParameters(inputElement) {
+      initializeWithCustomParameters(inputElement: any) {
         input.current = inputElement;
       },
     })
-  );
+  ) as { result: { current: ImperativeFilePickerReturnTypes<ExtractContentTypeFromConfig<UseFilePickerConfig>> } };
 
   act(() => {
     result.current.openFilePicker();
