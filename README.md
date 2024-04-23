@@ -462,6 +462,12 @@ class CustomValidator extends Validator {
 - Github: [@MrKampla](https://github.com/MrKampla)
 - LinkedIn: [@https://www.linkedin.com/in/kamil-planer/](https://www.linkedin.com/in/kamil-planer/)
 
+👤 **Adam Dobrzeniewski**
+
+- Twitter: [@twitter.com/xForsect](https://twitter.com/xForsect)
+- Github: [@Forsect](https://github.com/Forsect)
+- LinkedIn: [@https://www.linkedin.com/in/adam-dobrzeniewski](https://www.linkedin.com/in/adam-dobrzeniewski)
+
 ## [](https://github.com/Jaaneek/useFilePicker#-contributing)🤝 Contributing
 
 Contributions, issues and feature requests are welcome!  
