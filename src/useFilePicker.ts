@@ -10,6 +10,10 @@ import {
 } from './interfaces';
 import { openFileDialog } from './helpers/openFileDialog';
 import { useValidators } from './validators/useValidators';
+import { Validator } from './validators';
+
+// empty array reference in order to avoid re-renders when no validators are passed as props
+const EMPTY_ARRAY: Validator[] = [];
 
 function useFilePicker<
   CustomErrors = unknown,
@@ -20,7 +24,7 @@ function useFilePicker<
     multiple = true,
     readAs = 'Text',
     readFilesContent = true,
-    validators = [],
+    validators = EMPTY_ARRAY,
     initializeWithCustomParameters,
   } = props;
 
@@ -28,8 +32,10 @@ function useFilePicker<
   const [filesContent, setFilesContent] = useState<FileContent<ExtractContentTypeFromConfig<ConfigType>>[]>([]);
   const [fileErrors, setFileErrors] = useState<UseFilePickerError<CustomErrors>[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const { onFilesSelected, onFilesSuccessfullySelected, onFilesRejected, onClear } =
-    useValidators<ConfigType, CustomErrors>(props);
+  const { onFilesSelected, onFilesSuccessfullySelected, onFilesRejected, onClear } = useValidators<
+    ConfigType,
+    CustomErrors
+  >(props);
 
   const clear: () => void = useCallback(() => {
     setPlainFiles([]);
@@ -160,15 +166,15 @@ function useFilePicker<
       initializeWithCustomParameters
     );
   }, [
+    props,
     accept,
     clear,
     initializeWithCustomParameters,
     multiple,
-    onFilesSelected,
     onFilesRejected,
+    onFilesSelected,
     onFilesSuccessfullySelected,
     parseFile,
-    props,
     readFilesContent,
     validators,
   ]);
