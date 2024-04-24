@@ -1,7 +1,7 @@
 {
   "name": "use-file-picker",
   "description": "Simple react hook to open browser file selector.",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "license": "MIT",
   "author": "Milosz Jankiewicz",
   "homepage": "https://github.com/Jaaneek/useFilePicker",
@@ -109,6 +109,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^4.3.6",
     "jest": "^29.5.0",
+    "prettier": "2.8.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-is": "^17.0.1",
