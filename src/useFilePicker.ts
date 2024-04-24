@@ -42,45 +42,48 @@ function useFilePicker<
     onClear?.();
   }, [clear, onClear]);
 
-  const parseFile = (file: FileWithPath) =>
-    new Promise<FileContent<ExtractContentTypeFromConfig<ConfigType>>>(
-      async (
-        resolve: (fileContent: FileContent<ExtractContentTypeFromConfig<ConfigType>>) => void,
-        reject: (reason: UseFilePickerError) => void
-      ) => {
-        const reader = new FileReader();
+  const parseFile = useCallback(
+    (file: FileWithPath) =>
+      new Promise<FileContent<ExtractContentTypeFromConfig<ConfigType>>>(
+        async (
+          resolve: (fileContent: FileContent<ExtractContentTypeFromConfig<ConfigType>>) => void,
+          reject: (reason: UseFilePickerError) => void
+        ) => {
+          const reader = new FileReader();
 
-        //availible reader methods: readAsText, readAsBinaryString, readAsArrayBuffer, readAsDataURL
-        const readStrategy = reader[`readAs${readAs}` as ReaderMethod] as typeof reader.readAsText;
-        readStrategy.call(reader, file);
+          //availible reader methods: readAsText, readAsBinaryString, readAsArrayBuffer, readAsDataURL
+          const readStrategy = reader[`readAs${readAs}` as ReaderMethod] as typeof reader.readAsText;
+          readStrategy.call(reader, file);
 
-        const addError = ({ ...others }: UseFilePickerError) => {
-          reject({ ...others });
-        };
+          const addError = ({ ...others }: UseFilePickerError) => {
+            reject({ ...others });
+          };
 
-        reader.onload = async () =>
-          Promise.all(
-            validators.map(validator =>
-              validator.validateAfterParsing(props, file, reader).catch(err => Promise.reject(addError(err)))
+          reader.onload = async () =>
+            Promise.all(
+              validators.map(validator =>
+                validator.validateAfterParsing(props, file, reader).catch(err => Promise.reject(addError(err)))
+              )
             )
-          )
-            .then(() =>
-              resolve({
-                ...file,
-                content: reader.result as string,
-                name: file.name,
-                lastModified: file.lastModified,
-              } as FileContent<ExtractContentTypeFromConfig<ConfigType>>)
-            )
-            .catch(() => {});
+              .then(() =>
+                resolve({
+                  ...file,
+                  content: reader.result as string,
+                  name: file.name,
+                  lastModified: file.lastModified,
+                } as FileContent<ExtractContentTypeFromConfig<ConfigType>>)
+              )
+              .catch(() => {});
 
-        reader.onerror = () => {
-          addError({ name: 'FileReaderError', readerError: reader.error, causedByFile: file });
-        };
-      }
-    );
+          reader.onerror = () => {
+            addError({ name: 'FileReaderError', readerError: reader.error, causedByFile: file });
+          };
+        }
+      ),
+    [props, readAs, validators]
+  );
 
-  const openFilePicker = () => {
+  const openFilePicker = useCallback(() => {
     const fileExtensions = accept instanceof Array ? accept.join(',') : accept;
     openFileDialog(
       fileExtensions,
@@ -156,7 +159,19 @@ function useFilePicker<
       },
       initializeWithCustomParameters
     );
-  };
+  }, [
+    accept,
+    clear,
+    initializeWithCustomParameters,
+    multiple,
+    onFilesSelected,
+    onFilesRejected,
+    onFilesSuccessfullySelected,
+    parseFile,
+    props,
+    readFilesContent,
+    validators,
+  ]);
 
   return {
     openFilePicker,
