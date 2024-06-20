@@ -54,7 +54,7 @@ export default function App() {
       <button onClick={() => openFilePicker()}>Select files</button>
       <br />
       {filesContent.map((file, index) => (
-        <div>
+        <div key={index}>
           <h2>{file.name}</h2>
           <div key={index}>{file.content}</div>
           <br />
