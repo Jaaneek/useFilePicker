@@ -1,6 +1,7 @@
 import { FileWithPath as FileWithPathFromSelector } from 'file-selector';
 import { Validator } from './validators/validatorBase';
 import { XOR } from 'ts-xor';
+import { ENCODINGS } from './helpers/encodings';
 
 export type FileWithPath = FileWithPathFromSelector;
 
@@ -88,6 +89,23 @@ export type SelectedFilesOrErrors<ContentType, CustomErrors = unknown> = XOR<
   FileErrors<CustomErrors>
 >;
 
+type KnownEncoding = (typeof ENCODINGS)[number]['encodings'][number]['labels'][number];
+
+/**
+ * Type that represents text encodings supported by the system.
+ *
+ * The encoding standards are organized into the following categories:
+ *
+ * - **The Default Encoding**: UTF-8
+ * - **Legacy single-byte encodings**: IBM866, ISO-8859-2 through ISO-8859-16, KOI8-R, KOI8-U, macintosh, windows-874 through windows-1258, x-mac-cyrillic
+ * - **Legacy multi-byte Chinese (simplified) encodings**: GBK, gb18030
+ * - **Legacy multi-byte Chinese (traditional) encodings**: Big5
+ * - **Legacy multi-byte Japanese encodings**: EUC-JP, ISO-2022-JP, Shift_JIS
+ * - **Legacy multi-byte Korean encodings**: EUC-KR
+ * - **Legacy miscellaneous encodings**: replacement, UTF-16BE, UTF-16LE
+ */
+export type Encoding = KnownEncoding | (string & {}); // this is a TS hack to allow any string to be used as an encoding, apart from the known encodings
+
 type UseFilePickerConfigCommon = {
   multiple?: boolean;
   accept?: string | string[];
@@ -107,7 +125,7 @@ type ReadFileContentConfig<CustomErrors> =
         }
       | {
           readAs?: 'Text';
-          encoding?: string;
+          encoding?: Encoding;
           onFilesSelected?: (data: SelectedFilesOrErrors<string, CustomErrors>) => void;
           onFilesSuccessfullySelected?: (data: SelectedFiles<string>) => void;
         }
