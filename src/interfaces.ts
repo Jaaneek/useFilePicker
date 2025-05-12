@@ -96,7 +96,6 @@ type UseFilePickerConfigCommon = {
   onClear?: () => void;
   initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
 };
-
 type ReadFileContentConfig<CustomErrors> =
   | ({
       readFilesContent?: true | undefined | never;
@@ -107,7 +106,13 @@ type ReadFileContentConfig<CustomErrors> =
           onFilesSuccessfullySelected?: (data: SelectedFiles<ArrayBuffer>) => void;
         }
       | {
-          readAs?: Exclude<ReadType, 'ArrayBuffer'>;
+          readAs?: 'Text';
+          encoding?: string;
+          onFilesSelected?: (data: SelectedFilesOrErrors<string, CustomErrors>) => void;
+          onFilesSuccessfullySelected?: (data: SelectedFiles<string>) => void;
+        }
+      | {
+          readAs?: Exclude<ReadType, 'ArrayBuffer' | 'Text'>;
           onFilesSelected?: (data: SelectedFilesOrErrors<string, CustomErrors>) => void;
           onFilesSuccessfullySelected?: (data: SelectedFiles<string>) => void;
         }
