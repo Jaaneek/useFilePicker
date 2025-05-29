@@ -33,10 +33,13 @@
         "types": "./dist/validators/index.d.ts",
         "default": "./dist/validators/index.mjs"
       }
+    },
+    "./types": {
+      "types": "./dist/interfaces.d.ts"
     }
   },
   "scripts": {
-    "build": "pkgroll --clean-dist --minify --sourcemap",
+    "build": "pkgroll --clean-dist --sourcemap",
     "dev": "pkgroll --watch",
     "test:watch": "vitest",
     "test": "vitest run",

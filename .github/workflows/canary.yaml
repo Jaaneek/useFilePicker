@@ -3,7 +3,7 @@ name: Publish Canary
 on:
   pull_request:
     branches:
-      - 'main'
+      - 'master'
 
 jobs:
   publish-canary:

@@ -11,7 +11,7 @@ export const UseImperativeFilePicker = () => {
       multiple: true,
       readAs: 'DataURL',
       readFilesContent: true,
-      // validators,
+      validators,
       initializeWithCustomParameters(inputElement) {
         inputElement.webkitdirectory = selectionMode === 'dir';
       },

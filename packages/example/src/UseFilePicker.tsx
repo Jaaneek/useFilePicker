@@ -45,11 +45,11 @@ export const UseFilePicker = () => {
     },
     // accept: ['.png', '.jpeg', '.heic'],
     // readFilesContent: false, // ignores file content,
-    // validators: [
-    //   new FileAmountLimitValidator({ min: 1, max: 3 }),
-    //   // new FileSizeValidator({ maxFileSize: 100_000 /* 100kb in bytes */ }),
-    //   new ImageDimensionsValidator({ maxHeight: 600 }),
-    // ],
+    validators: [
+      new FileAmountLimitValidator({ min: 1, max: 3 }),
+      // new FileSizeValidator({ maxFileSize: 100_000 /* 100kb in bytes */ }),
+      new ImageDimensionsValidator({ maxHeight: 600 }),
+    ],
     onFilesSelected: ({ plainFiles, filesContent, errors }) => {
       // this callback is always called, even if there are errors
       console.log('onFilesSelected', plainFiles, filesContent, errors);

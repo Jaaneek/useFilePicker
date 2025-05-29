@@ -11,7 +11,6 @@ export function openFileDialog(
   const inputElement = document.createElement('input');
   // Hide element and append to body (required to run on iOS safari)
   inputElement.style.display = 'none';
-  inputElement.classList.add('use-file-picker-input');
   document.body.appendChild(inputElement);
   // Set its type to file
   inputElement.type = 'file';
@@ -29,10 +28,10 @@ export function openFileDialog(
     document.body.removeChild(inputElement);
   });
 
-  // inputElement.addEventListener('cancel', () => {
-  //   // remove element
-  //   document.body.removeChild(inputElement);
-  // });
+  inputElement.addEventListener('cancel', () => {
+    // remove element
+    document.body.removeChild(inputElement);
+  });
 
   if (initializeWithCustomAttributes) {
     initializeWithCustomAttributes(inputElement);
