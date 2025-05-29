@@ -25,6 +25,7 @@ describe('ImperativeFilePicker', () => {
     await user.upload(input.current, files);
 
     await waitFor(() => result.current.loading === false);
+    await waitFor(() => result.current.plainFiles.length > 0);
     expect(result.current.plainFiles.length).toBe(2);
 
     act(() => {
@@ -37,6 +38,7 @@ describe('ImperativeFilePicker', () => {
     await user.upload(input.current, newFile);
 
     await waitFor(() => result.current.loading === false);
+    await waitFor(() => result.current.plainFiles.length > 2);
     expect(result.current.plainFiles.length).toBe(3);
   });
 
@@ -52,6 +54,7 @@ describe('ImperativeFilePicker', () => {
     await user.upload(input.current, files);
 
     await waitFor(() => result.current.loading === false);
+    await waitFor(() => result.current.plainFiles.length > 0);
     expect(result.current.plainFiles.length).toBe(3);
 
     act(() => {
@@ -59,6 +62,7 @@ describe('ImperativeFilePicker', () => {
     });
 
     await waitFor(() => result.current.loading === false);
+    await waitFor(() => result.current.plainFiles.length < 3);
     expect(result.current.plainFiles.length).toBe(2);
     expect(result.current.plainFiles[0]?.name).toBe('hello.png');
     expect(result.current.plainFiles[1]?.name).toBe('new.png');
@@ -76,6 +80,7 @@ describe('ImperativeFilePicker', () => {
     await user.upload(input.current, files);
 
     await waitFor(() => result.current.loading === false);
+    await waitFor(() => result.current.plainFiles.length > 0);
     expect(result.current.plainFiles.length).toBe(3);
 
     act(() => {
@@ -84,6 +89,7 @@ describe('ImperativeFilePicker', () => {
     });
 
     await waitFor(() => result.current.loading === false);
+    await waitFor(() => result.current.plainFiles.length < 3);
     expect(result.current.plainFiles.length).toBe(2);
     expect(result.current.plainFiles[0]?.name).toBe('hello.png');
     expect(result.current.plainFiles[1]?.name).toBe('new.png');
@@ -101,6 +107,7 @@ describe('ImperativeFilePicker', () => {
     await user.upload(input.current, files);
 
     await waitFor(() => result.current.loading === false);
+    await waitFor(() => result.current.plainFiles.length > 0);
     expect(result.current.plainFiles.length).toBe(3);
     expect(result.current.filesContent.length).toBe(3);
 

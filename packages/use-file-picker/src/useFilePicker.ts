@@ -100,10 +100,8 @@ function useFilePicker<
       multiple,
       async evt => {
         clear();
-        const inputElement = evt.target as HTMLInputElement;
-        const plainFileObjects = inputElement.files ? Array.from(inputElement.files) : [];
-
         setLoading(true);
+        const plainFileObjects = (await fromEvent(evt)) as FileWithPath[];
 
         const validationsBeforeParsing = (
           await Promise.all(
@@ -120,24 +118,22 @@ function useFilePicker<
         setPlainFiles(plainFileObjects);
         setFileErrors(validationsBeforeParsing);
         if (validationsBeforeParsing.length) {
-          setLoading(false);
           setPlainFiles([]);
           onFilesRejected?.({ errors: validationsBeforeParsing });
           onFilesSelected?.({ errors: validationsBeforeParsing });
+          setLoading(false);
           return;
         }
 
         if (!readFilesContent) {
-          setLoading(false);
           onFilesSelected?.({ plainFiles: plainFileObjects, filesContent: [] });
+          setLoading(false);
           return;
         }
 
-        const files = (await fromEvent(evt)) as FileWithPath[];
-
         const validationsAfterParsing: UseFilePickerError<CustomErrors>[] = [];
         const filesContent = (await Promise.all(
-          files.map(file =>
+          plainFileObjects.map(file =>
             parseFile(file).catch(
               (fileError: UseFilePickerError<CustomErrors> | UseFilePickerError<CustomErrors>[]) => {
                 validationsAfterParsing.push(...(Array.isArray(fileError) ? fileError : [fileError]));
