@@ -1,7 +1,7 @@
 import { FileWithPath as FileWithPathFromSelector } from 'file-selector';
 import { Validator } from './validators/validatorBase';
 import { XOR } from 'ts-xor';
-import { ENCODINGS } from './helpers/encodings';
+import type { ENCODINGS } from './helpers/encodings';
 
 export type FileWithPath = FileWithPathFromSelector;
 
@@ -96,7 +96,7 @@ type KnownEncoding = (typeof ENCODINGS)[number]['encodings'][number]['labels'][n
  *
  * The encoding standards are organized into the following categories:
  *
- * - **The Default Encoding**: UTF-8
+ * - **The Default Encoding by W3C File API specification**: UTF-8
  * - **Legacy single-byte encodings**: IBM866, ISO-8859-2 through ISO-8859-16, KOI8-R, KOI8-U, macintosh, windows-874 through windows-1258, x-mac-cyrillic
  * - **Legacy multi-byte Chinese (simplified) encodings**: GBK, gb18030
  * - **Legacy multi-byte Chinese (traditional) encodings**: Big5
