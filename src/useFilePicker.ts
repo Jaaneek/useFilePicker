@@ -59,7 +59,7 @@ function useFilePicker<
 
           //availible reader methods: readAsText, readAsBinaryString, readAsArrayBuffer, readAsDataURL
           const readStrategy = reader[`readAs${readAs}` as ReaderMethod] as typeof reader.readAsText;
-          readStrategy.call(reader, file);
+          readStrategy.call(reader, file, props.readAs === 'Text' ? props.encoding : undefined);
 
           const addError = ({ ...others }: UseFilePickerError) => {
             reject({ ...others });

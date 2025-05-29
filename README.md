@@ -352,6 +352,7 @@ const Imperative = () => {
 | readFilesContent               | Ignores files content and omits reading process if set to false                                                                                                                                                                | true          | true, false                                      |
 | validators                     | Add validation logic. You can use some of the [built-in validators](#built-in-validators) like FileAmountLimitValidator or create your own [custom validation](#custom-validation) logic                                       | []            | [MyValidator, MySecondValidator]                 |
 | initializeWithCustomParameters | allows for customization of the input element that is created by the file picker. It accepts a function that takes in the input element as a parameter and can be used to set any desired attributes or styles on the element. | n/a           | (input) => input.setAttribute("disabled", "")    |
+| encoding                       | Specifies the encoding to use when reading text files. Only applicable when readAs is set to "Text". Available options include all standard encodings.                                                                         | "utf-8"       | "latin1", "utf-8", "windows-1252"                |
 | onFilesSelected                | A callback function that is called when files are successfully selected. The function is passed an array of objects with information about each successfully selected file                                                     | n/a           | (data) => console.log(data)                      |
 | onFilesSuccessfullySelected    | A callback function that is called when files are successfully selected. The function is passed an array of objects with information about each successfully selected file                                                     | n/a           | (data) => console.log(data)                      |
 | onFilesRejected                | A callback function that is called when files are rejected due to validation errors or other issues. The function is passed an array of objects with information about each rejected file                                      | n/a           | (data) => console.log(data)                      |
@@ -461,12 +462,6 @@ class CustomValidator extends Validator {
 
 - Github: [@MrKampla](https://github.com/MrKampla)
 - LinkedIn: [@https://www.linkedin.com/in/kamil-planer/](https://www.linkedin.com/in/kamil-planer/)
-
-👤 **Adam Dobrzeniewski**
-
-- Twitter: [@twitter.com/xForsect](https://twitter.com/xForsect)
-- Github: [@Forsect](https://github.com/Forsect)
-- LinkedIn: [@https://www.linkedin.com/in/adam-dobrzeniewski](https://www.linkedin.com/in/adam-dobrzeniewski)
 
 ## [](https://github.com/Jaaneek/useFilePicker#-contributing)🤝 Contributing
 
