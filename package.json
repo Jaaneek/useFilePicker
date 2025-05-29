@@ -1,52 +1,23 @@
 {
-  "name": "use-file-picker",
+  "name": "@use-file-picker/base",
+  "private": true,
   "description": "Simple react hook to open browser file selector.",
-  "version": "2.1.3",
+  "version": "0.0.1",
   "license": "MIT",
-  "author": "Milosz Jankiewicz",
+  "author": "Miłosz Jankiewicz, Kamil Planer",
   "homepage": "https://github.com/Jaaneek/useFilePicker",
   "repository": {
     "url": "https://github.com/Jaaneek/useFilePicker",
     "type": "git"
   },
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.js"
-    },
-    "./validators": {
-      "types": "./validators.d.ts",
-      "import": "./dist/validators.esm.js",
-      "require": "./dist/validators.js"
-    },
-    "./types": "./types.d.ts"
-  },
-  "types": "./dist/index.d.ts",
-  "files": [
-    "./dist",
-    "./src",
-    "./index.d.ts",
-    "./validators.d.ts",
-    "./types.d.ts"
-  ],
   "scripts": {
-    "analyze": "size-limit --why",
-    "build": "dts build -i ./src/index.ts -o ./dist/index.js -i ./src/validators.ts -o ./dist/validators.js -f esm,cjs",
-    "build-storybook": "build-storybook",
-    "lint": "dts lint",
-    "lint:fix": "dts lint --fix",
-    "prepare": "yarn build",
-    "size": "size-limit",
-    "start": "dts watch",
-    "storybook": "start-storybook -p 6006",
-    "test": "dts test --passWithNoTests"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "dts lint"
-    }
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "type-check": "turbo type-check"
   },
   "prettier": {
     "printWidth": 120,
@@ -56,68 +27,19 @@
     "arrowParens": "avoid",
     "endOfLine": "lf"
   },
-  "jest": {
-    "testEnvironment": "jsdom",
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    }
-  },
-  "peerDependencies": {
-    "react": ">=16"
-  },
+  "packageManager": "pnpm@10.11.0",
   "engines": {
     "node": ">=12"
   },
-  "size-limit": [
-    {
-      "path": "dist/use-file-picker.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/use-file-picker.esm.js",
-      "limit": "10 KB"
-    }
-  ],
-  "keywords": [
-    "file",
-    "fileselector",
-    "file-selector",
-    "file-picker",
-    "filepicker",
-    "file-input",
-    "react-file",
-    "react-file-picker",
-    "react-file-selector"
-  ],
-  "dependencies": {
-    "file-selector": "0.2.4"
-  },
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^4.9.1",
-    "@storybook/addon-essentials": "6.5.16",
-    "@storybook/addon-info": "^5.3.21",
-    "@storybook/addon-links": "6.5.16",
-    "@storybook/addons": "6.5.16",
-    "@storybook/react": "6.5.16",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "14.0.0",
-    "@testing-library/user-event": "^14.4.3",
-    "@types/react": "^18.0.33",
-    "@types/react-dom": "^18.0.11",
-    "babel-loader": "^8.2.2",
-    "dts-cli": "^2.0.3",
-    "eslint": "^8.37.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "husky": "^4.3.6",
-    "jest": "^29.5.0",
-    "prettier": "2.8.8",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-is": "^17.0.1",
-    "size-limit": "^4.9.1",
-    "ts-jest": "^29.0.5",
-    "ts-xor": "1.1.0",
-    "tslib": "2.5.0",
-    "typescript": "^5.1.3"
+    "@eslint/js": "^9.27.0",
+    "eslint": "^9.27.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.2.0",
+    "pkgroll": "^2.12.2",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1"
   }
 }
