@@ -39,7 +39,7 @@
     }
   },
   "scripts": {
-    "postbuild": "cp ../../README ../../LICENSE ./dist",
+    "postbuild": "cp ../../README.md ../../LICENSE ./dist",
     "build": "pkgroll --clean-dist --sourcemap",
     "dev": "pkgroll --watch",
     "test:watch": "vitest",
@@ -48,8 +48,8 @@
   },
   "files": [
     "dist",
-    "README",
-    "LICENSE"
+    "dist/README.md",
+    "dist/LICENSE"
   ],
   "peerDependencies": {
     "@types/react": ">=16",
