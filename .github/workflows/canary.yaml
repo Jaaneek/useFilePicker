@@ -1,0 +1,91 @@
+name: Publish Canary
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  publish-canary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build package
+        run: pnpm build
+        working-directory: packages/use-file-picker
+
+      - name: Test package
+        run: pnpm test
+        working-directory: packages/use-file-picker
+
+      - name: Lint package
+        run: pnpm lint
+
+      - name: Bump version for canary
+        working-directory: packages/use-file-picker
+        run: |
+          # Get current version from package.json
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          # Remove any existing pre-release identifiers
+          BASE_VERSION=$(echo $CURRENT_VERSION | sed 's/-.*$//')
+
+          # Create canary version with PR number and run number
+          CANARY_VERSION="${BASE_VERSION}-canary.${GITHUB_PR_NUMBER}.${GITHUB_RUN_NUMBER}"
+
+          # Update package.json with new version
+          npm pkg set version=$CANARY_VERSION
+        env:
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+
+      - name: Configure NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
+        working-directory: packages/use-file-picker
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish canary
+        run: pnpm publish --tag canary --no-git-checks
+        working-directory: packages/use-file-picker
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Check if package.json version is already published
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          LATEST_VERSION=$(npm view use-file-picker version)
+          if [ "$LATEST_VERSION" = "$PACKAGE_VERSION" ]; then
+            echo "Version $PACKAGE_VERSION is already published"
+            exit 1
+          fi
+        working-directory: packages/use-file-picker
