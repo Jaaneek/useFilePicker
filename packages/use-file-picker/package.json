@@ -1,7 +1,7 @@
 {
   "name": "use-file-picker",
   "description": "Simple react hook to open browser file selector.",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "license": "MIT",
   "author": "Milosz Jankiewicz, Kamil Planer",
   "homepage": "https://github.com/Jaaneek/useFilePicker",
@@ -39,12 +39,16 @@
     }
   },
   "scripts": {
+    "postbuild": "cp ../../README.md ../../LICENSE .",
     "build": "pkgroll --clean-dist --sourcemap",
     "dev": "pkgroll --watch",
     "test:watch": "vitest",
     "test": "vitest run",
     "type-check": "tsc --noEmit"
   },
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "@types/react": ">=16",
     "@types/react-dom": ">=16",
@@ -64,9 +68,6 @@
     "react-file",
     "react-file-picker",
     "react-file-selector"
-  ],
-  "files": [
-    "dist"
   ],
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
