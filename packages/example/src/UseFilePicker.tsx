@@ -39,10 +39,8 @@ export const UseFilePicker = () => {
     readAs: 'Text', // availible formats: "Text" | "BinaryString" | "ArrayBuffer" | "DataURL"
     initializeWithCustomParameters(inputElement) {
       inputElement.webkitdirectory = selectionMode === 'dir';
-      inputElement.addEventListener('cancel', () => {
-        alert('cancel');
-      });
     },
+    detectCancellation: 'promiseResultOnly',
     // accept: ['.png', '.jpeg', '.heic'],
     // readFilesContent: false, // ignores file content,
     validators: [
@@ -73,7 +71,14 @@ export const UseFilePicker = () => {
       <button onClick={() => setSelectionMode(selectionMode === 'file' ? 'dir' : 'file')}>
         {selectionMode === 'file' ? 'FILE' : 'DIR'}
       </button>
-      <button onClick={async () => openFilePicker()}>Select file</button>
+      <button
+        onClick={async () => {
+          const f = await openFilePicker();
+          console.log(f);
+        }}
+      >
+        Select file
+      </button>
       <button onClick={() => clear()}>Clear</button>
       <br />
       Amount of selected files:

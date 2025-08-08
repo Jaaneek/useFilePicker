@@ -7,7 +7,13 @@ export type FileWithPath = FileWithPathFromSelector;
 
 // ========== ERRORS ==========
 
-type BaseErrors = FileSizeError | FileReaderError | FileAmountLimitError | ImageDimensionError | FileTypeError;
+type BaseErrors =
+  | FileSizeError
+  | FileReaderError
+  | FileAmountLimitError
+  | ImageDimensionError
+  | FileTypeError
+  | SelectionCancelledError;
 
 export type UseFilePickerError<CustomErrors = unknown> = CustomErrors extends object
   ? BaseErrors | CustomErrors
@@ -46,6 +52,11 @@ export interface FileTypeError {
   name: 'FileTypeError';
   causedByFile: FileWithPath;
   reason: 'FILE_TYPE_NOT_ACCEPTED';
+}
+
+export interface SelectionCancelledError {
+  name: 'SelectionCancelledError';
+  reason: 'SELECTION_CANCELLED';
 }
 
 export type FileErrors<CustomErrors = unknown> = {
@@ -113,6 +124,7 @@ type UseFilePickerConfigCommon = {
   onFilesRejected?: (data: FileErrors) => void;
   onClear?: () => void;
   initializeWithCustomParameters?: (inputElement: HTMLInputElement) => void;
+  detectCancellation?: 'promiseResultOnly' | 'promiseResultAndHookState' | false;
 };
 type ReadFileContentConfig<CustomErrors> =
   | ({
@@ -160,8 +172,22 @@ export interface FileContent<ContentType> extends Blob {
   type: string;
 }
 
+export type OpenFilePickerOverrideOptions<CustomErrors> =
+  | (Omit<
+      UseFilePickerConfigCommon & ReadFileContentConfig<CustomErrors>,
+      'onFilesRejected' | 'onClear' | 'onFilesSelected' | 'onFilesSuccessfullySelected'
+    > & { readAs?: 'Text'; encoding?: Encoding })
+  | (Omit<
+      UseFilePickerConfigCommon & ReadFileContentConfig<CustomErrors>,
+      'onFilesRejected' | 'onClear' | 'onFilesSelected' | 'onFilesSuccessfullySelected'
+    > & { readAs?: Exclude<ReadType, 'Text'>; encoding?: never });
+
 export type FilePickerReturnTypes<ContentType, CustomErrors = unknown> = {
-  openFilePicker: () => void;
+  openFilePicker: (options?: OpenFilePickerOverrideOptions<CustomErrors>) => Promise<{
+    filesContent: FileContent<ContentType>[];
+    errors: UseFilePickerError<CustomErrors>[];
+    plainFiles: FileWithPath[];
+  }>;
   filesContent: FileContent<ContentType>[];
   errors: UseFilePickerError<CustomErrors>[];
   loading: boolean;
@@ -169,10 +195,17 @@ export type FilePickerReturnTypes<ContentType, CustomErrors = unknown> = {
   clear: () => void;
 };
 
-export type ImperativeFilePickerReturnTypes<ContentType, CustomErrors = unknown> = FilePickerReturnTypes<
-  ContentType,
-  CustomErrors
+export type ImperativeFilePickerReturnTypes<ContentType, CustomErrors = unknown> = Omit<
+  FilePickerReturnTypes<ContentType, CustomErrors>,
+  'openFilePicker'
 > & {
+  openFilePicker: (options?: OpenFilePickerOverrideOptions<CustomErrors>) => Promise<{
+    filesContent: FileContent<ContentType>[];
+    errors: UseFilePickerError<CustomErrors>[];
+    plainFiles: FileWithPath[];
+    addedFilesContent: FileContent<ContentType>[];
+    addedPlainFiles: FileWithPath[];
+  }>;
   removeFileByIndex: (index: number) => void;
   removeFileByReference: (file: File) => void;
 };

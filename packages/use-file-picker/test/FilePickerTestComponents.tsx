@@ -52,7 +52,7 @@ export const FilePickerComponent = (props: UseFilePickerConfig) => {
         </div>
       ) : null}
       <br />
-      <button onClick={openFilePicker}>Open File Picker</button>
+      <button onClick={() => openFilePicker()}>Open File Picker</button>
       {filesContent?.map(file => (file ? renderDependingOnReaderType(file, props.readAs!) : null))}
       {plainFiles?.map(file => (
         <div key={file.name} style={{ margin: '8px' }}>
@@ -92,7 +92,7 @@ export const ImperativeFilePickerComponent = (props: UseFilePickerConfig) => {
         </div>
       ) : null}
       <br />
-      <button onClick={openFilePicker}>Open File Picker</button>
+      <button onClick={() => openFilePicker()}>Open File Picker</button>
       {filesContent?.map(file => (file ? renderDependingOnReaderType(file, props.readAs!) : null))}
       {plainFiles?.map(file => (
         <div key={file.name} style={{ margin: '8px' }}>
