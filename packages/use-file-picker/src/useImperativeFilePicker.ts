@@ -84,8 +84,34 @@ function useImperativeFilePicker<
     [removeFileByIndex, allPlainFiles]
   );
 
+  const openImperativeFilePicker: ImperativeFilePickerReturnTypes<
+    ExtractContentTypeFromConfig<ConfigType>,
+    CustomErrors
+  >['openFilePicker'] = useCallback(
+    async (overrides = {}) => {
+      const result = await openFilePicker(overrides);
+      if (!result.errors.length) {
+        return {
+          plainFiles: [...allPlainFiles, ...result.plainFiles],
+          filesContent: [...allFilesContent, ...result.filesContent],
+          addedFilesContent: result.filesContent,
+          addedPlainFiles: result.plainFiles,
+          errors: [],
+        };
+      }
+      return {
+        plainFiles: allPlainFiles,
+        filesContent: allFilesContent,
+        addedFilesContent: [],
+        addedPlainFiles: [],
+        errors: result.errors,
+      };
+    },
+    [openFilePicker]
+  );
+
   return {
-    openFilePicker,
+    openFilePicker: openImperativeFilePicker,
     plainFiles: allPlainFiles,
     filesContent: allFilesContent,
     loading,

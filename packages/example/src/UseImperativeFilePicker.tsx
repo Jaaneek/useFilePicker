@@ -42,7 +42,14 @@ export const UseImperativeFilePicker = () => {
       <button onClick={() => setSelectionMode(selectionMode === 'file' ? 'dir' : 'file')}>
         {selectionMode === 'file' ? 'FILE' : 'DIR'}
       </button>
-      <button onClick={async () => openFilePicker()}>Select file</button>
+      <button
+        onClick={async () => {
+          const f = await openFilePicker();
+          console.log(f);
+        }}
+      >
+        Select file
+      </button>
       <button onClick={() => clear()}>Clear</button>
       <br />
       Amount of selected files:
